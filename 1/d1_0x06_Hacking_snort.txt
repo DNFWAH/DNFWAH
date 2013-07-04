@@ -1,0 +1,411 @@
+
+             _                                                _
+           _/T\_                                            _/P\_
+           (* *)          DO NOT FUCK WITH A HACKER         (* *)
+           | - |                #7 File 0x06                | - |
+           |   |                Hacking snort               |   |
+           |   |                                            |   |
+           |   |        By fU9ANg <bb.newlife@gmail.com>    |   |
+           |   |                                            |   |
+           |   |                                            |   |
+           (____________________________________________________)
+
+
+--[ Index
+
+    1 - Snort
+
+        1.1 - Introduction
+
+        1.2 - About Snort
+
+        1.3 - Framework
+
+                1.3.1 - Initialization
+
+                1.3.2 - Capture & Open
+
+                1.3.3 - Decode
+
+                1.3.4 - Match
+
+                1.3.5 - Output
+
+      2 - Conclusion
+
+      3 - Reference
+
+
+[------------------------------------------------------------------------------]
+
+
+--[  1.1 - Introduction
+
+在介紹Snort之前是什么東西, 來干什么用途的; 那首先應該從網絡入侵檢測系統(NIDS)說起,
+從網絡的發展來看:`網絡/系統入侵'這個詞同`計算機網絡'這個詞都來自軍事安全, 當然提到
+`入侵'我們或許會想到如下的詞語或者句子.
+
+1.) 闖入
+2.) 非許可/非授權/非法
+3.) 秘密行動/不公開行為
+4.) 破壞系統/偷取信息
+5.) 瓜分土地
+...
+
+看或聽到這樣的一些詞語或者句子,沒個傢伙都有一個自已對`入侵'的定義了; 关于`網絡入侵
+檢測/防御'系統; 就在98年時, 社區有一家伙叫做`Martin Roesch'用C語言寫了一個偉大的開
+源的NIDS, 命名為"Snort"; 就在此文章中讓我們來了解它吧! (當然不會羅列所以的源代碼)
+
+
+--[  1.2 - About Snort
+
+Snort是NIDS概念中的一個實例, 今天的Snort已經多種平臺下運行, 它是對在網絡中的行為進
+行監控, 并實時的檢測是否有入侵的行為, 它通過對計算機網絡或系統之間傳輸數據包進行檢
+測分析, 從中發現此計算機網絡或系統是否有被攻擊的跡象.
+
+Snort是基于Libpcap庫( 循環抓捕數據包 )的網絡入侵檢測系統; 通過查看源代碼和用戶手冊
+, 可知Snort工作的三大方式(拿取的Snort版本為2.0):
+
+    01.) Sniffer Mode( 嗅探模式 )
+       > 把網絡數據包打印顯示在標準輸出上
+
+    02.) Packet Logger Mode( 數據包日志模式 )
+       > 把網絡數據包保存在存儲設備上, 這兩種模式相當于Tcpdump軟件的功能
+
+    03.) Network Intrustion Detection Mode( 入侵檢測模式 )
+       > 這是Snort比較特別的功能, 下面主要介紹此模式
+
+Snort的入侵檢測模式就是基于Libpcap庫提供的函數進行抓捕數據包,  并與Snort的規則庫中
+的所有有效的規則進行比較/規則匹配, 如果比較失敗, 證明沒有發現入侵行為, 可安全通過;
+否則, 有入侵行為, 此時Snort會采取幾大反應/動作: `寫數據庫或寫日志文件'.
+
+
+--[  1.3 - Framework
+
+給出下圖, 便于更好的理解Snort的框架:
+
+ +-----------------------------------------------------------------------------+
+ |                                                                             |
+ |   +---------------------+                                                   |
+ |   | Network data stream |                                                   |
+ |   +---------------------+                                                   |
+ |              |                                                              |
+ |              v                                                              |
+ |   +---------------------+      +------------------+                         |
+ |   | Packet Capture Lib  |  ->  |  Packet Decoder  |                         |
+ |   +---------------------+      +------------------+    +---------------+    |
+ |                                         |              |RULES (*.rules)|    |
+ |                                         v              +---------------+    |
+ |                                +------------------+            | load       |
+ |                                |    Preprocess    |            v            |
+ |                                +------------------+    +---------------+    |
+ |                                         |              | Rule analyser |    |
+ |                                         v              +---------------+    |
+ |                                +------------------+            |            |
+ |                                | Detection Engine | <----------+            |
+ |   +--------+                   +------------------+                         |
+ |   | STDOUT |                            |                                   |
+ |   | SYSLOG |                            v                                   |
+ |   | DB     |       Output      +------------------+                         |
+ |   | ...    |      <-------     |   Logger/Alert   |                         |
+ |   +--------+                   +------------------+                         |
+ |                                                                             |
+ |                                                                             |
+ |             --------------------------------------------------              |
+ |          << Figure: SNORT - Network Intrusion Detection System >>           |
+ |                                                                             |
+ +-----------------------------------------------------------------------------+
+
+
+--[  1.3.1 - Initialization
+
+人們在做任何一件事情時, 都會先有計劃, 和一些必要的準備工作;  這些的Snort的實現者們
+也是先要做一些準備工作, 大體分為如下:
+
+    01.) 設置信號處理函數
+    02.) 獲得程序名稱
+    03.) 初始化子網掩碼和協議名稱
+    04.) 初始化檢測引擎
+    05.) 初始化解碼標志
+    06.) 處理命令行參數
+    07.) 向用戶層輸出Snort的工作模式
+    08.) 設置日志的輸出路徑且檢查是否可用
+    09.) 為獲得數據包, 打開pcap文件或設備接口
+    10.) 初始化輸出插件
+    11.) 設備數據包處理器
+    12.) 初始化預處理插件
+    13.) 初始化插件
+    14.) 初始化TAG
+    15.) 創建規則鏈表
+    16.) 解釋規則文件
+    17.) 警告模式設定
+    18.) 日誌模式設定
+    19.) 創建快速的數據包檢測引擎
+
+ +-----------------------------------------------------------------------------+
+ |                                                                             |
+ |                   /================\                                        |
+ |                  (  Initialization  )                                       |
+ |                   \================/                                        |
+ |                           |                                                 |
+ |                           v                                                 |
+ |                   +----------------+                                        |
+ |                   | Command Parser |                                        |
+ |                   +----------------+                                        |
+ |                           |                                                 |
+ |                           v                                                 |
+ |                   +----------------+        +----------------+              |
+ |                   |  Rule Analyser |   ->   | Creat RuleTree |              |
+ |                   +----------------+        +----------------+              |
+ |                           |                         |                       |
+ |                           v                         |                       |
+ |                +---------------------+              |                       |
+ |                | Open PCAP Interface |              |                       |
+ |                +---------------------+              |                       |
+ |             +-----------> | <-----------+           |                       |
+ |             |             v             |           |                       |
+ |             |     +----------------+    |           |                       |
+ |             |     | Packet Capture |    |           |                       |
+ |             |     +----------------+    |           |                       |
+ |             |             |             |           |                       |
+ |             |             v             |           |                       |
+ |             |     +----------------+    |           |                       |
+ |             |     | Packet Decoder |    |           |                       |
+ |             |     +----------------+    |           |                       |
+ |             |             | <-----------------------+                       |
+ |             |             v             |                                   |
+ |             |           /===\           |                                   |
+ |             |    N     /     \          |                                   |
+ |             |_________/ Match \         |                                   |
+ |                       \ Rules /         |                                   |
+ |                        \     /          |                                   |
+ |                         \===/           |                                   |
+ |                           | Y           |                                   |
+ |                           v             |                                   |
+ |                   +----------------+    |                                   |
+ |                   |  Logger/Alert  |    |                                   |
+ |                   +----------------+    |                                   |
+ |                           |             |                                   |
+ |                           +-------------+                                   |
+ |                                                                             |
+ |                       --------------------------                            |
+ |                    << Figure: SNORT - Flow chart >>                         |
+ |                                                                             |
+ +-----------------------------------------------------------------------------+
+
+
+--[  1.3.2 - Capture & Open
+
+以上的初始化過程已把我們的獲取數據包的環境搭建起來, 這就是我們表演的舞臺了; 來吧, 打開
+用于獲取數據包的設備接口; 看看某某家伙在網絡上做了什么. 哦, 對了或許我們的數據包不是來
+自設備接口, 而是Pcap的數據文件, 而Snort提供出一個函數(OpenPcap())來完成這件事;  當然你
+在hacking這個入侵檢測系統(Snort)時, 會有源代碼級的瞭解, 所以下面就來看看它的實現吧.
+
+    1.) 如果數據包來自設備接口
+        > 調用libpcap庫中的pcap_lookupdev()函數來獲取一個設備接口名.
+        > 調用pcap_open_live()函數來初始化且打開設備接口.
+
+    2.) 如果數據包來自pcap文件
+        > 調用pcap_open_offline()函數來打開一個pcap文件, 為讀取其中的數據包.
+
+    3.) 如果用戶層設置了snapshot, 則調用pcap_snapshot()函數來進行設置.
+
+    4.) 如果用戶層過濾器, 則調用pcap_setfilter()函數來進行設置.
+
+    5.) 調用pcap_datalink()函數來設置數據鏈路層的類型.
+
+此時SNORT的所有初始化完成, 且已為數據包打開了一個設備接口;  那現在就從設備接口上獲取一
+個一個的數據包, 且調用ProcessPacket()函數去處理獲取到的數據包.
+
+
+--[  1.3.3 - Decode
+
+每個數據包的到來Snort的第一步工作就是對包進行解碼,  會根據數據鏈路層的類型來決定調用哪
+一類處理函數, 由SetPktProcessor()函數來完成數據鏈路層的類型確定; 主要分為如下的類型:
+
+    +-------------------------------------------------------------+
+    | DLT_EN10MB        | DecodeEthPkt        | 以太網             |
+    | DLT_IEEE802_11    | DecodeIEEE80211Pkt  | 無線局域網          |
+    | DLT_IEEE802       | DecodeTRPkt         | 令牌環網絡          | 
+    | DLT_FDDI          | DecodeFDDIPkt       | 光纖分布數據接口網絡  | 
+    | DLT_SLIP          | DecodeSlipPkt       | 串行線路網際協議網絡  |  
+    | DLT_PPP           | DecodePppPkt        | 點對點網絡          |
+    | DLT_LINUX_SLL     | DecodeLinuxSLLPkt   | Linux cooked-mode |
+    | DLT_PFLOG         | DecodePflog         | OpenBSD PF log    |
+    | DLT_LOOP          | DecodeNullPkt       | LoopBack          |
+    | DLT_NULL          | DecodeNullPkt       | LoopBack          |
+    | DLT_RAW           | DecodeRawPkt        | Raw data          |
+    | DLT_I4L_RAWIP     | DecodeI4LRawIPPkt   | I4L-rawip         |
+    | DLT_I4L_IP        | DecodeEthPkt        I I4L-ip            |
+    | DLT_I4L_CISCOHDLC | DecodeI4LCiscoIPPkt | I4L-cisco         |
+    +-------------------------------------------------------------+
+
+每個數據包的到來Snort的第一步工作就是對包進行解碼,  會根據數據鏈路層的類型來決定調用哪
+上表格中的類型是基于Libpcap中的pcap_datalink()函數來實現的; 且用函數指針實現, 在源代碼
+用了這行代碼來實現數據包的解析: (*grinder)(&p, pkthdr, pkt). 當然如果我們查看Libpcap庫
+時, 則會發現datalink是基于偉大的ioctl函數(對設備進行控制)來實現的; 以下就拿取DecodeEth
+Pkt()函數對以太網數據包進行解剖, 在Libpcap庫對以太網數據包的格式如:
+
+    For example:
+    +-------------+-------------+-------------++-------------+
+    |  ether_hdr  |    ip_hdr   | tcp/udp_hdr ||    DATA.    |
+    +-------------+-------------+-------------++-------------+
+
+    1.) 解析數據包的以太網頭
+        p->eh  = (EtherHdr *)(p->pkt);
+    2.) 解析數據包的ip頭
+        p->iph = (IPHdr *)(p->pkt+ETHERNET_HEADER_LEN);
+    3.) 解析數據包的tcp頭
+        p->tcph= (TCPHdr *)(p->pkt+ETHERNET_HEADER_LEN+p->ip_hlen);
+    4.) 解析數據包的tcp頭
+        p->udph= (UDPHdr *)(p->pkt+ETHERNET_HEADER_LEN+p->ip_hlen);
+    5.) 解析數據包的應用層
+         應用層的協議類型的數據包解析, 請直接查看rfc文檔或者到wiki查找詳細的信息.
+
+
+--[  1.3.4 - Match
+
+在之前的初始化函數ParseRulesFile() ->ParserRule() 中把規則加載到三級鏈表上如下的數據結
+構和圖示:
+
+typedef struct _OptTreeNode
+{
+    OptFpList   *opt_func;
+    RspFpList   *rsp_func;
+    ...
+    struct _OptTreeNode  *OTN_activation_ptr;
+    struct _RuleTreeNode *RTN_activation_ptr;
+    struct _OptTreeNode  *next;
+    struct _RuleTreeNode *rtn;
+} OptTreeNode;
+
+typedef struct _RuleTreeNode
+{
+    Struct _RuleTreeNode *right;
+    OptTreeNode          *down;
+    ...
+    struct _ListHead *listhead;
+
+} RuleTreeNode;
+
+typedef struct _ListHead
+{
+    RuleTreeNode *IpList;
+    RuleTreeNode *TcpList;
+    RuleTreeNode *UdpList;
+    RuleTreeNode *IcmpList;
+    struct _OutputFuncNode *LogList;
+    struct _OutputFuncNode *AlertList;
+
+    struct _RuleListNode   *ruleListNode;
+
+} ListHead;
+
+typedef struct _RuleListNode
+{
+    ListHead *RuleList;
+    ...
+    struct _RuleListNode *next;
+
+} RuleListNode;
+
+
+[------------------------------------------------------------------------------]
+
+RuleListNode:
+    +----------+    +----------+    +----------+    +---------+    +---------+
+    | activate | -> |  dynamic | -> |  alert   | -> |  pass   | -> |   log   | --> ...
+    +----------+    +----------+    +----------+    +---------+    +---------+
+
+ListHead:
+    +-------------------------------------------------+
+    |  +------+    +------+    +------+    +------+   |
+    |  | TCP  |    |  UDP |    |  IP  |    | ICMP |   |
+    |  +------+    +------+    +------+    +------+   |
+    +-----|-----------|-------------------------------+
+          |           |
+          |           +----------+ 
+RTN:      v                      v
+    +--------------+      +--------------+
+    | Protocol:TCP |      | Protocol:UDP |
+    | Src MAC      |      | Src MAC      |
+    | Dst MAC      |      | Dst MAC      |  --> ...
+    | Src IP       |      | Src IP       |
+    | Dst IP ...   |      | Dst IP ...   |
+    +--------------+      +--------------+
+          |
+          |
+OTN:      v
+    +----------+      +----------+
+    | Flag:    |  ->  | Flag:    |  --> ...
+    | content: |      | content: |
+    +----------+      +----------+
+
+查看數據包是否為具有入侵行為的數據包由很多的小功能函數去實現, 其實整個匹配過程是比較繁
+瑣的, 這里不作詳細具體的代碼分析, 大概的函數調用為:
+
+InterfaceThread()
+       |
+       v
+ ProcessPacket()
+       |
+       v
+(*grinder) (&p, pkthdr, pkt)
+       |
+       v
+  Preprocess()
+       |
+       v
+  idx->func() // 調用所有可用的預處理插件
+       |      // (如: 端口掃描[PortscanPreprocFunction])去處理此數據包
+       v
+   Detect()
+
+如果此數據包匹配為入侵行為的包, 則調用輸出插件進行相應輸出.
+
+
+--[  1.3.5 - Output
+
+系統會根據相應的輸出插件把數據包的信息輸出, 如寫系統日志輸出插件AlertSyslog:
+
+格式為: void AlertSyslog (Packet *p, char *msg, void *argv, Event* event);
+它主要是把`要輸出的信息', (源目的地址, 協議名稱, 優先級, 類型 ...)組合成一個具有一定意
+義的格式化的字符串, 通過系統調用函數syslog寫系統日志.
+
+當然如果應用層設置了數據庫(如: Postgresql)插件進行信息輸出; 則還會為連接數據庫時, 應用
+層還需提供連接數據庫的服務器地址, 用戶名和密碼; 關于其它的輸出插件的功能實現, 有興趣的
+家伙, 留給你們去hacking了.
+
+
+--[  2 - Conclusion
+
+關于Snort的代碼的細節, 最好的方式就是RTFSC; 個人認為Snort有兩大技術點需了解:
+    1.) 為了效率的考慮, Snort添加了特別的三級鏈表, 且根據rules來填充它, 便于檢測是否有
+        入侵行為, 還加上Snort系統提供了插件的思想對系統進行擴展; 如:
+        spp-* (預處理插件)
+        sp -* (檢測處理插件)
+        spo-* (檢測輸出插件)
+
+    2.) 所有類型(datalink), 怎樣解碼/它們的結構是怎樣的,天知道你在將來哪天會加自己的新
+        協議
+
+當把SNORT的框架了解后, 會感到它還是比較簡單, 就是把我們曾經在XXX校園里學的MD數據結構和
+算法組合起來比較巧妙和靈活的應用了一番, 不過悲劇的事情就在于我們學了, 但是不知道怎樣用
+它們(數據結構和算法); 今天MD有太多的家伙都是哲學家, 都有自己的方法論, 給你講出來是一套
+一套的, 都就連最基本的代碼他也不會去寫, 如果真的有這種人, 你們現在做的決定就是把他趕出
+你們的群(Group).
+
+僅僅為開源而開源的好處在于對于只看錢的一幫網絡公司, 拿著一個`Kernel+Netfilter+L7-filte
+r+iptables+SNORT+Libpcap+Tcpdump+Wireshark'的結構做了一些對源代碼的修修補補不說(為了做
+網絡應用), 還舉個牌子叫做"自主研發"公司, 甚至還有他們自已的許可證. -_=
+
+--[  3 - Reference
+
+[1] - Network Instrusion Detection System
+      http://en.wikipedia.org/wiki/Network_intrusion_detection_system
+
+[2] - Snort home page (include `Main' program, Rules, Doc, community, etc..)
+      http://www.snort.org/
+
+[3] - Pcap man page (libpcap)
+      http://www.tcpdump.org/pcap3_man.htm

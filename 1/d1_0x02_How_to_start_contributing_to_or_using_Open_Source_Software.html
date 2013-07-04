@@ -1,0 +1,630 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title> DO NOT FUCK WITH A HACKER ISSUE 1</title>
+</head>
+<body> <p>           [* *]        DO NOT FUCK WITH A HACKER           [* *]</p>
+ <p>           | - |                #3 File 0x02                | - |</p>
+  <p>          | * |How to start contributing to or using Open Source Software| * |</p>
+  <p>          | - |            By Shlomi Fish ,shlomif(at)iglu.org.il
+  | - |</p>
+<p>            | *
+  | <a href="http://teachingopensource.org/index.php/How_to_start_contributing_to_or_using_Open_Source_Software">Original
+    link</a> | * |</p>
+<table id="toc" class="toc"><tbody><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction_No._1_-_What_is_Open_Source_Software"><span class="tocnumber">1</span> <span class="toctext">Introduction No. 1 - What is Open Source Software</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#What_is_software.3F"><span class="tocnumber">1.1</span> <span class="toctext">What is software?</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#What_is_.22shrinkwrap.22_software.3F"><span class="tocnumber">1.2</span> <span class="toctext">What is "shrinkwrap" software?</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#What_is_open_source_software.3F"><span class="tocnumber">1.3</span> <span class="toctext">What is open source software?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Why_open_source_software.3F"><span class="tocnumber">2</span> <span class="toctext">Why open source software?</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#How_to_start_using_open-source_software.3F"><span class="tocnumber">3</span> <span class="toctext">How to start using open-source software?</span></a>
+<ul>
+<li class="toclevel-2 tocsection-7"><a href="#Using_Native_Windows_Open_Source_Software"><span class="tocnumber">3.1</span> <span class="toctext">Using Native Windows Open Source Software</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Playing_with_Linux"><span class="tocnumber">3.2</span> <span class="toctext">Playing with Linux</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Which_Linux_to_Choose.3F"><span class="tocnumber">3.3</span> <span class="toctext">Which Linux to Choose?</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Should_you_aspire_for_.22sainthood.22.3F"><span class="tocnumber">4</span> <span class="toctext">Should you aspire for "sainthood"?</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="#Contributing"><span class="tocnumber">5</span> <span class="toctext">Contributing</span></a>
+<ul>
+<li class="toclevel-2 tocsection-12"><a href="#Some_Mental_Preparation"><span class="tocnumber">5.1</span> <span class="toctext">Some Mental Preparation</span></a>
+<ul>
+<li class="toclevel-3 tocsection-13"><a href="#Consider_Finding_a_Mentor"><span class="tocnumber">5.1.1</span> <span class="toctext">Consider Finding a Mentor</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-14"><a href="#Choose_some_Projects_to_Contribute_to"><span class="tocnumber">5.2</span> <span class="toctext">Choose some Projects to Contribute to</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#How_to_Survive_as_an_Open_Source_Contributor"><span class="tocnumber">5.3</span> <span class="toctext">How to Survive as an Open Source Contributor</span></a>
+<ul>
+<li class="toclevel-3 tocsection-16"><a href="#The_UNIX.2FLinux_Command_Line"><span class="tocnumber">5.3.1</span> <span class="toctext">The UNIX/Linux Command Line</span></a></li>
+<li class="toclevel-3 tocsection-17"><a href="#Build_Systems"><span class="tocnumber">5.3.2</span> <span class="toctext">Build Systems</span></a>
+<ul>
+<li class="toclevel-4 tocsection-18"><a href="#perl.27s_Module-Build"><span class="tocnumber">5.3.2.1</span> <span class="toctext">perl's Module-Build</span></a></li>
+<li class="toclevel-4 tocsection-19"><a href="#perl.27s_ExtUtils::MakeMaker"><span class="tocnumber">5.3.2.2</span> <span class="toctext">perl's ExtUtils::MakeMaker</span></a></li>
+<li class="toclevel-4 tocsection-20"><a href="#GNU_Autotools"><span class="tocnumber">5.3.2.3</span> <span class="toctext">GNU Autotools</span></a></li>
+<li class="toclevel-4 tocsection-21"><a href="#CMake"><span class="tocnumber">5.3.2.4</span> <span class="toctext">CMake</span></a></li>
+</ul>
+</li>
+<li class="toclevel-3 tocsection-22"><a href="#Version_Control_Systems"><span class="tocnumber">5.3.3</span> <span class="toctext">Version Control Systems</span></a></li>
+<li class="toclevel-3 tocsection-23"><a href="#Bug_tracking"><span class="tocnumber">5.3.4</span> <span class="toctext">Bug tracking</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-24"><a href="#Learning_How_to_Program"><span class="tocnumber">5.4</span> <span class="toctext">Learning How to Program</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-25"><a href="#Summary"><span class="tocnumber">6</span> <span class="toctext">Summary</span></a></li>
+<li class="toclevel-1 tocsection-26"><a href="#Where_to_go_from_here"><span class="tocnumber">7</span> <span class="toctext">Where to go from here</span></a></li>
+<li class="toclevel-1 tocsection-27"><a href="#Authors"><span class="tocnumber">8</span> <span class="toctext">Authors</span></a></li>
+</ul>
+</td></tr></tbody></table><script type="text/css">if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<h2> <span class="mw-headline"
+	   id="Introduction_No._1_-_What_is_Open_Source_Software"> --[ 1.
+	   Introduction No. 1 - What is Open Source Software </span></h2>
+<p>This introduction will explain what open-source software is in a 
+series of answers to questions. You may wish to skip or skim parts of it
+ depending on your knowledge.
+</p>
+<h3><span class="mw-headline" id="What_is_software.3F"> ----[ 1.1 What is software? </span></h3>
+<p>While many of the devices and tools we encounter in every day life 
+(e.g: hammers, refrigerators, CD players, pencils, microwave ovens) 
+serve a limited amount of purposes, a computer is a multi-function 
+device, which one needs to instruct what to do. This is done by 
+programming it and the end result is called <b>software</b> which is composed of individual programs and applications.
+</p><p>If we take your home computer (a stationary machine, a laptop, a 
+netbook, etc.) as an example, then you can use it to run a web browser, a
+ word processor, a spreadsheet program, some games, and other programs -
+ often at the same time. You can also download for free, purchase or 
+even experience directly through the Internet (say on web-sites 
+containing online games) other programs that you can also run on the 
+computer. Sometimes you can run several alternative programs.
+</p><p>Software naturally does not come out of thin air: it has to be 
+programmed by programmers. Some software is distributed in the native 
+computer's processor machine code and is run directly on it. Some 
+software is distributed directly in modifiable source code (in case the 
+computer already has a different program that can run it directly from 
+there). Some programs take an intermediate approach of implementing a 
+machine-independent bytecode sometimes called a "P-code" which is 
+generated from the source code and then executed. In any case, the 
+source code of the program always exists (or at least existed) 
+somewhere, and is used to prepare it for use and distribution.
+</p>
+<h3> <span class="mw-headline"
+	   id="What_is_.22shrinkwrap.22_software.3F"> ----[ 1.2 What is "shrinkwrap" software? </span></h3>
+<p>Shrinkwrap software is software that its programmers have written for
+ other people to use "in the wild". It can be sold in shops, bought 
+through the Internet, downloaded free of charge, or whatever, but it is 
+still expected to be of general use to a substantial number of people 
+who would like to use it. You can find a lot of programs like that on 
+Software development hubs ("Forges") such as <a href="http://sourceforge.net/" class="external text" rel="nofollow">SourceForge</a>, on software directories such as <a href="http://freshmeat.net/" class="external text" rel="nofollow">Freshmeat.net</a>, and on many other sites.
+</p><p>It may seem surprising to some people, but the vast majority of the source code in the world <b>is not</b>
+ intended for shrinkwrap software. A lot of the code out there is used 
+in-house: by banks, governments, companies and individuals and a lot of 
+it is intended to power various embedded devices. Let's suppose you've 
+opened a spreadsheet and wrote a simple formula (such as "=$A1+B$2"). 
+This little formula is code, and unless you're going to share your 
+spreadsheet with the world (which most people won't for various reasons)
+ it will remain in-house code. A UNIX command-line user may write many 
+small programs at the command line prompt every day, (such as "grep -F 
+hello *" to search for files containing the word "hello") and not only 
+are these programs not going to be released to the public, they are 
+likely going to end up being thrown away after they became functional, 
+ran and yielded the correct results. It is likely that the amount of 
+in-house or throwaway code written in programmable tools like multiplies
+ the amount of code in the original tool pretty quickly.
+</p><p><b>Open source software</b> is one type of shrinkwrap software 
+which like we said is intended to be used in the wild by other people, 
+which may actually be sold commercially or otherwise give some 
+commercial benefits to its developers, and as such be considered 
+"commercial software".  Other types include commercial software that is 
+not open-source (sometimes called "'proprietary software'") which needs 
+to be bought for money, non-open-source software which does not cost 
+money (often called <b>"freeware"</b>), and <b>shareware</b> which can 
+be downloaded free-of-charge but requires money for enhanced use, such 
+as using beyond a trial period, getting rid of a nag screen, or enabling
+ extended features.
+</p><p>Now let's see what makes open source software different.
+</p>
+<h3><span class="mw-headline" id="What_is_open_source_software.3F">
+    ----[ 1.3 What is open source software? </span></h3>
+<p>For the sake of the explanation, you'll also hear people refer to open source software as <b>free software</b>
+ (where "free" means "libre" and not "gratis"), "free and open source 
+software" (or "FOSS" short) or even "FLOSS - free, libre, and open 
+source software". All these names refer to the same phenomenon with some
+ different semantic and ideological associations.
+</p><p>The <a href="http://www.gnu.org/philosophy/free-sw.html" class="external text" rel="nofollow">"Free Software Definitions"</a>
+ is possibly the most succinct definition of how open source software 
+needs to be licensed in order to be considered open source:
+</p>
+<ul><li> The freedom to run the program, for any purpose (freedom 0).
+</li><li> The freedom to study how the program works, and change it to 
+make it do what you wish (freedom 1). Access to the source code is a 
+precondition for this.
+</li><li> The freedom to redistribute copies so you can help your neighbor (freedom 2).
+</li><li> The freedom to distribute copies of your modified versions to 
+others (freedom 3). By doing this you can give the whole community a 
+chance to benefit from your changes. Access to the source code is a 
+precondition for this.
+</li></ul>
+<p>Basically, a piece of open source software ships has its original 
+human-readable and modifiable source code available, can be run and used
+ for any purpose, and can be modified internally or externally and even 
+"forked" (i.e: span-off as a competing project).
+</p><p>Nevertheless, this definition still gives some room to maneuver 
+for licensing. Sometimes, downloaded copies of FOSS can be converted 
+into a different licence by any third party (these are called 
+"permissive licences" or "BSD-style licences"), but often code that 
+includes the FOSS code or even just calls subroutines from it needs to 
+be licensed under a similar, free licence. The latter is referred to as 
+"copyleft" and is the foundation of such licences as the <a href="http://en.wikipedia.org/wiki/GNU_General_Public_License" class="extiw" title="wikipedia:GNU General Public License">GNU General Public License (GPL)</a> or the <a href="http://en.wikipedia.org/wiki/LGPL" class="extiw" title="wikipedia:LGPL">GNU Lesser General Public License (LGPL)</a>, and many similar licenses.
+</p><p>In any case, one should understand that being open source does 
+not stand against commercialism or Capitalism. There are many commercial
+ companies which publish a lot of their code under open-source licences 
+(many of which are profitable), and many individuals are making a decent
+ living out of working on open-source code. One can sell support and 
+services around open-source code, and as some people like to say "our 
+code is free - our time (and yours) isn't.".
+</p>
+<h2> <span class="mw-headline" id="Why_open_source_software.3F"> --[ 2. Why open source software? </span></h2>
+<p>There are several aspects that make open source software superior:
+</p>
+<ol><li> Usually, one can legally download the open-source applications, use them or even modify and adapt them for different needs, <b>legally</b>
+ and free of charge. Despite all that, it is perfectly legal to sell 
+open-source software (or services that relate to them), but in this day 
+and age of cheap, common, and fast Internet, many people will opt not to
+ pay for it.
+</li><li> Many open-source projects make a smart use of the Internet for
+ getting input from users, customising the software according to it, or 
+even accepting contributions from co-developers. (This has been referred
+ to as <a href="http://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar" class="extiw" title="wikipedia:The Cathedral and the Bazaar">the Bazaar style of development</a>.)
+</li><li> Open source software can be adapted to overcome its 
+limitations (such as bugs, missing features, or broken compatibility), 
+either by oneself, or by hiring or convincing someone to do that for 
+you. Source code tends to be much more adaptable to changes in the 
+deployment platform than binary executables.
+</li><li> Open source software encourages a culture of "freedom", 
+"openness" and sharing, which stands as opposed to the helplessness and 
+resentment that users of proprietary software often feel.
+</li><li> One can point to one's contributions to open source software 
+as a portfolio of previous work which is both free and legal to examine 
+and be impressed from. Furthermore, often other people on the Internet 
+will contact you about your open-source project which will allow you to 
+gain more recognition.
+</li></ol>
+<p>Naturally, there may be many important downsides to the open source 
+development model, but we believe that it is advantageous in many cases.
+</p>
+<h2> <span class="mw-headline"
+	   id="How_to_start_using_open-source_software.3F"> --[ 3. How to start using open-source software? </span></h2>
+<p>Now that we've understood what open source software is, and assuming 
+you think it's a cool idea that you'd like to contribute to (or just 
+benefit from), let's see how you can start to use it, which is normally a
+ prerequisite for contributing to it.
+</p>
+<h3> <span class="mw-headline"
+	   id="Using_Native_Windows_Open_Source_Software"> ----[ 3.1 Using Native Windows Open Source Software </span></h3>
+<p>Assuming you're still using Microsoft Windows, you may wish to play 
+with some open-source software that can be installed and run on Windows.
+ For this head to <a href="http://www.opensourcewindows.org/" class="external text" rel="nofollow">the "Open Source Windows (software)" site</a>
+ and install and play with the applications featured there, and possibly
+ use them in production. There is a lot of other open source 
+applications for Windows listed on <a href="https://help.ubuntu.com/community/ListOfOpenSourcePrograms" class="external text" rel="nofollow">The List of Open Source Programs (LOOP)</a>.
+</p>
+<h3> <span class="mw-headline" id="Playing_with_Linux"> ----[ 3.2 Playing with Linux </span></h3>
+<p>After you've installed many open-source applications for Windows, you
+ may wish to perform the next logical step and play with Linux, which is
+ a close-to-entirely-free operating system usable as a comfortable and 
+stable desktop for one's PC. Linux is an operating system and as such 
+serves as a host for other programs, similar to the fact that Microsoft 
+Windows is an operating system that hosts many applications each as 
+different processes and as different windows.
+</p><p>Linux is not entirely compatible with Windows, but the graphical 
+user interface (GUI) is similar enough to become comfortable with it. 
+Despite common prejudice, Linux is not exclusively intended for 
+programmers or only for "computer geeks" and common people can become 
+comfortable with it. In fact, it tends to work better, and be more 
+transparent, reliable and secure than Microsoft Windows.
+</p><p>The good news is that you can install Linux while being able to 
+keep your Windows installation and continue using it, and switch from 
+Linux to Windows (or even use them at the same time). The ways to 
+install Linux from the most intimidating to the least intimidating one 
+are:
+</p>
+<ol><li> <b>Repartition your hard disk.</b> This means that an 
+installation of the Linux operating system will be installed side by 
+side with the Windows installation, allowing you to choose which one to 
+use during boot. This process normally progresses fine, but may result 
+in data loss if the computer loses power or you've done something wrong 
+with the installation, so it's advisable to backup first.
+</li><li> <b>LiveCD/LiveUSB</b> - a Linux LiveCD, LiveDVD or LiveUSB is a
+ self-contained Linux distribution that boots up and runs directly from 
+the CD drive or USB stick without requiring installation on the 
+hard-disk, and while leaving the host system in tact. The downside is 
+that any changes not saved on the hard-disk will be lost after a reboot,
+ and reportedly using a LiveCD for prolonged periods tends to ruin the 
+CD-ROM drive. 
+</li><li> <b>Virtual Machine (VirtualBox, qemu)</b> - in this scheme, 
+one runs Linux inside a virtual machine, meaning an emulated computer 
+running inside a window on the host system (Microsoft Windows in our 
+case). The virtual machine still has networking and can communicate with
+ the host system, but otherwise does not interfere with it. The downside
+ is that Linux will likely run slower this way.
+</li></ol>
+<p>Of these, it is recommended to start by installing Linux inside a 
+virtual machine inside a good virtual machine emulator such as <a href="http://www.virtualbox.org/" class="external text" rel="nofollow">the open-source and free VirtualBox</a>.
+</p>
+<h3> <span class="mw-headline" id="Which_Linux_to_Choose.3F"> ----[
+    3.3 Which Linux to Choose? </span></h3>
+<p>Since the Linux operating system and its individual components are 
+all open-source and can be freely packaged and distributed, this spawned
+ a proliferation of <b>Linux distributions</b>, which after being 
+installed, provide similar functionality but with different packaging, 
+different distribution-specific modifications and customisation to the 
+components of the system, and somewhat different philosophies. Most 
+Linux distributions are pretty niche, or otherwise not ready for general
+ use (if not no longer actively maintained or went out of fashion). Here
+ is a short list of the most recommended distributions:
+</p>
+<ol><li> <a href="http://www.ubuntu.com/" class="external text" rel="nofollow">Ubuntu Linux</a>
+ - probably the most popular desktop distribution, Ubuntu has 
+semi-annual releases and aims to provide a polished desktop experience.
+</li><li> <a href="http://fedoraproject.org/" class="external text" rel="nofollow">Fedora</a> - a free distribution from Red Hat Inc. with semi-annual releases, and good desktop polish.
+</li><li> <a href="http://www.mandriva.com/" class="external text" rel="nofollow">Mandriva Linux</a>
+ - a free desktop-oriented distribution with semi-annual releases, good 
+integration between the components and good desktop polish.
+</li><li> <a href="http://www.mepis.org/" class="external text" rel="nofollow">MEPIS</a> - a desktop-oriented distribution based on Debian.
+</li></ol>
+<p>These are all intended to be installed on the hard-disk or on a virtual machine. 
+</p><p>Some recommended Live CD / Live DVD distributions are:
+</p>
+<ol><li> <a href="http://www.knoppix.net/" class="external text" rel="nofollow">Knoppix</a>
+</li><li> <a href="http://www2.mandriva.com/linux/which/" class="external text" rel="nofollow">Mandriva One</a>
+</li><li> <a href="http://www.pclinuxos.com/" class="external text" rel="nofollow">PCLinuxOS</a>
+</li></ol>
+<p>Whatever you do make sure you avoid the "distribution 
+hopping"-syndrome where you hop from one distribution to another after 
+running into a few difficulties with one distribution. Choose one 
+distribution and stick with it, as you are likely to encounter different
+ issues in a different distribution.
+</p>
+<h2> <span class="mw-headline"
+	   id="Should_you_aspire_for_.22sainthood.22.3F"> --[ 4. Should you aspire for "sainthood"? </span></h2>
+<p>Some ardent supporters of open-source software will claim that using 
+non-open-source software is immoral, and that one should aspire for 
+"sainthood" by using open-source software exclusively, up to not using 
+non-open-source operating systems such as Microsoft Windows. While such 
+stance may be appealing to some, we recommend that you don't follow it, 
+at least not right away. You will likely still need your Windows 
+partition, in part so you can test that the open-source applications of 
+you or others work there properly and are well-supported. Furthermore, 
+the main issue is open source software vs. proprietary software, not 
+Linux vs. Windows.
+</p>
+<h2> <span class="mw-headline" id="Contributing"> --[ 5. Contributing </span></h2>
+<p>OK, you've been using open-source software, have played with Linux 
+(or even are using it daily), and now you're interested in contributing 
+to some open-source applications you like. First of all, welcome aboard,
+ we could use all the help we can get and we hope you find it a pleasant
+ experience.
+</p>
+<h3> <span class="mw-headline" id="Some_Mental_Preparation"> ----[ 5.1
+    Some Mental Preparation </span></h3>
+<p>Contributing to open-source software can be fun and rewarding. Yet, 
+it will likely be a bumpy road, as you may find that some people you 
+interact with are rude or insulting. The important thing to remember is 
+not to give up.
+</p><p>It's OK to become insulted and discouraged for a while. <a href="http://en.wikipedia.org/wiki/Lawrence_Lessig" class="external text" rel="nofollow">Lawrence Lessig</a>, a law professor who has written several books about the free culture of the Internet, and has projected <a href="http://creativecommons.org/" class="external text" rel="nofollow">the Creative Commons</a>, had this to write in <a href="http://remix.lessig.org/" class="external text" rel="nofollow">his book "Remix"</a>:
+</p>
+<blockquote>
+
+<p>
+I find it insanely difficult to read these comments [to my blog posts]. Not because
+they’re bad or mistaken, but mainly because I have very thin skin.
+There’s a direct correlation between what I read and pain in my
+gut. Even unfair and mistaken criticism cuts me in ways that are
+just silly. If I read a bad comment before bed, I don’t sleep. If I trip
+upon one when I’m trying to write, I can be distracted for hours. I
+fantasize about creating an alter ego who responds on my behalf.
+But I don’t have the courage for even that deception. So instead,
+my weakness manifests itself through the practice (extraordinarily
+unfair to the comment writer) of sometimes not reading what others 
+have said.
+</p>
+<p>
+So then why do I blog all? Well, much of the time, I have no
+idea why I do it. But when I do, it has something to do with an ethic
+I believe that we all should live by. I first learned it from a judge I
+clerked for, Judge Richard Posner. Posner is without a doubt the
+most significant legal academic and federal judge of our time, and
+perhaps of the last hundred years. He was also the perfect judge to
+clerk for. Unlike the vast majority of appeals court judges, Posner
+writes his own opinions. The job of the clerk was simply to argue.
+He would give us a draft opinion, and we’d write a long memo in
+critique. He’d use that to redraft the opinion.
+</p>
+<p>
+I gave Posner comments on much more than his opinions. In
+particular, soon after I began teaching he sent me a draft of a book,
+which would eventually become Sex and Reason. Much of the book
+was brilliant. But there was one part I thought ridiculous. And in a
+series of faxes (I was teaching in Budapest, and this was long before
+e-mail was generally available), I sent him increasingly outrageous
+comments, arguing about this section of the book.
+</p>
+<p>
+The morning after I sent one such missive, I reread it, and was
+shocked by its abusive tone. I wrote a sheepish follow-up, apologiz-
+ing, and saying that of course, I had endless respect for Posner, blah,
+blah, and blah. All that was true. So too was it true that I thought
+my comments were unfair. But Posner responded not by accepting
+my apology, but by scolding me. And not by scolding me for my
+abusive fax, but for my apology. “I’m surrounded by sycophants,”
+he wrote. “The last thing in the world I need is you to filter your
+comments by reference to my feelings.”
+</p>
+<p>
+I was astonished by the rebuke. But from that moment on, I
+divided the world into those who would follow (or even recom-
+mend) Posner’s practice, and those who wouldn’t. And however
+attractive the anti-Posner pose was, I wanted to believe I could fol-
+low his ethic: Never allow, or encourage, the sycophants. Reward
+the critics. Not because I’d ever become a judge, or a public fig-
+ure as important as Posner. But because in following his example,
+I would avoid the worst effects of the protected life (as a tenured
+professor) that I would lead.
+</p>
+</blockquote>
+<p>So even if you, like Prof. Lessig, have a thin skin, and can get 
+discouraged by a bad comment, it's important not to give up completely. 
+It's OK to feel down for a while, but understand that the feeling will 
+pass and you will eventually be recognised for the work you invest in 
+contributing to open source.
+</p><p>There is some good advice on <a href="http://unarmed.shlomifish.org/909.html" class="external text" rel="nofollow">handling Internet criticism</a>  on the "Unarmed but still Dangerous" blog, which builds upon the excellent advice given by <a href="http://en.wikipedia.org/wiki/David_D._Burns" class="extiw" title="wikipedia:David D. Burns">Dr. David D. Burns</a> in the book <a href="http://en.wikipedia.org/wiki/Feeling_Good:_The_New_Mood_Therapy" class="extiw" title="wikipedia:Feeling Good: The New Mood Therapy"><i>Feeling Good: The New Mood Therapy</i></a>,
+ which is a self-help guide for Cognitive Therapy, and which discusses 
+how to handle criticism and avoid becoming affected by it.
+</p>
+<h4> <span class="mw-headline" id="Consider_Finding_a_Mentor"> ------[
+    5.1.1 Consider Finding a Mentor </span></h4>
+<p>Some people will find it easier to survive as open-source 
+contributors by having a person whom they can consult with and who can 
+guide them. There are several ways to find a mentor:
+</p>
+<ol><li> Find one on <a href="https://openhatch.org/" class="external text" rel="nofollow">OpenHatch</a>
+</li><li> See the <a href="http://teachingopensource.org/index.php/FOSS_Mentor_Projects" class="external text" rel="nofollow">Teaching Open Source Intitiative's List of FOSS Mentor projects</a>
+</li></ol>
+<h3> <span class="mw-headline"
+	   id="Choose_some_Projects_to_Contribute_to"> ----[ 5.2 Choose some Projects to Contribute to </span></h3>
+<p>The next step is to pick up projects to contribute to. You can choose
+ to contribute to open-source projects that you are actively using such 
+as your distribution, or its various comprising components (the 
+web-browser, the office suite, the Instant Messaging client, the mail 
+client, your favourite text editor, your desktop environment, etc.). 
+Alternatively, you can monitor software announcement sites such as the 
+Linux and open-source oriented <a href="http://freshmeat.net/" class="external text" rel="nofollow">Freshmeat</a> and find interesting projects to work on there. More recently, <a href="https://openhatch.org/" class="external text" rel="nofollow">the OpenHatch site</a> started as a way to connect between wannabe contributors and projects.
+</p><p>You may be wondering how you can contribute. There are several ways:
+</p>
+<ol><li> The first way, and the first one that comes to most people's 
+minds is by programming. We'll get to how you can learn programming 
+later. However, it's not the only way, and there are many ways you can 
+contribute while still learning how to program.  
+</li><li> The second way is to frequent the projects' online forums 
+(such as their Internet Relay Chat channels, their mailing lists, their 
+web-forums, and so forth) and answer questions or try to find people who
+ can.
+</li><li> Another way is to help maintain the project's wiki, in case it has one.
+</li><li> Some projects may be interested in providing translations and 
+localisations for the project into non-English languages, so if you are 
+fluent in a foreign tongue, you can volunteer to help maintain the 
+translations.
+</li><li> It is also useful to help the project with <b>bug triaging</b>
+ - trying to reproduce bugs, finding bugs that should be closed, 
+replying to the reporter of the bug or the other project's maintainers 
+with your findings, etc.
+</li></ol>
+<p>There are probably other ways to contribute, but the important thing 
+is to pick a few projects to which you wish to contribute and start.
+</p>
+<h3> <span class="mw-headline"
+	   id="How_to_Survive_as_an_Open_Source_Contributor"> ----[
+	   5.3 How to Survive as an Open Source Contributor </span></h3>
+<p>In this section, we will try to briefly touch on various technologies
+ you'll need to understand in order to effectively contribute to 
+open-source projects. We will refer you to material for further reading.
+</p>
+<h4> <span class="mw-headline" id="The_UNIX.2FLinux_Command_Line">
+    ------[ 5.3.1 The UNIX/Linux Command Line </span></h4>
+<p>While Linux is perfectly usable using a graphical user-interface 
+(GUI), it has a different interface called the command line, in which 
+one types commands using the keyboard and receives feedback using a 
+console / terminal output. To use it you can use KDE's so-called 
+"konsole" console window, or GNOME's "gnome-terminal". In order to work 
+on most open-source projects, you will need to have some familiarity 
+with the Linux command-line. Here are some resources to get you started:
+</p>
+<ol><li> <a href="http://unixhelp.ed.ac.uk/" class="external text" rel="nofollow">UNIXhelp for users</a> is an old, but likely still pertinent guide to the UNIX (and ergo Linux) command line. 
+</li><li> <a href="http://tldp.org/guides.html" class="external text" rel="nofollow">The Linux Documentation Project's Guides</a> contain some books that may also prove helpful.
+</li><li> There's <a href="http://en.wikibooks.org/wiki/Linux_Guide/Using_the_shell" class="external text" rel="nofollow">a Wikibook page titled "Linux Guide - Using the shell"</a> and some other resources on <a href="http://en.wikibooks.org/" class="external text" rel="nofollow">Wikibooks</a>
+</li></ol>
+<p>The important thing to realize about the UNIX command line is <b>not to be afraid</b>
+ of it. While it may seem intimidating at first, most people will 
+quickly find it to be very convenient and a very powerful tool. 
+Furthermore, it is often a requirement for people who wish to contribute
+ to open-source projects, as many tasks can only be done or are better 
+done there.
+</p>
+<h4> <span class="mw-headline" id="Build_Systems"> ------[ 5.3.2 Build Systems </span></h4>
+<p>Open source software is normally distributed as packed and compressed
+ archives of the source code, which need to be built in order to be 
+installed and deployed on the host system. Downstream distributors tend 
+to take the source packages and prepare binary and ready-to-install 
+packages out of them, which are specific to only one particular package 
+manager (such as <a href="http://en.wikipedia.org/wiki/RPM_Package_Manager" class="extiw" title="wikipedia:RPM Package Manager">rpm</a> or <a href="http://en.wikipedia.org/wiki/dpkg" class="extiw" title="wikipedia:dpkg">dpkg</a>). However, if you plan on contributing to an open-source project you'll need to know how to build its source code.
+</p><p>Here's a coverage of some popular build-systems and how to build code from them:
+</p>
+<h5> <span class="mw-headline" id="perl.27s_Module-Build"> --------[
+    5.3.2.1 perl's Module-Build </span></h5>
+<p><a href="http://search.cpan.org/dist/Module-Build/" class="external text" rel="nofollow">Module-Build</a>
+ is Perl 5's newer build system, which is not dependent on the 
+idiosyncrasies of the system's shell and its make implementation. To use
+ it one should do something like:
+</p>
+<pre>        $ perl Build.PL
+        $ ./Build
+        $ ./Build test
+        $ ./Build install # as root or using local::lib or some Build.PL arguments to install locally.
+</pre>
+<h5> <span class="mw-headline" id="perl.27s_ExtUtils::MakeMaker">
+    --------[ 5.3.2.2 perl's ExtUtils::MakeMaker </span></h5>
+<p><a href="http://search.cpan.org/dist/ExtUtils-MakeMaker/" class="external text" rel="nofollow">ExtUtils-MakeMaker</a>
+ is Perl 5's older build system, which generates makefiles and 
+system-specific shell scripts. To use it one should run the following 
+commands:
+</p>
+<pre>        $ perl Makefile.PL
+        $ make
+        $ make test
+        $ make install # as root or using local::lib or some Makefile.PL arguments to install locally.
+</pre>
+<h5> <span class="mw-headline" id="GNU_Autotools"> --------[ 5.3.2.3 GNU Autotools </span></h5>
+<p><a href="http://teachingopensource.org/index.php?title=Wikpedia:GNU_build_system&amp;action=edit&amp;redlink=1" class="new" title="Wikpedia:GNU build system (page does not exist)">GNU Autotools</a>
+ are a popular choice for creating cross-platform build systems for 
+C/C++ and similar programs, but they are pretty old, and cause many 
+problems and so many people recommend using something else instead. To 
+build a program that uses GNU Autotools you need to run:
+</p>
+<pre>       $ ./autogen.sh # Or similar - if building from the raw source.
+       $ ./configure --prefix="$HOME/apps/myapp" # And possibly other flags.
+       $ make
+       $ make install
+</pre>
+<h5><span class="mw-headline" id="CMake"> --------[ 5.3.2.4 CMake </span></h5>
+<p><a href="http://en.wikipedia.org/wiki/CMake" class="extiw" title="wikipedia:CMake">wikipedia:CMake</a>
+ is a new cross-platform build-system that aims to be a better 
+alternative to GNU Autotools and sports many enhancements. To build a 
+CMake-based project, use something like:
+</p>
+<pre>   $ mkdir build
+   $ cd build
+   $ cmake-gui ..
+   $ make
+   $ make install
+</pre>
+<h4> <span class="mw-headline" id="Version_Control_Systems"> ------[
+    5.3.3 Version Control Systems </span></h4>
+<p>Reading from <a href="http://onlamp.com/pub/a/onlamp/2004/01/29/scm_overview.html" class="external text" rel="nofollow">an earlier article</a> that Shlomi Fish who also contributed to the document you're reading now had written:
+</p>
+<blockquote>
+
+<p>
+A version control system enables developers to keep historical versions 
+of the files under development and to retrieve past versions. It stores 
+version information for every file (and the entire project structure) in
+ a collection normally called a repository.
+</p>
+<p>
+Inside the repository, several parallel lines of development, normally 
+called branches, may exist. This can be useful to keep a maintenance 
+branch for a stable, released version while still working on the 
+bleeding-edge version. Another option is to open a dedicated branch to 
+work on an experimental feature.
+</p>
+<p>
+Version control systems also let the user give labels to a snapshot of a
+ branch (often referred to as tags), to ease later extraction. This is 
+useful to signify individual releases or the most recent usable 
+development version.
+</p>
+<p>
+Using a version control system is an absolute must for a developer of a 
+project above a few hundred lines of code, and even more so for projects
+ involving the collaboration of several developers. Using a good version
+ control system is certainly better than the ad-hoc methods some 
+developers use to maintain various revisions of their code.
+</p>
+</blockquote>
+<p>So if the project you're trying to contribute to does not use a 
+version control system, it should start right away. You can read more 
+about the motivation for version control in the mentioned article and  <a href="http://www.slideshare.net/xSawyer/source-code-management-systems" class="external text" rel="nofollow">a presentation that Sawyer X gave</a>.  Here's some introductory material on the various popular version control systems in use today:
+</p>
+<ol><li> For CVS, which is an old version control systems, and now largely unloved (but can still be found in use), see <a href="http://cvsbook.red-bean.com/" class="external text" rel="nofollow">the online book "Open Source Development with CVS"</a>.
+</li><li> For Subversion, a centralised version control system that aims to be an improved and corrected CVS, see <a href="http://svnbook.red-bean.com/" class="external text" rel="nofollow">the online book "Version Control with Subversion"</a>.
+</li><li> For Git, a distributed version control system that has been gaining popularity, see <a href="http://progit.org/book/" class="external text" rel="nofollow">the online book "Pro Git"</a>
+</li><li> For Mercurial, a distributed version control system written in Python, see <a href="http://hgbook.red-bean.com/" class="external text" rel="nofollow">the online book "Mercurial: The Definitive Guide"</a>.
+</li><li> For help with Bazaar, another distributed version control system written in Python, see <a href="http://wiki.bazaar.canonical.com/Documentation" class="external text" rel="nofollow">its documentation</a>.
+</li></ol>
+<h4> <span class="mw-headline" id="Bug_tracking"> ------[ 5.3.4 Bug tracking </span></h4>
+<p>As defects (a.k.a "bugs") and requests for enhancements are 
+introduced to the project, one needs to track them using a bug tracker. 
+"Joel on Software" gives <a href="http://www.joelonsoftware.com/articles/fog0000000029.html" class="external text" rel="nofollow">the motivation and how-to of bug-tracking in an essay</a> which you should probably read.
+</p><p>Most bug-trackers nowadays have a web-based interface, which one 
+can use from the browser and is mostly self-explanatory. So try to use 
+it and if you run into problems consult your co-developers for help. 
+There are too many different implementations of bug trackers to cover 
+them all here, but being web-based, they should not be too hard to use 
+for active contribution.
+</p>
+<h3> <span class="mw-headline" id="Learning_How_to_Program"> ----[ 5.4
+    Learning How to Program </span></h3>
+<p>Once you start contributing to open-source, you probably would like 
+to advance your contributions to the next logical level, by learning how
+ to program. Now the topic of what should be the introductory 
+programming language is a topic of ongoing debate (see for example <a href="http://www.shlomifish.org/philosophy/computers/education/introductory-language/" class="external text" rel="nofollow">this essay by Shlomi Fish</a>). We recommend that you start by learning either <a href="http://en.wikipedia.org/wiki/Perl" class="extiw" title="wikipedia:Perl">the Perl programming language</a> or <a href="http://en.wikipedia.org/wiki/Python_%28programming_language%29" class="extiw" title="wikipedia:Python (programming language)">the Python programming language</a> and then learning the other one.
+</p><p>To learn Perl, refer to <a href="http://perl-begin.org/" class="external text" rel="nofollow">the Perl Beginners' Site</a> which provides many good resources. To learn Python refer to the book <a href="http://www.greenteapress.com/thinkpython/" class="external text" rel="nofollow">How to think like a computer scientist - in Python</a> and there are other <a href="http://wiki.python.org/moin/IntroductoryBooks" class="external text" rel="nofollow">Python introductory books listed on the Python wiki</a>.
+ You then may be able to contribute to a project written in either 
+language , but continue learning other programming languages and topics.
+</p><p>It takes many years to become a good programmer, and good 
+programmers are constantly trying to improve their skills and expand 
+their knowledge.
+</p>
+<h2> <span class="mw-headline" id="Summary"> --[ 6. Summary </span></h2>
+<p>Using open-source software can make your computer work more 
+enjoyable, give you more freedom, and supply you with many important 
+technological advantages such as lack of vendor lock-in, lower costs, 
+and the ability to contribute. In addition, contributing to open-source 
+software may be fun, and it also has the advantage that you're also 
+helping you and other users of the open-source applications.
+</p><p>We hope this document has given you the information and pointers 
+necessary to start your journey into the world of open-source software. 
+Feel free to contact us if you feel anything is amiss, so we can improve
+ it.
+</p>
+<h2> <span class="mw-headline" id="Where_to_go_from_here"> --[ 7. Where to go from here </span></h2>
+<p>This section aims to list some additional resources about contributing to open-source. The first one is <a href="http://www.shlomifish.org/philosophy/foss-other-beasts/" class="external text" rel="nofollow">the essay "Open Source, Free Software, and Other Beasts"</a>
+ by Shlomi Fish (who also wrote most of the first version of this 
+essay.), which provides an introduction to the world of open source 
+software for those who are not very familiar with it. It is available 
+online under the open-content Creative Commons Attribution licence. 
+</p><p>Another good resource is Eric Raymond's <a href="http://catb.org/%7Eesr/faqs/hacker-howto.html" class="external text" rel="nofollow">"How to become a hacker"</a> document followed by his <a href="http://www.catb.org/%7Eesr/writings/cathedral-bazaar/" class="external text" rel="nofollow">the "Cathedral and the Bazaar" series</a>. They are both very enlightening resources, but note that they suffer from a certain amount of arrogance.
+</p><p>The <a href="http://www.gnu.org/philosophy/" class="external text" rel="nofollow">Philosophy section of the Free Software Foundation (FSF) site</a>
+ contains some interesting articles. While they are written from an 
+extremist and uncompromising view, which you may choose not to adopt, 
+but they are still a useful food for thought.
+</p><p>Some good resources about software management for open-source programmers include:
+</p>
+<ol><li> <a href="http://www.paulgraham.com/" class="external text" rel="nofollow">Paul Graham's Essays</a>
+</li><li> <a href="http://www.joelonsoftware.com/" class="external text" rel="nofollow">The "Joel on Software site</a> by Joel Spolsky.
+</li><li> <a href="http://linuxmafia.com/%7Erick/" class="external text" rel="nofollow">Rick Moen's resources</a>
+</li><li> <a href="http://www.extremeprogramming.org/" class="external text" rel="nofollow">Extreme Programming</a>
+</li><li> The aforementioned resources by Eric Raymond.
+</li></ol>
+<p>You can find many additional resources on open source software by performing web searches or by perusing the various <a href="http://www.wikimedia.org/" class="external text" rel="nofollow">Wikimedia resources</a> (such as the Wikipedia or Wikibooks), and on <a href="http://www.wikia.com/" class="external text" rel="nofollow">Wikia</a>.
+</p>
+<h2> <span class="mw-headline" id="Authors"> --[ 8. Authors </span></h2>
+<ul><li> Primary Author: <a href="http://teachingopensource.org/index.php/User:Shlomif" title="User:Shlomif">Shlomi Fish</a> - also see <a href="http://www.shlomifish.org/" class="external text" rel="nofollow">his homepage</a>
+</li><li> Some contributions from <a href="http://www.teachingopensource.org/index.php?title=How_to_start_contributing_to_or_using_Open_Source_Software&amp;action=history" class="external text" rel="nofollow">other users of the Teaching Open Source wiki</a> including <a href="http://teachingopensource.org/index.php/User:Erkan_Yilmaz" title="User:Erkan Yilmaz">Erkan Yilmaz</a> and <a href="http://teachingopensource.org/index.php/User:NeoPhyte_Rep" title="User:NeoPhyte Rep">NeoPhyte Rep</a> .
+</li></ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 106/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key tos_mediawiki-tos_:pcache:idhash:840-1!1!0!!en!2 and timestamp 20110416140600 -->
+</body></html>

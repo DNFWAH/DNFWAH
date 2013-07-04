@@ -1,0 +1,283 @@
+
+              _                                                _
+            _/T\_                                            _/P\_
+            (* *)        DO NOT FUCK WITH A HACKER           (* *)
+            | - |                #2 File 0x01                | - |
+            | A |               A & G trends                 | G |
+            |   |                                            |   |
+            |   |    By Shawn the R0ck <citypw@gmail.com>    |   |
+            |   |                                            |   |
+            |   |                                            |   |
+            (____________________________________________________)
+
+--[ Contents
+
+0. Introduction
+
+1. Where and When
+
+   1.1 fuck role playing, embrace life experience
+
+2. The Art of Apple
+
+   2.2 Paradigm shift for who
+
+3. Legacy of void
+
+4. Conclusion
+
+
+--[ 0. Intro
+
+quakecon 2010上id software的创始人John Carmack在iphone上演示[1]了新一
+代的id tech 5引擎---Rage.通常来讲走old school路线的hacker对苹果公司的
+是嗤之以鼻的,作为一名从1994年就开始玩id出产的每一部游戏的玩家看到了这
+个演示肯定会兴奋起来.关于面对Apple和Google对新一代的digital natives的
+影响之大也是我们在未来的社区开放教育和家庭教育中必须去面对的问题.很早
+之前就想谈谈关于这个话题,既然iphone和android都影响到这个星球的很多角落
+那也有必要谈谈了.
+
+
+--[ 1. 我们所处的时代性背景的环境?
+
+Unix诞生(1969)到现在也就41年,关于这段历史背景可以去google,早期的UNix社
+区的hacker都是对硬件,软件,数学,哲学甚至艺术,神学有着想当的功底的家伙,
+一位现代意义上的hacker的生命是在永恒性和时代性中间不断的去平衡,上个世
+纪70年代,UC Berkeley的spice就是一帮怪人花了10多年的时间完成了电路所有
+可能性的情况的数学模型到计算模型的转换,也就是实现成了code.而Alonzo
+Church本人也是数学家,但不太清楚他的哲学模型的来源,但肯定和两希的方法论
+有关系.从工程层面,简洁的讲,老牌UNIX社区的hacker几乎是走的软硬结合的路
+线.Unix社区文化的黄金发展时期给我们留下了很多财富,不管是文化还是技术层
+面上,这一点可以从ESR的The Art of Unix Programming(Unix编程艺术)中看到.
+
+但到了1989年之后,情况发生了变化,个人电脑的兴起导致了很多商业公司也需要
+各种各样的定制系统,这些需求也就成为了MIS和ERP的原型,个人电脑的兴起让
+hacker们开始对行业系统相关的领域开始关注,他们一部分人进入了银行,证卷,
+工业系统的开发当中.而随着1990年万维网(www)发明之后的快速增长让在此期间
+成长起来的hacker进入了Web开发领域,但在90年代这帮hacker的软硬件水平还是
+相对比较高,之后由于微软, APPLE在各自的平台上开发出了极为简化的开发工具
+直接让大批量的成长于1998年之后的程序员可以很方便的写程序,也就是说这个
+时期的hacker的软硬件水平已经不如之前的来自Unix社区的hacker们.
+
+2006年,Web已经成为生活在这个星球上的人们必不可少的一部分,相应的所谓Web
+2.0的潮流更注重个性化,blog之类的东东由此而来,blog= web log,这可不是什
+么"博客"的语境能体会其真实意义的,在70年代后期和80年代,hacker们都在终端
+机上连接到大型机进行工作,而他们都习惯于建立一个自己的log文件用于记录每
+天的心得,这个log文件会随着时间的流逝变得越来越大.而blog的意思就是说把
+log放到web上.2006的web开发已成为整个应用的主流,工业用的ERP系统,商业使
+用的MIS和个人的GTD系统都基于web进行实现,这一时期的
+LAMP(GNU/Linux+Apache+Mysql+php)和Ror(ruby on rails)比起之前的开发框架
+大大的加速了开发效率,当然这和个人电脑的价格低廉有很大的关系,web框架为
+了让开发迅速,所以使用了很多解释型语言的特性相对效率会变得低下,不过比起
+高性能的廉价个人电脑这点牺牲也算不得什么.
+
+上面一堆废话还是不能详细的描述整个历史的进程,还是建议读者去
+google吧....2006之后的情况变得更加的复杂,大部分hacker们的知识结构比起
+1990年发生了很大的变化,hacker不在关注软硬件的本身,而更多的是去关注上层
+应用的问题,在2010年的Steve Levy的那篇在连线上的"重访技术巨人,黑客,理想
+主义者"[2]文章可以看出几代hacker之间知识结构的不同,从hardware
+hacking->Write your own OS->make your own
+website->webapp->iphone-andriod development的范式的转移.
+
+新一代的hacker们把hacking转化成为了generic hacking的形式,也就是说只要
+follow黑客伦理在任何领域都可以进行hacking,当然这也不是什么新鲜的事情,
+早在Phrack的1990年代的杂志就已经提到过hacking在general层面上的意义,更
+早的话可以追述到1980年代的一个hacker的发言(如果没记错,应该是Steve
+Wozinak):你可以在任何领域成为黑客而不光是在计算机领域,只要你专注于你所
+专注的创造,木匠黑客也成为可能,etc...当然如果从Pekka的对黑客伦理的研究
+来看,黑客伦理可以追述到圣奥古斯丁的时间观和柏拉图的学院.
+
+黑客伦理对各个领域的渗透在1990年代最早关注和应用的是在犹太社区,当然这
+几乎是underground的,2000年之后越来越多的hacker在诸多领域兴起比如法律,
+金融,艺术,教育,etc.关于这一点可以参考以前的那篇threads[3].
+
+----[ 1.1 只能亲自体验的生命---隐喻
+
+2001年开始,以2位来自犹太社区的hacker为代表的阵营完成了对早期软硬结合
+hacking精神到应用程序开发的hacking的范式的转移,这2个家伙你们或许已经非
+常熟悉---Paul Graham and Joel Sposky.早期的老派Unix黑客的精神延续到了
+新生代的hacker群体里,但有一点需要关注的是,在新一代应用级别的hacker的代
+表人物都对两希范式的哲学部分有不浅的了解,而且大多数hacker对软硬结合的
+知识不比前辈们逊色,写OS和compiler的家伙也不是个例,当然生长在强两希社区
+(犹太,撒克逊,日尔曼,斯拉夫)之外的digital natives相对来讲就没有那么幸运
+了,直接被应用开发的大潮冲进了大流之中.但这里有一个很关键应该也是很多年
+轻hacker关心的问题:facebook也是应用的开发,为什么没有诞生在犹太社区以
+外?Shawn个人觉得这个是很正常的事情,Mark E.Zuckerberg很年轻,请认真的看
+看有关他创建facebook的访谈,今年纽约时报的一位有名记者写了一本书关于他
+的书,Mark不是把web开发仅仅当成web开发,而把整个过程看作为有机系统的形
+成,Mark的哲学家身份更多于商人,而coder更胜于CEO.共通进化的有机系统是很
+关键的一点,Shawn只能也只有能力谈到这里,剩下的内容太庞杂涉及4层模型.
+
+
+--[ 2 Apple的艺术革命
+
+早在30年前,Apple II就已经被old school的家伙们所熟知,今天一定要谈谈G和
+A,今天的主角其实是他们.这2个都是犹太财团在计算机领域的7巨
+(MS,IBM,G,A,ORACLE,INTEL,FSF)之列,但跟其他几个巨头不太一样的是他们的名
+气是最大的,为什么很多人都喜欢使用A的产
+品,Macbook,ipad,iphone,itouch,etc...因为A一直都在给用户宣称你买一台
+Macbook买的不仅仅是一台机器,而是一种社会标识,意味着你已经在参与艺术普
+及化的运动之中,这是一场革命,而你深处其中,这样的世界观难道不能深入有识
+之士的年轻人的内心吗?随便走进一个开放研讨会,如果您使用的是MS-Windows那
+只会被hacker们不屑一顾的眼光渺上一眼,当然computer/video game LAN-PARTY
+除外.
+
+----[ 2.1 Google的paradigm shift
+
+那G呢?每天我们都在使用google web search,gmail,google group,google
+buzz,etc...G最牛的也是hacker们必须注意的地方是她完整的把原本"曲高和寡"
+的Unix old-school风格转化(transformed into)成了"世界公民"的日常用品.看
+看google group的功能,把usenet,mailing list,bbs都完备而简洁的结合到了一
+起.把最高的愿景实现到最世俗化的世界的程度是两希范式的特点之一,7巨头都
+有这种能力,但G已经把这种能力发挥到了极致.这里Shawn还可以具一个例
+子:P-buffers[4].P-buffers是一款用于把不同的网络协议以自定义的方式存放到数
+据结构的一个中间层软件,这个东东用途非常广,几乎很多数通产品都会使用类似
+的软件,你想想?从软件工程看,数据通讯行业是世界上排名在top 5和底层有关系
+的应用,G把PB的语法弄的很像C和Lisp的结合,这是一个新的尝试,G厉害就厉害在
+通过这样一个尝试(a try)把世界上跟底层打交道相关的开发者的头脑往G所指的
+方向上去.G的强大自然不用Shawn来多谈,7巨头中都是软硬结合有机性玩的最酷
+的也应该是G了,从GNU/Linux kernel,web server,gcc,protocols related
+stuffs,etc全部是自己定制,但最终的性能超过了很多专业定制的厂商比如
+RedHat.
+
+
+--[ 3 我们如何来面对这一切?
+
+这份ezine的读者应该大多数来自中国,也就是说我们的生长环境是在亚洲,这意
+味着我们没有人会在14岁前完成Torah(律法书)的基础学习,21岁之前搞懂神话学
+映射物理世界的人也不多,35岁前的开放性领域的知识论的积累不是漫无目的滥
+用的实用主义,42岁时完成人生哲学和方法论整合的人凤毛麟角,当人生的7*7年
+过去时,才发现人生苦短.....
+
+因为在资讯时代,各种信息过于繁杂,要有一套行之有效的范式来构建这套系统才
+能够真正意义上帮助到年轻人的生命而不光是知识.这套范式其实我们以前谈过,
+简洁的讲就是3个logy的原则(本体论ontology,方法论methodology,认识论
+epistemology),因为只有这样才能避免酱缸,ontology让我们去思考世界本身是
+什么?而这个问题中所带出的一些标准你只能凭着信心来接受.methodology则是
+在了解了部分ontology的基础上以自存性作为position进行对世界的认知,不同
+的position则产生不通的范式而这就带出了epistemology的范畴.
+
+希望我们的下一代可以从家庭教育中完成我们本应该完成但当时没有完成的律法
+课程,从最高的信仰->哲学->数学->计算机科学(CS)->计算机工程(CE).关于家庭
+教育这是另外一个话题,虽和今天这个话题有着有机的联系但今天我们还是把重
+心放到讨论A和G的上面.
+
+--[ 3.1 智者的遗产
+
+目前的世界中还是得化分为2种使用同样的3logies方法论但又在具体形而下的表
+现形式上完全不通的hacker范式:1,Unix老派hacker 2,generic hacker.这2者在
+方法论上都来自两希范式,但不同的是展现给世界的形式.
+
+1,undergroud的聚会 2,公开化聚会
+1,注重哲学层面的思辨 2,注重技术本身
+1,偏旧哥特斯拉夫式的地下室风格 2,典型的新纪元运动中典型美式风格
+1,注重各种hacking领域的本质 2,针对相对表面级别的hacking
+代表杂志:1,Phrack[5] 2,hackerMonthly[6]
+
+Phrack杂志创办于1985年,目前已经有25年的历史,一帮来自地下的技术精湛的
+hacker在phrack上写了非常多的高质量文章,在phrack的underground式的语境
+下,hacking通常指信息安全相关的技术,phracking则是结合无线电通信的一种
+hacking.phrack代表了old school的hacker的风格,即使到今天他们大多数人仍
+然喜欢低调的风格,没有大规模的研讨会,但他们所公布的内容会影响到业内安全
+产品策略,但人们还是不知道到底是哪些人在写这些文章.因为phrack的hacker们
+大多喜欢使用在irc或者mailinglist里的名字(当然不是真名),而且匿名的作者
+也不少.phrack还有一个特点是underground的风格让hacker们看起来有无政府主
+义的倾向,他们热衷于追求某个领域的hacking(信息安全相关技术占30%以
+上),phrack上的文章您还可以找到教你如何制作炸药包和突击步枪,phracker们
+对自由和创造性的热衷恐怕是世界上少有的族类,但他们严格的遵守着黑客伦理
+以至于他们几乎不会去cracking非财团系统的服务器.他们是信息革命的先锋,他
+们是这场革命的缔造者,但这群世界最顶级的hacker直到今天仍然选择了
+underground.这是值得我们思考的,如果没有phrack恐怕我们会浪费更多的时间
+在研究兄弟会的建立上,phrack给了我们太多的思考和形而下的资源库.
+
+hackermonthly和phrack相反,走的是disclosure路线,把黑客伦理渗透到各个领
+域,hackermonthly更关注的是startup(创业),VC(风险投资),技术创业,iphone平
+台的应用开发,web 2.0,SOA之类的和人们生活息息相关的领域,至少在表面上看
+起来这些"流行"的技术是这样,这里Shawn完全没有贬低第2种范式hacker的意思,
+而是必须强调第2种范式来源于第1种范式.Paul Graham和Joel Sposky这2位第2
+范式的代表在软硬结合的技术方面是非常厉害的,Paul自己开发lisp的方言,在
+1990年代Paul就是使用common lisp开发的最早一批的电子商务平台,而Joel对
+SICP的热衷已经在他的Joel on software里谈了很多次.这种范式相比不需要过
+多介绍.
+
+以上几点是比较明显的2种hacker不同的范式,我们可以来问问自己更适合于哪一
+种?对于Shawn而言,比例大概是6:4,而有些读者则完全推崇第一种范式.ok,介绍
+完了这个现在可以谈谈A和G了,A的作品比如Macbook,iphone,ipad都是很酷的电
+子产品,但对于A在BSD上的"偷盗"行为相信很多old school hacker还是耿耿于怀,
+但2011年可是id software的游戏跑在iphone上,将来或许还会运行在ipad上,A的
+影响是巨大的.
+
+G的产品gmail,groups,android,etc...G的产品也很有aha,email系统当大家都认
+为不会有太大的创新,但gmail让我们都眼前一亮改变了我们的生活方式,groups
+结合了mailinglist和bbs,这让old school的东东可以容易的让new school接
+受,android则直接成为了iphone的竞争对手,几年的时间出货量已经超过
+iphone,G为了不违反GPL还特地的把android的GNU/Linux kernel进行了大量改造,使
+用一个中间层作为硬件驱动层,这样那些移动生产商可以不提供驱动的源代码,这
+对商业公司来讲或许是一大福音.
+
+如果不仔细hacking一番恐怕很难找到第一种范式的影子,为什么呢?generic式的
+hacking渗透到了很多非计算机的领域,但不要忘了黑客伦理诞生于计算机领域,
+而第一种范式则是黑客伦理的发源地(当然这里所谈的hacker ethic是相对狭义
+的,也就是说没有直接涉入形而上的基础.如Pekka所言,广义的黑客伦理应该追述
+到柏拉图的学院派和圣奥古斯丁的时期甚至更早).第2种范式是建立在第1种范式
+的基础上的,上面已经谈到过了两希范式的其中一大原则是在世俗的世界当中去
+实现那神圣的愿景,A和G的hacker们都知道如果赤裸裸的把一套东东拿出来是没
+办法来征服世界的,所以必须进行转化(transform into)成世俗能接受的,而
+macbook和android之类的产品就属于此类最形而下形式的表现.如Martin Buber
+所言:"在最世俗的世界中去实现那神圣的愿景."
+
+那对于今天的hacker而言,处于在这个特定时代性的背景下,如何能尽力站在永恒
+性的postion出发善用两希范式是一个严肃的问题.phrack式和hackermonthly式
+的范式我们必须认真来思考,我们今天的哲学观决定了我们的未来!这个话题还有
+太多的内容要探讨,但有一点在这里必须谈谈,就是有机性(organic)的问题,这个
+问题关乎有机性的生命(one organic life),即一个生命的个体在处理4大关系
+(对上帝,对自己,对人,对物质)中使用方法论的耦合度问题.eg:比如一个基督徒
+礼拜天去教堂作礼拜向上帝忏悔,或许他因为需要心理安慰或者教会的人比较有
+爱心所以他才去,因为从礼拜一到礼拜六则是另外一种状态.Shawn告诉你,这种基
+督徒非常多,这种基督徒不等同于基督教,不等同于归正神学,更不能等同于基督.这
+样一种信仰状态说的好听一点叫做生命不成熟,讲的直接点就是精神分裂(当然,
+神经科学是hacker们感兴趣的话题,或许在issue x上Shawn会分享这个topic).看
+看我们今天中国的互联网环境就知道,很多人写"博客"(不是blog)的内容和他的
+生命绝对不会匹配(match).常常看到一些人在"个人博客"上光炫的人物,在daily
+life中则缺乏生命力:-)
+
+
+--[ 4 What end
+
+理性思辨所带来的哲学有很多,但关于生命的哲学的起源则来源于两希,如基督讲
+"我就是道路,真理与生命".这里可以作一个类比,即道路-methodology,真
+理-ontology,生命-epistemology.如果logy的最终没有使生命得益处那恐怕也会
+输掉人生的博弈游戏.什么是一位hacker的生命呢?这是很难回答的问题.在一次
+讨论中,一个家伙问:什么是强加尔文主义?旁边一哥们说:"看看老唐(唐崇荣)你
+就知道了.".那在这里Shawn的答案也类似:"看看RMS或者KK的人生,你就知道什么
+是hacker的生命了.".
+
+在这个以科技为主旋律的时代,A & G无疑是某种时代精神的象征,在如此复杂的
+世界中怎么样来探索人生意义是一件极度困难的事情,一系列的选择决定了你未
+来的生命,在跟随时代性的同时还得深入永恒性的领域,如何取得这种平衡是每一
+位hacker都会面对的,当然这已经超过了paper所探讨的范围,还是留给读者自己
+来选择: The Desert of The Real or The Glory of The Fake ?
+
+
+May Lord's hacking spirit guide us!!!
+
+
+[1] id software's new engine demos on Iphone
+http://games.slashdot.org/story/10/08/13/007227/id-Software-Demos-Rage-On-iPhone-Releases-Source-Code-For-Two-Games
+
+[2] Geek Power: Steven Levy Revisits Tech Titans, Hackers, Idealists
+http://www.wired.com/magazine/2010/04/ff_hackers/all/1
+
+[3] 书评<黑客伦理与信息时代精神>
+http://book.douban.com/review/3048297/
+
+[4] http://code.google.com/apis/protocolbuffers/docs/overview.html
+
+[5] phrack
+http://www.phrack.org/
+
+[6] hackermonthly
+http://hackermonthly.com/
+
+
+

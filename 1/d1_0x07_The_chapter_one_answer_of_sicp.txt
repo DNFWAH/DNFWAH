@@ -1,0 +1,1322 @@
+
+             _                                                _
+           _/T\_                                            _/P\_
+           (* *)         DO NOT FUCK WITH A HACKER          (* *)
+           | - |               #8 File 0x07                 | - |
+           |   |       The chapter one answer of SICP       |   |
+           |   |                                            |   |
+           |   |      By fU9ANg <bb.newlife@gmail.com>      |   |
+           |   |                                            |   |
+           |   |                                            |   |
+           (____________________________________________________)
+
+
+    當提到和及聽人問起SICP是什么的時候, 你不得不很興奮且樂意的向問
+這個問題的家伙回答到:
+
+    01.) "大名鼎鼎的紫皮書"
+    02.) "MIT計算機科學學科的入門課程"
+    03.) "怪人們的公共核心課程"
+    04.) "在社區中大家都會推薦的參考材料"
+    05.) "是一本怎樣從數學模型轉換計算模型的書"
+    06.) "是一種程序設計的方法論"
+    07.) "作為一名程序員, 是跨入計算領域的入門訓練"
+    08.) "是一本數學分析和計算本質的書"
+    09.) "是一本講形式化語言和程序設計語言學的書"
+    10.) "是一本lambda演算的書"
+    11.) "同TCPL(The C Programming Language--K&R)一同為怪人的圣經"
+    ...
+
+    好的, 當你看完且了解了這本書后, 或許又有一種新的定義將被加到此
+列表下. :) 其實不, 或許像這樣的定義都錯了, 她僅僅是一本很普通的書,
+是全世界符號主義( 符號形式化)或阿隆佐.邱奇理論的產物, 是一本怪人寫
+給怪人的書.
+
+    在網上到處都可以找到關于SICP每章練習后的零碎答案，如果僅僅是為
+了完成練習的話, 或許我們應該馬上停下來, 因為繼續下去的結果會使我們
+會后悔, 當然如果你是怪人的話, 那繼續吧!
+
+    先要說明一下, 在此文章中, 只對SICP的第一章的練習作出了回答, 原
+因只有一個，那就是本文作者被TMD莫名其妙的事情耽誤. 哈~, 如果可能的
+話, 讓我們期待在DNFWAH issue8中可以見到第二章的練習回答和解釋.
+
+    此練習回答正在把"計算機科學"與"人生意義"串聯在一起的某個家伙的
+實現和思考, 愿望怪人們評述(包括此文中的錯誤/不完美的解釋和一些想法).
+
+    在繼續往下看時, 先假設你已經讀過SICP或你手中正握住一本; 來吧, 
+怪人們讓我們開始吧!
+
+
+[--------------------------------------------------------------------]
+
+Welcome to DNFWAH!
+login: fU9ANg
+******
+
+[fU9ANg @DNFWAH ~]$ ls
+Opening    Hacking    Reading    Thinking
+Listening  Studying   Teaching   Backpacking
+Fighting   Biking     Gaming     Fucking
+
+[fU9ANg @DNFWAH ~]$ uname -s
+GNU/Linux (Fedora 7)
+
+[fU9ANg @DNFWAH ~]$ Answer ~/sicp/chapter_1/exercise
+
+
+--[  Exercise 1.1
+
+> 10
+10
+> (+ 5 3 4)
+12
+> (- 9 1)
+8
+> (/ 6 2)
+3
+> (+ (* 2 4) (- 4 6))
+6
+> (define a 3)
+> (define b (+ a 1))
+> (+ a b (* a b))
+19
+> (= a b)
+#f
+> (if (and (> b a) (< b (* a b)))
+      b
+      a)
+4
+> (cond ((= a 4) 6)
+        ((= b 4) (+ 6 7 a))
+        (else 25))
+16
+> (+ 2 (if (> b a) b a))
+6
+> (* (cond ((> a b) a)
+           ((< a b) b)
+           (else -1))
+     (+ a 1))
+16
+
+;; 不要認為以上是很簡單的練習,  以上把本書三大作者要講的Scheme
+;; 語言的基礎全部考察了( 表達式, 復合表達式, 復合過程); 如果和
+;; 本書第四/五章的內容來寫一個"求值器"來實現以上的基礎, 就不那
+;; 么容易了(需要思考很多數學模型, 計算模型和過程抽象 ...)
+
+
+--[  Exercise 1.2
+
+;; 用前綴式展開如下
+(/
+   (+ 5
+      (+ 4
+         (- 2
+            (- 3
+               (+ 6
+                 (/ 4 5))))))
+   (* 3
+      (- 6 2)
+      (- 2 7)))
+
+
+--[  Exercise 1.3
+
+;; 如輸入的三個數為x, y, z 則有如下幾種可能性:
+;; x>y 又 y>z 則結果為(+ x y)
+;; x>y 又 y<z 則結果為(+ x z)
+;; x<y 又 x>z 則結果為(+ x y)
+;; x<y 又 x<z 則結果為(+ y z)
+;; x=y 又 x>z 則結果為(+ x y)
+;; x=y 又 x<z 則結果為(+ x z)或者(+ y z)
+
+(define maxAdd                ; 定義一個過程 (且有三個形式參數)
+    (lambda (x y z)
+        (cond ((> x y)
+            (if (< y z) (+ x z)
+                (+ x y)))
+        ((< x y)
+            (if (< x z) (+ y z)
+                (+ x y)))
+        ((= x y)
+            (if (< x z) (+ x z)
+                (+ x y))))))  ; 也可為(if (< x z) (+ y z) (+ x y))))))
+      
+
+--[  Exercise 1.4
+
+;; 定義一個過程且此過程有兩個形式參數
+;; 根據復合表達式, "+/-"(在scheme中都是過程)會把a, b參數的值傳
+;; 入過程(+/-)中進行計算, 這就是符號化語言魅力 :-)
+(define (a-plus-abs-b a b)
+    ((if (> b 0) + -) a b))
+
+;; 求值模型 如測試輸入: (a-plus-abs-b 12 -12)
+=> ((if (> -12 0) + -) 12 -12))
+=> (- 12 -12)
+=> 24
+
+
+--[  Exercise 1.5
+
+;; 此題檢測求值器是采用什么求值規則, 是正則序還是應用序?
+(define (p) (p))      ;; 定義一過程p, 且沒有形式參數, 此過程內
+                      ;; 部又調用它自己(過程p); 這樣在求值器中
+                      ;; 執行會出現死循環;  因為沒有測零函數和
+                      ;; 不動點算子.
+(define (test x y)
+  (if (= x 0) 0 
+      y))
+
+(test 0 (p))
+
+;; 回答:
+;;     (1). 如果求值器為應用序求值規則, 則會死循環.
+;;     (2). 如果求值器為正則序求值規則, 則不會死循環.
+;; 理解:
+;;     (1). 按應用序求值規則會在執行(test 0 (p))時, 求值器會把
+;;          0和(p)參數分別求值后, 傳遞給x和y形式參數, 但對 (p)
+;;          求值會產生死循環.
+;;     (2). 按正則序求值規則會在執行(test 0 (p))時, 求值器不會
+;;          對0和(p)進行求值, 而直接展開傳遞給x和y, 所以不會死
+;;          循環, 展開且傳遞值后如形式: (if (= 0 0) 0 (p)).
+;;
+;; 說明:
+;;     通過以上測試, 我的Scheme求值器(guile/mzscheme) 是按應用
+;;     序規則進行求值規則.
+
+
+--[  Exercise 1.6
+
+理解:
+    會出現死循環, 因為定義new-if中的cond會按應用序進行求值, 則
+題中已提示到一點, "if是一種特殊形式"? 為什么? 我想在Scheme求值
+器是按應用序規則進行求值, 但scheme求值器在實現if時, 則是按正則
+序進行, 所以說"特殊形式"; 本書的四五章可以給我們一些思考.
+
+
+--[  Exercise 1.7
+
+;; 在此為實現"監視猜測值在一次迭代到下一次迭代的變化情況"(按照
+;; 1.7題中的提示), 主要是改進good-enough, 我的改進過程名為good
+;; -enough-second.
+
+(define (sqrt-iter-second guess x)
+  (let loop ((p-x x)
+             (p-guess guess)
+             (temp (improve-second guess x)))
+    (if (good-enough-second? p-guess temp)
+        (exact->inexact temp)
+        (loop p-x temp
+              (improve-second temp p-x)))))
+
+(define (improve-second guess x)
+  (average-second guess (/ x guess)))
+
+(define (average-second x y)
+  (/ (+ x y) 2))
+
+(define (good-enough-second? guess-one guess-two)
+  (< (abs (- guess-one guess-two)) 0.001))
+
+
+--[  Exercise 1.8
+
+;; 使用牛頓立方根公式: ((x ÷ y^2) + 2×y) ÷ 3
+;; 以下為塊結構定義cube
+
+(define (cube x)
+    (define (cube-iter guess x)
+        (if (good-enough? guess x) (exact->inexact guess)
+            (cube-iter (improve guess x) x)))
+
+  ;; 此外的good-enough?也可以改為1.7中的"檢測一次迭代
+  ;; 到下一次迭代的變化情況" 的想法來寫good-enough?的
+  ;; 邏輯.
+
+  (define (good-enough? guess x)
+    (< (abs (- (* guess guess guess) x)) 0.001))
+
+  (define (improve guess x)
+    (average (+ guess guess) (/ x (* guess guess))))
+
+  (define (average x y)
+    (/ (+ x y) 3))
+
+  (cube-iter 1 x))
+
+
+--[  Exercise 1.9
+
+;; 例如: (+ 4 5)
+
+;; 第一過程實現為"線性遞歸", 如采用"應用序"展開
+(inc (+ (dec 4) 5))
+(inc (inc (+ (dec 3) 5)))
+(inc (inc (inc (+ (dec 2) 5))))
+(inc (inc (inc (inc (+ (dec 1) 5)))))
+(inc (inc (inc (inc 5))))
+(inc (inc (inc 6)))
+(inc (inc 7))
+(inc 8)
+9
+
+;; 如求值器采用"正則序"展開, 則為
+(inc (+ (dec 4) 5))
+(inc (inc (+ (dec (dec 4)) 5)))
+(inc (inc (inc (+ (dec (dec (dec 4))) 5))))
+(inc (inc (inc (inc (+ (dec (dec (dec (dec 4)))) 5)))))
+(inc (inc (inc (inc (+ (dec (dec (dec 3))) 5)))))
+(inc (inc (inc (inc (+ (dec (dec 2)) 5)))))
+(inc (inc (inc (inc (+ (dec 1) 5)))))
+(inc (inc (inc (inc 5))))
+(inc (inc (inc 6)))
+(inc (inc 7))
+(inc 8)
+9
+
+;; 第二種過程實現為"迭代", 展開為
+(+ (dec 4) (inc 5))
+(+ (dec 3) (inc 6))
+(+ (dec 2) (inc 7))
+(+ (dec 1) (inc 8))
+(inc 8)
+9
+
+
+--[  Exercise 1.10
+
+Ackermann函數的scheme語言描述:
+(define (A x y)
+    (cond ((= y 0) 0)
+          ((= x 0) (* 2 y))
+          ((= y 1) 2)
+          (else (A (- x 1)
+                   (A x (- y 1))))))
+
+(A 1 10) => 1024
+(A 2 4)  => 65536
+(A 3 3)  => 65536
+
+;; 以上的練習, 在求值器中輸入即可得知, 數學替換式應該為(采用正
+;; 則序):
+
+;; (A 1 10)
+;; 
+;; (A 0 (A 1 9))
+;; (* 2 (A 1 9))
+;; (* 2 (* 2 (A 1 8)))
+;; (* 2 (* 2 (* 2 (A 1 7))))
+;; (* 2 (* 2 (* 2 (* 2 (A 1 6)))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 5))))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 4)))))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 3))))))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 2)))))))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (A 1 1))))))))))
+;; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 2)))))))))
+;; 1024
+
+;; (A 2 4)
+;;
+;; (A 1 (A 2 3))
+;; (A 1 (A 1 (A 2 2)))
+;; (A 1 (A 1 (A 1 (A 2 1))))
+;; (A 1 (A 1 (A 1 2)))
+;; (A 1 (A 1 (A 0 (A 1 1))))
+;; (A 1 (A 1 (A 0 2)))
+;; (A 1 (A 1 4))
+;; 由上例可得: (A 1 (2^4))
+;; (A 1 16)
+;; 65536
+
+;; (A 3 3)
+;;
+;; (A 2 (A 3 2))
+;; (A 2 (A 2 (A 3 1)))
+;; (A 2 (A 2 2))
+;; 由上例可得: (A 2 (2^2))
+;; (A 2 4)
+;; 65536
+
+(define (f n) (A 0 n))   ;; 計算的是2n
+(define (g n) (A 1 n))   ;; 計算的是2^n
+(define (h n) (A 2 n))   ;; 計算的是2^(2^(2^(2^(2))))... (n個)
+(define (k n) (* 5 n n)) ;; 計算的是5n^2
+
+;; 此題我們可以先思考出(A 1  n)的數學模型, 通過(A 1 n)再來思考
+;; (A 2 n)的數學模型; 同理也可以思考(A 3 n)的數學模型,你可以試
+;; 試求(A 2 5)的數學模型.  :-)
+;; 這個函數的計算空間和步驟是太大了, 指數的指數增長.
+
+
+--[  Exercise 1.11
+
+;; 由題, 可知數學模型:
+;; / if `n < 3' then `f(n) = n'
+;; + 
+;; \ if `n >=3' then `f(n) = f(n-1) + 2f(n-2) + 3f(n-3)
+
+(define (fn-first-version n)   ;; 用遞歸方法書寫
+  (if (< n 3) n
+      (+ (fn-first-version (- n 1))
+         (* 2 (fn-first-version (- n 2)))
+         (* 3 (fn-first-version (- n 3)))) ))
+
+(define (tail-fn n)            ;; 用迭代方法書寫
+  (let loop ((icount n)
+             (acount0 0)
+             (acount1 1)
+             (acount2 2))
+    (cond
+     ((= icount 0) 0)
+     ((= icount 1) 1)
+     ((= icount 2) acount2)
+     (else (loop (- icount 1)
+              acount1
+              acount2
+              (+ (* 3 acount0)
+                 (* 2 acount1)
+                 acount2))))))
+
+;; 理解迭代方式書寫的(tail-fn)函數, 如:
+;; (tail-fn 4)
+;;
+;;      icount   acount0   acount1   acount2
+;; loop 4        0         1         2
+
+;; loop 3        1         2         4
+
+;; loop 2        2         4         (+ 3 4 4)
+
+
+--[  Exercise 1.12
+
+;; 計算第line行site列是什么數? 它等于第(line -1)行site列的數和
+;; 第(line -1)行(site- 1)列的數之和; 如圖: (x=3+3=6)
+;; 
+;;            1
+;;           1 1
+;;          1 2 1
+;;         1 3 3 1
+;;        1 4 x 4 1
+;;        ...
+
+(define pascal
+  (lambda (site line)
+    (if (or (= site 1) (= site line)) 1 
+        (+ (pascal (- site 1) (- line 1))
+           (pascal site (- line 1))))))
+
+
+;;; 下面代碼是三種對斐波那契數列的Scheme語言寫法形式
+
+;; first-version (Recursion)
+;; 一般遞歸(樹型遞歸)
+
+(define (Fib n)
+    (cond ((= n 0) 0)
+      ((= n 1) 1)
+      (else (+ (Fib (- n 1))
+           (Fib (- n 2))))))
+
+;; second-version
+;; 迭代
+
+(define (Fib n)
+    (define Fib-iter 
+        (lambda (a b count)
+            (if (= count 0) b
+                (Fib-iter (+ a b) a (- count 1)))))
+    (Fib-iter 1 0 n))
+
+;; third-version
+;; 尾遞歸
+
+(define (Fib n)
+    (let Fib-loop ((a 1) (b 0) (count n))
+        (if (= count 0) b
+            (Fib-loop (+ a b) a (- count 1)))))
+
+;; 1 1 2 3 5 8 13 21 34 55 ...
+;;
+;; 以上的三種寫法區別在于:
+;;
+;; 2和3是沒有區別的(Scheme內部);
+;; 而1則每次調用時, 會重新新建一個框(包含7個內容)
+;; 2和3被調用時, 內容不會生成新的框(除第一次調用時)
+
+
+--[  Exercise 1.13
+
+;; 1. 證明Fib(n)是最接Ф^n/√5, 其中Ф=(1+√5)/2
+;;  證明:
+;;  由公式Fib(n)=Fib(n-1)+Fib(n-2), 和數學歸納法, 則有
+;;  Ф^n/√5 = Ф^(n-1)/√5 + Ф^(n-2)/√5
+;;  Ф^n = Ф^(n-1) + Ф^(n-2)
+;;  設n=3和Ф=(1+√5)/2 則有
+;;  ((1+√5)/2)^3 = ((1+√5)/2)^2  + ((1+√5)/2)^1
+;;  ((1+√5)^3)/8 = (2(1+√5)^2)/8 + (4(1+√5)^1)/8
+;;  ((1+√5)^3)   = (2(1+√5)^2)   + (4(1+√5)^1)
+;;  16+8√5       = (12+4√5)      + (4+4√5)
+;;  16+8√5       = 16+8√5
+;;  所以 以上得證.
+
+;; 2. 證明Fib(n)=(Ф^n-r^n)/√5 其中r=(1-√5)/2
+;;  證明:
+;;  由公式Fib(n)=Fib(n-1)+Fib(n-2), 和歸納法, 則有
+;;  (((1+√5)/2)^n - ((1-√5)/2)^n)/√5 = 
+;;  (((1+√5)/2)^(n-1) - ((1-√5)/2)^(n-1))/√5 +
+;;  (((1+√5)/2)^(n-2) - ((1-√5)/2)^(n-2))/√5
+;;
+;;  (((1+√5)^n) - ((1-√5)^n))/2^n =
+;;  (2*((1+√5)^(n-1) - (1-√5)^(n-1)))/2^n +
+;;  (4*((1+√5)^(n-2) - (1-√5)^(n-2)))/2^n
+;;
+;;  設n=2, 則有:
+;;  ((1+√5)^2 - (1-√5)^2) = 
+;;  (2*(1+√5) - 2*(1-√5)) +
+;;  (4*((1+√5)^0 - (1-√5)^0))
+;;
+;;  4√5 = 4√5 + 0
+;;  所以 以上得證.
+
+
+--[  Exercise 1.14
+
+                          (cc 11 5)        +          (cc 6 2)                         +      (cc 11 1)
+                             /  \          +            /  \                           +        /  \
+                           /      \        +          /      \                         +      /      \
+                      (cc 11 4) (cc -19 0) +      (cc 6 1) (cc 1 2)                    + (cc 11 0) (cc 10 1)
+                         /  \	     |     +       /  \         .                      +     |       /  \
+                       /      \      |     +     /      \       .                      +     |     /      \
+                (cc 11 3) (cc -14 4) 0     + (cc 6 0) (cc 5 1) (看左邊, 值為1)         +     0 (cc 10 0) (cc 9 1)
+                  /  \        |            +    |       /  \                           +          |        .
+                /      \      |            +    |     /      \                         +          |        . 
+           (cc 11 2) (cc 1 3) 0            +    0 (cc 5 0) (cc 4 1)                    +          0       (和    
+          /  \           /  \              +         |       /  \                      +                   左
+        /      \       /      \            +         |     /      \                    +                   圖
+  (cc 11 1)(cc 6 2) (cc 1 2)(cc -9 3)      +         0 (cc 4 0) (cc 3 1)               +                (cc 6 1)
+     |       |         /  \        |       +              |       /  \                 +                   一
+     |       |       /      \      |       +              |     /      \               +                   樣
+見右圖2 見右圖1 (cc 1 1) (cc -4 2) 0       +              0 (cc 3 0) (cc 2 1)          +                   的
+                /  \          |            +                   |       /  \            +                   值
+              /      \        |            +                   |     /      \          +                   為
+        (cc 1 0) (cc 0 1)     0            +                   0 (cc 2 0) (cc 1 1)     +                    1)
+            |        |                     +                        |        .         +
+            |        |                     +                        |        .         +
+            0     (值為1)                  +                        0  (看左邊, 值為1) +
+
+;; 樹的深度n, 則有空間 theta(n); 步數為theta(n^5).
+;; 關于以上, 或許應該更好的用像算法導論中數學語言描述.
+
+
+--[  Exercise 1.15
+
+;; 理解
+;; A) 把(sine 12.15)展開, 則為如下:
+;; (sine 12.15)
+;; 
+;; (p (sine (/ 4.05 3.0))))
+;; (p (p (sine (/ 1.35 3.0)))))
+;; (p (p (p (sine (/ 0.45 3.0))))))
+;; (p (p (p (p (sine (/ 0.15 3.0)))))))
+;; (p (p (p (p (p (sine (/ 0.05 3.0)))))))  
+;; p被調用5次.
+;
+;; B) 由A)可以看出, 對一個數a 有n步; 則有:
+;; a/3^n < 0.1
+;; a*3^(-n) < 0.1
+;; 3^n > 10a
+;; log3^n > log10a
+;; nlog3 > lga
+;; n > lga/log3 
+;; 由log3常數, 則空間與步數為theta(lg a)
+
+
+--[  Exercise 1.16
+
+;; 求冪的三種算法(其中的第三種為我對題1.16給出的答案)
+
+;; first-version 
+;; 一般遞歸(線性遞歸)
+
+(define expt1
+  (lambda (b n)
+    (if (= n 0) 1
+        (* b (expt1 b (- n 1))))))
+
+; 求值器內部 (這里用替換模型分析) 如: (expt1 2 10)
+;
+; (* 2 (expt1 2 (- 10 1)))
+; (* 2 (* 2 (expt1 2 (- 9 1))))
+; (* 2 (* 2 (* 2 (expt1 2 (- 8 1)))))
+; (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 7 1))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 6 1)))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 5 1))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 4 1)))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 3 1))))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 2 1)))))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (expt1 2 (- 1 1))))))))))))
+;; 以上每一行(表達式),都會生成一個"活動過程記錄"/"stack frame"
+;; 當(- 1 1)時滿足(= n 0)，則返回1；又會有如下的返回情況
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 1))))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 2)))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 4))))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 8)))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 (* 2 16))))))
+; (* 2 (* 2 (* 2 (* 2 (* 2 32)))))
+; (* 2 (* 2 (* 2 (* 2 64))))
+; (* 2 (* 2 (* 2 128)))
+; (* 2 (* 2 256))
+; (* 2 512)
+; 1024
+
+;; second-version (尾遞歸)
+
+(define tail-expt
+    (lambda (b n)
+        (let loop ((num b) (icount n))
+            (if (= icount 1) num
+                (loop (* num b) (- icount 1))))))
+
+;; third-version (1.16答案)
+
+(define (even? n)
+    (= (remainder n 2) 0))
+
+(define fast-exp
+    (lambda (x n)
+        (let loop ((sOdd 1) (sEven x) (iCount n))
+            (cond 
+                ((or (= iCount 1) (= iCount 0)) (* sOdd sEven))
+                ((even? iCount) (loop sOdd (* sEven sEven) (/ iCount 2)))
+                (else (loop (* sOdd sEven) sEven (- iCount 1)))))))
+
+
+--[  Exercise 1.17
+
+;; 使用尾遞歸實現
+
+(define (fast-mul a b)
+    (cond 
+        ((= b 0) 0)
+        ((even b) (fast-mul (double a) (halve b)))
+        (else (+ a (fast-mul a (- b 1))))))
+
+
+--[  Exercise 1.18
+
+;; 基于加, 加倍, 折半運算的迭代計算過程
+
+(define (fast-mul a b)
+    (let loop ((p-a a)
+               (p-b b)
+               (odd-acc 0)
+               (even-acc a))
+        (cond
+            ((or (= p-b 0) (= p-b 1)) (+ odd-acc even-acc))
+            ((even p-b) 
+                (loop (double p-a) (halve p-b) odd-acc (double even-acc)))
+            (else (loop p-a (- p-b 1) (+ odd-acc p-a) even-acc)))))
+
+
+--[  Exercise 1.19
+
+(define (fib-iter a b p q count)
+  (cond ((= count 0) b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   (+ (* p p) (* q q))   ; compute p'
+                   (+ (* q q) (* 2 p q)) ; compute q'
+                   (/ count 2)))
+        (else (fib-iter (+ (* b q) (* a q) (* a p))
+                        (+ (* b p) (* a q))
+                        p 
+                        q
+                        (- count 1)))))
+
+; 如果以上代碼成立的話, 則:
+
+; 1. 設count=2 和 代碼不進入even?,而直接進入else中,有:
+; count=2時, a'=bq+aq+ap, b'=bp+aq
+; count=1時, a''=b'q+a'q+a'p, b''=b'p+a'q   (1)
+;
+; 2. 設count=2 和 代碼先進入even?,后進入else, 則:
+; count=2時, 設p'為計算出來的p 和 設q'為計算出來的q
+; count=1時, a'=bq'+aq'+ap', b'=bp'+aq'     (2)
+;
+; 以上的(1)式和(2)式相同, 則有:
+;
+; b'q+a'q+a'p = bq'+aq'+ap' 
+; 由a' = bq+aq+ap和b' = bp+aq 有如下:
+; (bp+aq)q+(bq+aq+ap)q+(bq+aq+ap)p = bq'+aq'+ap'
+; 又由a=1和b=0 有如下:
+; aq^2+aq^2+apq+aqp+ap^2 = q'+p'
+; 2aq^2+2apq+ap^2 = q'+p'                   
+; 2q^2+2pq+p^2 = q'+p'                      (3)
+; 
+; b'p+a'q=bp'+aq'
+; 由b' = bp+aq 和 a' = bq+aq+ap 有如下:
+; (bp+aq)p+(bq+aq+ap)q=bp'+aq'
+; 又由a=1和b=0 有如下:
+; aqp+aq^2+apq=aq'
+; 2apq+aq^2 = q'                            
+; 2pq+q^2   = q'                            (4)
+;
+; 由(3)和(4)式, 則有:
+; p'= p^2 + q^2
+; q'= q^2 + 2qp
+
+
+--[  Exercise 1.20
+
+;; (gcd 206 40)
+;; 采用正則序代換模型展開
+
+ 1. (gcd 40 (remainder 204 40))
+
+ 2. (gcd (remainder 204 40) (remainder 40 (remainder 204 40)))
+
+ 3. (gcd (remainder 40 (remainder 204 40))
+         (remainder (remainder 204 40) 
+                    (remaidner 40 (remainder 204 40))))
+
+ 4. (gcd (remainder (remainder 204 40)
+                    (remainder 40 (remainder 204 40)))
+         (remainder (remainder 40 (remainder 204 40))
+                    (remainder (remainder 204 40)
+                               (remainder 40 (remainder 204 40))))))
+
+;; (gcd 206 40)
+;; 采用應用序代模型展開
+               
+ 1. (gcd 40 (remainder 204 40)) <=> (gcd 40 6)
+ 2. (gcd 6  (remainder 40  6 )) <=> (gcd 6  4)
+ 3. (gcd 4  (remainder 6   4 )) <=> (gcd 4  2)
+ 4. (gcd 2  (remainder 4   2 )) <=> (gcd 2  0)      
+
+;; 通過以上的正則序和應用序展開則有:
+;; 正則序實際執行11次remainder, 而應用序執行4次remainder.
+
+
+--[  Exercise 1.21
+
+由過程smallest-divisor測試199, 1999, 19999 則有如下結果:
+(smallest-divisor 199)
+> 199
+(smallest-divisor 1999)
+> 1999
+(smallest-divisor 19999)
+> 7
+
+
+--[  Exercise 1.22
+
+;; first-version
+
+(define (my-search-for-primes num)
+  (let loop((i 0)
+            (n (+ num 1))
+            (time (current-milliseconds)))
+    (if (= i 3) (display "*** END ***")
+        (begin
+          (display n)
+          (newline)
+          (cond
+           ((prime? n) (begin (display " *** ") ; prime? -> fast-prime?
+                              (newline)
+                              (display (- (current-milliseconds) time))
+                              (newline)
+                              (loop (+ i 1) (+ n 2) time)))
+           (else (loop i (+ n 1) time)))) )))                                                                   
+
+;; second-version
+
+(define (search-for-primes num)
+   (search-for-primes-iter (+ num 1) 3))
+
+(define (search-for-primes-iter num i)
+  (cond ((= 0 i)
+         (begin
+           (newline)
+           (display "*** END ***")
+           (newline)))
+        ((timed-prime-test num) (search-for-primes-iter (+ 2 num)
+                                                        (- i 1)))
+        (else (search-for-primes-iter (+ 2 num) i))))
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (newline)
+  (start-prime-test n (current-milliseconds)))
+
+(define (start-prime-test n start-time)
+  (if (prime? n)                ; prime? -> fast-prime? (1.24)
+      (report-prime (- (current-milliseconds) start-time))
+      #f))  ; 添加一個返回值 #f                                                                                               
+
+(define (report-prime elapsed-time)
+  (display " *** ")
+  (newline)
+  (display elapsed-time)
+  (newline)
+  #t)       ; 添加一個返回值 #t 
+
+;; 關于是不是√n, 等學習了c的scheme混合編程, 那時再寫一個runtime
+;; 來進行做測試, 你可以去試試.
+
+
+--[  Exercise 1.23
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        ((not (divides? test-divisor 2)) 
+     (find-divisor n (+ test-divisor 2))) ; (next test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (square n)
+  (* n n))
+
+(define (next test-divisor)
+  (if (= test-divisor 2) 3
+      (+ test-divisor 2)))
+
+; 關于問題回答, 等學習了c和scheme的混編后, 重寫runtime, 再作回答
+
+
+--[  Exercise 1.24
+
+; 把以上(1.22)代碼中的prime? 換成fast-prime?(費馬方法), 關于問題
+; 等重寫runtime, 再回答
+
+
+--[  Exercise 1.25
+
+; 對, 可以把程序改為1.25所示, 但不會提高程序計算速度; 是可以提高
+; 空間為theta(1); 因為改之前與改之后的計算速度相同.
+
+
+--[  Exercise 1.26
+
+; 因為如1.26代碼所寫的話, 當exp為2n時, expmod 要做雙倍的計算, 然
+; 后, 才乘積; 所以計算過程變成theta(n).
+
+
+--[  Exercise 1.27
+
+(define (carmichael-check num)
+  (let loop ((n num)
+             (a 1))
+    (cond 
+      ((= a n) (begin (display "y")
+                      (newline)))
+      ((prime? n) (begin (display "n")
+                         (newline)))
+      ((= (expmod a n n) a) (loop n (+ a 1)))
+      (else (begin (display "n")
+                   (newline))))))
+
+; 此題的思想是:滿足expmod(費馬小定理),
+;              但不滿足prime?(尋找因子法)
+;
+; 其是可以只測試一次prime?就可以了, 可以重寫此上函數
+; 如下:
+(define (carmichael-check num)
+
+  (define (expmod-check num) ; define sub-procedure
+    (let loop ((n num)
+               (a 1))
+      (cond 
+        ((= a n) #t)
+        ((= (expmod a n n) a) (loop n (+ a 1)))
+        (else #f))))
+  
+  (and (not (prime? num)) (expmod-check num)))
+
+
+--[  Exercise 1.28
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a (- n 1) n) 1))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) #t) ; true
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else #f)))      ; false
+
+; 說明: 換用"Miller-Rabin"方法后, 比起"費馬檢查", 好
+;       了很多; 像能夠騙過"費馬檢查"的carmichael數, 
+;       不能騙過"Miller-Rabin檢查"了.
+
+
+--[  Exercise 1.29
+
+(define (fn f a b n)
+  
+  (define (f-h) (/ (- b a) n))
+  
+  (define (term k)
+    (cond 
+      ((= k 0) (f a))
+      ((= k n) (f (+ a (* k (f-h)))))
+      ((= (remainder k 2) 0) (* 2 (f (+ a (* k (f-h))))))
+      (else (* 4 (f (+ a (* k (f-h))))))))
+  
+  (exact->inexact (* (/ (f-h) 3) 
+     (sum term 0 inc n)))) ; 關于sum的定義, 請看SICP第一章
+
+
+; 通過此題, 可以看出sum中的term和next兩個形參; 不只可以接
+; 受系統提供的過程, 也可以接受程序員自字義的過程(抽象).
+;
+; 比較: 使用"幸普森"的方法, 可以在 (fn cube 0 1 2) 中當n為
+;       2時,就可以得到0.25(或1/4); 而在SICP中的例子中(使用
+;       "一般求定積分") 方法, dx取0.00001時, 精確值為
+;       0.24999999998662892
+; 總結:
+; 幸普森"的方法是非常有效率的, 很快就出來答案1/4; 而"一般
+; 求定積分"方法, 當dx=0.000001時, 程序員是不能忍受的.
+
+
+--[  Exercise 1.30
+
+;; 迭代方式實現
+
+(define (sum term a next b)
+  (define (iter a result)
+    (if (> a b) result
+        (iter (next a)  
+              (+ result (term a)))))
+  (iter a 0))
+
+
+--[  Exercise 1.31
+
+;; first-version 以遞歸方式
+
+(define (product term a next b)
+  (if (> a b) 1
+      (* (term a)
+     (product term (next a) next b))))
+
+;; second-version 以迭代方式
+
+(define (product term a next b)        
+  (define (iter a result)
+    (if (> a b) result
+    (iter (next a) (* result (term a)))))
+  (iter a 1))
+
+;; 用以上的product來定義factorial
+
+(define (factorial n)
+  (product * 1 inc n))
+
+;; 按照練習1.31所提的公式(John Wallis)和product求π
+
+(define (test-pi n)
+  (define (inc2 n) (+ n 2))
+  (if (even? n)
+      (exact->inexact 
+       (* 4 (/ (* (product * 2 inc2 n)
+          (product * 4 inc2 (- n 2)))
+           (* (product * 3 inc2 (- n 1))
+          (product * 3 inc2 (- n 1))))))
+      
+      (exact->inexact 
+       (* 4 (/ (* (product * 2 inc2 (+ n 1))
+          (product * 4 inc2 (- n 1)))
+           (* (product * 3 inc2 n)
+          (product * 3 inc2 n))))) ))
+
+
+--[  Exercise 1.32
+
+;; 遞歸方式
+
+(define (accumulate combiner null-value term a next b)
+    (if (> a b) null-value
+        (combiner (term a)
+                  (accumulate combiner null-value term (next a) next b))))
+
+;; 迭代方式
+
+(define (accumulate combiner null-value term a next b)
+  (define (iter aa result)
+    (if (> aa b) result
+        (iter (next aa) (combiner result (term aa)))))
+  (iter a null-value))
+
+;; 用以上對accumulate的實現來定義sum和product
+;; 1. 定義sum
+
+(define (sum term a next b)
+  (accumulate + 0 term a next b))
+
+;; 2. 定義product
+
+(define (product term a next b)
+  (accumulate * 1 term a next b))
+
+
+--[  Exercise 1.33
+
+;; 迭代方式實現
+
+(define (filtered-accumulate combiner null-value 
+                 predicate term a next b)
+  (define (iter aa result)
+    (cond 
+     ((> aa b) result)
+     ((predicate aa b) (iter (next aa)  ; 此處也可以寫成(predicate aa)
+                                        ; 但有兩個參數的謂詞, 就有問題
+                 (combiner result (term aa))))
+     (else (iter (next aa) result))))
+  (iter a null-value))
+
+;; 定義好了filtered-accumulate, 則
+;; 1. 對a到b區間內的素數之和
+
+(define (prime=? n nil) ; 定義另一種形式(接收兩個參數)的過程
+  (prime? n))
+
+(define (prime-add a b)
+  (filtered-accumulate + 0 prime=? + a inc b))
+
+;; 2. 對小于n區間內的i, 所有滿足GCD(i, n)=1的整數(i<n)之積
+
+(define (test-gcd? i n); 定義一個過程(接收兩個參數)
+  (= (gcd i n) 1))
+
+(define (gcd-add i n)
+  (filtered-accumulate * 1 test-gcd? * i inc n))
+
+
+--[  Exercise 1.34
+
+(define (f g) (g 2))
+
+(f square) 
+>4
+(f (lambda (z) (* z (+ z 1))))
+>6
+
+; 如果為(f f), 則我的求值器會報錯, 因為2不是函數:
+;
+; 求值器會把第二個f做為實參傳遞給g, 這時就為(g 2)其實
+; 為(f 2), 因為2不是函數, 所有最終的(2 2), 就會報錯.
+
+
+--[  Exercise 1.35
+
+; 由x|→1+1/x, 則有如下:
+; x=1+1/x
+; x^2-x-1=0, 又由(b^2±√4ac)/2a
+; 解得x=(1±√5)/2, 根據題意(1-√5)/2不可能, 所以得證.
+;
+; 使用SICP中的1.3.3節中的fixed-point過程, 如下:
+; (fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0)
+; =>1.6180327868852458
+; 
+; 1.6180327868852458 ≈ (1+√5)/2
+
+
+--[  Exercise 1.36
+
+; 使用SICP中的1.3.3節中的fixed-point過程, 如下:
+> (fixed-point (lambda (x) (/ (log 1000) (log x))) 1.2)
+4.555531964899801
+; 此題也可以改為用"平均阻尼"進行, 使它可以用1.0傳入
+; first-guess形參中.
+
+
+--[  Exercise 1.37
+
+; 迭代計算過程
+
+(define (cont-frac n d k)     ; first-version
+  (let loop ((i k)
+             (temp (d k)))
+    (if (= i 1) 
+        (/ (n i) temp)
+        (loop (- i 1) (+ (d (- i 1)) 
+                         (/ (n i) temp))))))
+
+; 遞歸計算過程
+
+(define (cont-frac-two n d k) ; second-version
+  (if (= k 0) 0
+      (/ (n k) (+ (d k) (cont-frac-2 n d (- k 1))))))
+
+; (cont-frac (labmda (i) 1.0) 
+;            (lambda (i) 1.0)
+;            11)
+; => 0.6180555555555556
+;
+; 回答: 當k=11時, 具有十進制的4位精度 (0.6180...)
+
+
+--[  Exercise 1.38
+
+(define fn-D
+  (lambda (i)
+    (cond
+      ((= i 1) 1)
+      ((= i 2) 2)
+      ((= (remainder i 3) 2)
+       (- i (truncate (/ i 3))))
+      (else 1))))
+
+; 使用時: 
+; (cont-frac (lambda (i) 1.0) fn-D 5)
+
+
+--[  Exercise 1.39
+
+;; 使用Lambert公式, 求tanX的值.
+
+(define (tan-cf x k)  
+  (define (fn-odd i) 
+    (- (* 2 i) 1))   ; define sub-proc
+  (let loop ((y x)
+             (i 1))
+    (cond
+     ((> i k) 0)
+     ((= i 1) 
+      (/ y (- (fn-odd i) (loop y (+ i 1)))))
+     (else 
+      (/ (* y y) (- (fn-odd i) (loop y (+ i 1))))))))
+
+
+--[  Exercise 1.40
+
+;; 因為過程newtons-method的第一個參數為一個過程
+;; 定義一個過程cubic
+
+(define (cubic a b c)
+  (lambda (x) (+ (* x x x)
+         (* a x x)
+         (* b x)
+         c)))
+
+;; 使用時: (define a -1)
+;;         (define b -2)
+;;         (define c -3)
+;;         (newtons-method (cubic a b c) 1)
+;;         => 2.374423763210693
+
+
+--[  Exercise 1.41
+
+;; 定義一個名稱為double的過程, 且使它的參數被調用兩次.
+
+(define (double fn)
+  (lambda (x) (fn (fn x))))
+
+(define (inc x)  ; procedure inc
+  (+ x 1))
+
+;; 使用時: (((double (double double)) inc) 5) => 21
+;; 分析:
+;;  1. (double double) <=> (lambda (x) (double (double x))) 
+;;     設為過程f的話, 則把inc帶入f, 就有 (inc (inc (inc (inc x))))
+;
+;;  2. (double (double double)) <=> (lambda (x) (f (f x)))  
+;;     設為過程g的話, 則把inc帶入g, 就有: "(inc (inc ...(inc x)))"
+;;     16個inc組合.
+;
+;;  3. ((double (double double)) inc) <=> 有16個inc組合而成的過程, 
+;;     格式為: (lambda (x) (inc (inc (inc (inc (inc (inc (inc (inc 
+;;     (inc (inc (inc (inc (inc (inc (inc (inc x)))))))))))))))))
+;
+;;  4. (((double (double double)) inc) 5) 由式子3中的一個包含16個
+;;     inc過程的過程, 轉值5進去, 則結果為21(就是5做inc 16次)
+
+
+--[  Exercise 1.42
+
+;; 參數為兩個過程f和g;  結果返回一個過程, 如題中的f(g(x))
+
+(define (compose proc-one proc-two)
+    (lambda (x) (proc-one (proc-two x))))
+
+;; 使用時: ((compose square inc) 6) => 49
+;;         ((compose inc square) 6) => 37
+
+
+--[  Exercise 1.43
+
+(define (repeated proc-name n)
+  (lambda (x)
+    (let loop ((i n)
+               (proc proc-name))
+      (if (= i 1) (proc x)
+          (loop (- i 1) 
+                (lambda (y) (proc-name (proc y))))))))
+
+;; 說明: 先初始化proc為形參的proc-name, 然后每n-1次, 就
+;;       把proc應用到proc-name函數,  這時產生一個新的函
+;;       數, 再賦給proc, 直到i=1時, 返回已經做過n次處理
+;;       的proc給程序員.
+;; 例子: ((repeated square 2) 5) => 625
+;; 又寫: ((repeated inc 12) 10)  => 22
+
+
+--[  Exercise 1.44
+
+(define dx 0.0001) ; dx
+
+(define (smooth f)
+  (lambda (x) (/ (+ (f (- x dx))
+                    (f x)
+                    (f (+ x dx))) 3)))
+
+;; 使用時, 如: ((repeated (smooth square) 2) 10)
+
+
+--[  Exercise 1.45
+
+;; 使用前面的三個過程組合, 就可以了; 如下:
+
+(define (common-fn n x)  
+  (fixed-point ((repeated average-damp (- n 1)) 
+        (lambda (y) (/ x (expt y (- n 1)))))
+           1.0))
+
+;; 使用時: (common-fn 2 5) => 2.236067977499978 (求平方根)
+;;         使用系統過程(sqrt 5) => 2.23606797749979
+;;         運算速度common-fn和sqrt差不多; 又如:
+;;         (common-fn 2 10000000000000000000000000000)
+;;         => 1e+14
+;;         (sqrt 10000000000000000000000000000) 
+;;         => 100000000000000
+;;
+;;         (common-fn 3 5) => 1.7099779004121451(求立方根)
+;
+;; 總結:   以前章節中, 我對牛頓法的"可計算性"是比較懷疑, 因
+;;         為比起系統中sqrt過程, 我們的樸素方法慢太多了; 但
+;;         通過使用本節的內容"不動點", "平均阻尼"和"計算n次
+;;         方根" 可以看出以上common-fn過程的速度幾乎和系統
+;;         中的sqrt相同. 
+
+--[  Exercise 1.46
+
+;; iterative-improve
+
+(define (iterative-improve good-enough? f)
+  (lambda (x)
+      (let loop ((guess x)
+                 (next (f x)))
+        (if (good-enough? guess next)
+            next
+            (loop next (f next))))))
+
+
+;; 使用以上的iterative-improve過程來重新定義的1.3.3節中
+;; 的 fixed-point過程
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) 0.00001))
+  ((iterative-improve close-enough? f) first-guess))
+
+
+;; 使用重新定義的fixed-point過程, 來定義過程my-sqrt
+
+(define (my-sqrt-first x)
+    (fixed-point (lambda (y) (average y (/ x y)))
+                 1.0))
+
+;; 使用以上的iteractive-improve過程來重新定義1.1.7節中的
+;; sqrt過程
+
+(define (my-sqrt-second x)   
+  (define (good-enough? guess next)
+    (< (abs (- (square guess) x)) 0.001))
+  (define (improve guess)
+    (average guess (/ x guess)))
+  ((iterative-improve good-enough? improve) 1.0))
+
+;; 使用如下:
+> (sqrt 5)          ; 這是系統提供的過程
+2.23606797749979
+> (my-sqrt-first 5)
+2.236067977499978
+> (my-sqrt-second 5)
+2.236067977499978
+> (sqrt 7)          ; 這是系統提供的過程
+2.6457513110645907
+> (my-sqrt-first 7)
+2.6457513110645907
+> (my-sqrt-second 7)
+2.6457513111113693
+
+[--------------------------------------------------------------------]
+
+
+    通過對第一章(過程抽象)的了解, 能看出抽象的美妙, 抽象也是對問題
+的復雜進行分解, fU9ANg想在任意一門語言中對抽象都有不同的美妙, 這也
+是需要學習的地方; 一個想法是把SICP前三章學習理解完, 重新構造一些Sc
+heme的結構體和基于R5RS上的擴展; 把四五章理解完, 試著構造一個 "求值
+器".
+
+    在以后的練習和學習且試著構造基礎時 (參考R5RS/R6RS文檔)可以繼續
+分享關于一些在過程中的細節, 也期待你來討論和分享.
+
+    BTW: 看在此時, 或許我們應該休息一下; 聽一首"G.F.Handel - Water
+Music"且抽一支香煙; 或者應該找幾個怪人出來聚一下談談 "數學模型", "
+計算模型", "可計算性理論", "復雜性理論", "圖靈機模型", "Lambda演算
+", "遞歸理論", "MIT開放課OCW"...-- 談完這一切后, 現在只有一個想法:
+"如果有機會的話, 或許應該到MIT讀應用數學系". :-)
+
+
+--[ 參考
+
+[01] - 計算機科學
+       http://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6
+
+[02] - 計算理論
+       http://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E7%90%86%E8%AE%BA
+
+[03] - 可計算理論
+       http://zh.wikipedia.org/wiki/%E5%8F%AF%E8%AE%A1%E7%AE%97%E6%80%A7%E7%90%86%E8%AE%BA
+
+[04] - 計算復雜性理論
+       http://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E6%80%A7%E7%90%86%E8%AE%BA
+
+[05] - 自動機
+       http://zh.wikipedia.org/wiki/%E8%87%AA%E5%8A%A8%E6%9C%BA
+       
+[06] - 圖靈機
+       http://zh.wikipedia.org/wiki/%E5%9C%96%E9%9D%88%E6%A9%9F
+
+[07] - λ演算
+       http://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97
+
+[08] - 遞歸函數
+       http://zh.wikipedia.org/wiki/%E9%80%92%E5%BD%92%E5%87%BD%E6%95%B0
+
+[09] - R5RS文檔
+       http://www.schemers.org/Documents/Standards/R5RS/
+
+[10] - R6RS文檔
+       http://www.r6rs.org/
+
+[11] - Scheme Language
+       http://en.wikipedia.org/wiki/Scheme
+
+[12] - 一位怪人的練習回答和理解
+       http://eli.thegreenplace.net/category/programming/lisp/sicp/

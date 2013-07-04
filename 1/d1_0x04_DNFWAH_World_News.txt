@@ -1,0 +1,202 @@
+[foRsaken@localhost ~]$ uname -a
+Watson D W N GNU/xXx 2.8.13
+
+[foRsaken@localhost ~]$ cat DNW
+
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+            DWN  DO                                         FUCK    DWN
+            DWN        D n f w a h   W o r l d   N e w s            DWN
+            DWN  NOT   ~~~~~~~~~~~   ~~~~~~~~~   ~~~~~~~    WITH    DWN
+            DWN                    Issue 1                          DWN
+            DWN  A                                          HACKER  DWN
+            DWN                  May 8, 2011                        DWN
+            DWN                                                     DWN
+            DWN          Created, Written, and Edited               DWN
+            DWN                 by f0Rsaken                         DWN
+            DWN                                                     DWN
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+
+
+作为目前dnfwah编辑的f0Rsaken在寻找一些有趣的新闻来作为World News的分享,这
+些news包括永恒性背景的(宗教,哲学,艺术),也包括时代性背景的(科幻,科学,工程),
+当然也包括两者交叉的领域比如游戏,音乐等领域,只要是hacker们感兴趣的领域
+的news我们都会关注.
+
+但你也知道,我们不是全知全能的人物,所以我们需要hacker们的帮忙,如果你对
+某个有趣领域的news具有很大的热情,请编辑好了发给我们,我们最乐于接受慷慨
+hacker的contribution.
+
+
+Stuxnet, Cyberwar, Hacktivism and Political Hacking
+
+--[ Stuxnet代码分析支持伊朗-以色列阴谋论 ]
+http://developers.solidot.org/developers/10/10/03/166223.shtml
+
+--[ Bruce Schneier谈Stuxnet蠕虫 ]
+http://it.solidot.org/it/10/10/08/0526218.shtml?tid=115
+
+--[ Stuxnet设计干扰铀浓缩 ]
+http://it.solidot.org/article.pl?sid=10/11/16/0953240
+
+--[ Stuxnet是制造业最大威胁 ]
+http://it.solidot.org/article.pl?sid=10/11/19/0528204
+
+--[ 伊朗承认Stuxnet蠕虫影响到核计划 ]
+http://internet.solidot.org/internet/10/11/30/0340200.shtml
+
+--[ Stuxnet蠕虫可能破坏了1,000台伊朗离心机 ]
+http://it.solidot.org/article.pl?sid=10/12/27/0712211
+
+--[ Stuxnet幕后创作者是美国和以色列 ]
+http://it.solidot.org/article.pl?sid=11/01/17/060220
+
+2010年至今的Stuxnet风波已经是全球hacker们关注的交点,从军事的角度看这是
+一场信息战争,从hacker的角度看这的确是一次技术的兴奋点,足以让对非安全领
+域的hacker们high起来[ http://www.symantec.com/connect/blogs/stuxnet-1
+],从政治的角度来看则引发了以色列阴谋论的讨论,作为hacker需要了解政治,对
+吗?去他妈的政治.Stuxnet事件或许我们学到了一些总原则:
+1, Do not fuck with Jews
+2, Don't be caught up if you had to.
+
+
+Wikileaks, the out heaven of anarchist?
+
+2009
+--[ 美国国会议员宣布调查Wikileaks ]
+http://internet.solidot.org/article.pl?sid=09/12/02/1017201
+
+--[ Wikileaks请求帮助，不仅仅要求钱 ]
+http://internet.solidot.org/article.pl?sid=09/12/27/0237256
+
+--[ PayPal冻结Wikileaks帐户 ]
+http://internet.solidot.org/article.pl?sid=10/01/24/0226251
+
+2010
+--[ Wikileaks经济学 ]
+http://internet.solidot.org/article.pl?sid=10/01/13/1046251
+
+--[ 五角大楼搜寻Wikileaks创始人Julian Assange ]
+http://internet.solidot.org/article.pl?sid=10/06/12/0545216
+
+--[ Bradley Manning,Adrian Lamo和WikiLeaks ]
+http://internet.solidot.org/article.pl?sid=10/06/19/1352255
+
+--[ 维基解密最新泄密文件涉及中国 ]
+http://internet.solidot.org/article.pl?sid=10/11/27/0449227
+
+--[ WikiLeaks泄密文档可搜索版 ]
+http://internet.solidot.org/article.pl?sid=10/11/29/0219248
+
+--[ Wikileaks公布机密外交文件,指政治局是Google网络攻击策划者 ]
+http://it.solidot.org/article.pl?sid=10/11/29/0110254
+
+--[ 美国谴责WikiLeaks泄密是对全世界的攻击 ]
+http://internet.solidot.org/article.pl?sid=10/11/30/0615203
+
+--[ 中国外交部发言人斥Wikileaks内容荒谬 ]
+http://internet.solidot.org/article.pl?sid=10/12/03/0018224
+
+--[ Assange指责媒体对其解密 ]
+http://internet.solidot.org/article.pl?sid=10/12/22/0021258
+
+2011
+--[ Julian Assange声称拥有泄密文件 ]
+http://internet.solidot.org/article.pl?sid=11/01/07/0956252
+
+--[ 泄密文档可能迫使美国加快追捕本拉登步伐 ]
+http://internet.solidot.org/article.pl?sid=11/05/04/1030232
+
+能引起世界关注如此长时间的新闻必定是有趣的,极端无政府主义认为公众应该
+知道真相,即使真相会让某些人受伤.wikileaks的故事应该是这样的一个例子,自
+由主义的价值对"哲学家"数量众多的地区更有效.
+
+
+Sci-fi or Science
+
+--[ 人机智力竞赛Watson获胜 ]
+http://hardware.solidot.org/article.pl?sid=11/02/17/0345233
+
+--[ Watson技术应用于医院 ]
+http://science.solidot.org/article.pl?sid=11/04/14/0634243&threshold=-1
+
+这次人机大战中的Watson,就是由10个机柜总共90台Power 750服务器组成,每台
+Power 750服务器配备四路八核32线程3.55GHz处理器,内存16TB,RAM为15兆也就
+是说,每个节点都装有4个Power 7芯片,每芯片均为8核4个硬件线程.除了硬
+件的强悍,Watson能够轻松的进行语音识别和资料查找,这也是Watson已经在医学
+领域开始商业化的原因.
+
+想象一下到2026年时,你的口袋里的计算设备(比如iphone 13,如果iphone还存活
+到那时)所使用的CPU的计算能力或许比今天的Watson更强悍,那时离奇点更近,会
+发生什么事情呢?
+
+
+music news
+
+--[ Medal of Honor - Linkinpark's Catalyst ]
+http://v.youku.com/v_show/id_XMTk0NDgzODM2.html
+
+--[ Transformer 3 : Dark of the Moon - Linkinpark's Iridescent ]
+http://mikeshinoda.com/2011/04/13/iridescent-transformers-3-single/
+
+Linkinpark的最新专辑中的Catalyst成为了著名游戏Medal of Honor的主题曲,
+而Iridescent则成为了著名电影变形金刚3的主题曲.变形金刚1(What I've
+done)和变形金刚2(New Divide)的主题曲也是由Linkinpark制作的.
+
+Linkinpark自从2007年的What I've done那张专辑开始,其音乐的风格和歌词内
+容影响了很多年轻人,Linkinpark的音乐让生活在这个时代性背景下的年轻人更
+能理解.
+
+
+Underground Ezines
+--[ Phrack Issue 67 released ]
+http://it.solidot.org/it/11/01/18/0549244.shtml
+
+一份不用多介绍的杂志,经历了25年后的67期依然代表着高质量的论文,让我们来
+回顾一下早期Phrack谈到关于中国的故事:
+
+1, 1988年12月30日发布的第23期的World News中略提到关于开放新闻问题.
+
+2, 1989年11月17日发布的第29期的World News中谈到中国大陆当时有300,000台
+电脑(包括个人电脑),而到1989年的11月6日一共有10%的电脑感染上了病毒其主
+要是"Small Ball," "Marijuana," and "Shell.".
+
+3, 29期的Prophile中,简略谈到关于面对审查的问题.
+
+
+--[ Artificial Life XII ]
+http://www.alife12.org/
+
+第12次人工生命会议,会议的议题包括了生物科技的很多领域,bio-hacker可以下
+载详细的论文汇总[ http://mitpress.mit.edu/books/full_pdfs/Artificial_Life_XII.pdf]
+
+
+Neuroscience news
+--[ 神经学技术的商业化 ]
+http://www.mittrchinese.com/single.php?p=15369
+
+2011-2022年,财团们毫无疑问的想让生物科技工程化,而就在2011年2月,总投资
+高达5000W美刀关于神经网络的项目来看,工程化正在急速进行着,或许2025年的
+某一天当您的房贷即将还完时,外星人却入侵了您的大脑让您认为还得还上25年,
+那接下来会发生什么?谁他妈他的知道!
+
+
+Dance in Matrix world
+--[ Razy Gogonea的Matrix舞蹈 ]
+http://www.56.com/u63/v_NTk5NzAyMDQ.html
+
+出生于罗马尼亚的Dance-hacker,与众不同的Neo之舞.
+
+
+AI, strong or weak?
+--[ 没有思考能力的机器 ]
+http://science.solidot.org/article.pl?sid=11/05/05/1042242
+
+Marvin Minsky这位犹太AI社区的元老谈到关于过去很长一段时间AI局限在工程
+领域比如神经网络(为专家系统?),遗传算法之类的问题上耗费了很多时间,大多
+数非AI领域的hacker对AI的理解还停留在1980年代符号主义的黄金时期 [
+http://blog.youxu.info/2010/02/10/lisp-and-ai-2/ ],在迈向强AI的道路中
+或许无法回避一些基础的问题比如"What is Intelligence?".到底通过图灵测
+试或者完全模仿人脑才算是RI(Real Intelligence)呢?前者认为智能是根据行为
+来判断,而后者则认为在强AI之路中不可能绕开对人脑结构的hack,如果对后者有
+兴趣可以参考科普读物<人工智能的未来>http://book.douban.com/subject/1834728/
+

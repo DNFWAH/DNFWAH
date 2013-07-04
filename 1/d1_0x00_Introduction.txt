@@ -1,0 +1,120 @@
+#cat /proc/dnfwah
+              _                                                _
+            _/T\_                                            _/P\_
+            (* *)        DO NOT FUCK WITH A HACKER           (* *)
+            | - |                #1 File 0x00                | - |
+            |   |               Introduction                 |   |
+            |   |                                            |   |
+            |   |               By f0Rsaken                  |   |
+            |   |                                            |   |
+            |   |               May 8,2011                   |   |
+            (____________________________________________________)
+
+--[ Contents
+
+0. lock and load 
+
+1. What is dnfwah
+
+   1.1 What should we hack about
+
+2. What's the big deal in Issue1
+
+3. How to contribute to dnfwah
+
+
+--[ 0. lock and load
+
+Hello Gears,
+ 欢迎来到DO NOT FUCK WITH A HACKER,你正在阅读的是我们的Issue 1,这一期
+的编辑们是一群还在探寻人生意义的白痴,或许我们以前从不认识,以后也不一定
+会见面,但不管你来自哪里,是否有自己的兄弟会或者社区,不管你是否信仰什么,
+是否正在努力的探索人生意义还是已经经历了人生的某个重要阶段,这所有的一切
+都不是那么重要,重要的是你是否有一颗开放的心态去面对这个快速进化的时代,
+这个以科技为时代性背景的时代.这份ezine的发起的动机是我们已经在一个开放
+研讨会的group讨论了一阵子,是觉得有些东西可以分享,这篇文章会简要的介绍
+这份ezine是干什么的和接受哪种类型的文章.
+
+
+--[ 1. 什么是dnfwah
+
+很简单,整个ezine的模式都是对phrack[1]的学习,phrack所关注的是hacker的生
+命和最有意思的技术层面的hacking,phrack以电子杂志的形式存在了25年之久,
+作为old school早期的杂志到今天还在继续影响世界顶级的怪人很罕见.
+
+----[ 1.1 dnfwah关注的领域
+
+DO NOT FUCK WITH A HACKER也力图跟随phrack的脚步.按照强两希的传统,在题
+目上我们会关注包括永恒性的宗教,哲学,艺术,而时代性方面则主要是以科技作
+为主轴:自由软件,开放硬件,神经科学,etc,题目是非常的宽泛,甚至你可以分享
+在跟生活相关的趣事比如"宁愿跟一位无名的hacker一起去看3USD的脱衣舞表演
+也不愿意跟你那恶心的老板一起午间祷告"-_-dnfwah的总原则很简洁:遵循黑客
+伦理,分享您的hacking或者您的hacker生命历程.
+
+
+--[ 2. What's the big deal in Issue1 - expecting Issue0? WTH
+
+在向为数不多的hacker发出为Issue1分享些有趣的hacks文章后,在很短的时间内
+得到了正式的回复,还有一些hacker由于时间来不及则打算在Issue2时在为大家
+分享,by community and for community的hacking精神并没有如一些phracker所
+言已经被人们所淡忘,而只是大部分人选择了以new school的方式继续而已,而我
+们---foRsaken,作为第一期的编辑,我们坚定以old school的方式继续着我们的
+信仰,也希望继foRsaken以后会有更多的old school hacker来为underground提
+供更多的高质量文章.
+
+这是dnfwah Issue 1,是目前为止这个星球上的唯一一期,发布时间为:以色列时
+间的May 8,2011凌晨.
+
+文章内容:
+
+0x00 Introduction						   f0Rsaken
+0x01 A & G trends                                      	     Shawn the R0ck
+0x02 How to start contributing to or using Open Source Software Shlomi Fish
+0x03 The way of NGO hacking    	     	   	       		  Sarah Lan
+0x04 DNFWAH World News                                 		   f0Rsaken
+0x05 Hacking_libpcap_and_tcpdump				     fU9ANg
+0x06 Hacking_snort						     fU9ANg
+0x07 The_chapter_one_answer_of_sicp				     fU9ANg
+0x08 My_way_of_music_hacking					      Aeihu
+0x09 Summary_of_Complex_system					      Cat
+
+
+--[ 3. How to contribute to dnfwah
+
+如果你打算要...你准备要...你真的愿意为dnfwah分享您宝贵的hacks的话我们
+非常的欢迎,对于contributor有一些原则必须遵守:
+
+题目:参见[ 1.1 dnfwah关注的领域 ],您生命体验的hacking都值得分享.
+~~~~
+
+投稿准则:
+~~~~~~~~
+
+	1. dnfwah只接受plain text,html,laTex(这个必须提供源代码和已生
+	成的pdf)这三种格式,这样就满足了old school和new school的hacker
+	的习惯.
+
+	2. 如果您分享的文章里有源代码,当然这是非常棒的事情,很难想象
+	computer hacker的分享没有源代码,wow...我们的意思是说源代码无处
+	不在,比如物理学家和生物学家正用不同的方式来逆向工程.没有源代码
+	的世界是无聊的世界,但我们必须对您分享的计算机领域的源代码有所
+	要求,我们建议两种方式: 1,直接打包成*.tar.gz格式然后encode进入
+	文本 2,如果您没有使用plain text投稿那就直接把*.tar.gz放进文章
+	所在目录.
+
+投稿地址:
+~~~~~~~~
+	物理地址: 别他妈以为真会告诉你!你不属于这个星球上少有的像RMS
+	一样的哲学家更不可能是这个星球上唯一的程序员John Carmack(别尝
+	试忽悠,我们知道John不会读中文ezine的),你当然不是你就是你...那
+	个唯一的你,不是吗? 如果你真想知道物理地址我们可以向你透露我们
+	和你目前在一个星球上.
+
+	电子邮箱: forsaken2046(at)gmail.com,我们(f0Rsaken)会接管dnfwah
+	一段时间直到有更年轻有趣且具奉献精神的团队出现.
+
+
+
+
+[1] Phrack Magazine -
+http://www.phrack.org/

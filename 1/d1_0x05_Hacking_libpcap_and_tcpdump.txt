@@ -1,0 +1,614 @@
+
+             _                                                _
+           _/T\_                                            _/P\_
+           (* *)          DO NOT FUCK WITH A HACKER         (* *)
+           | - |                #6 File 0x05                | - |
+           |   |         Hacking libpcap and tcpdump        |   |
+           |   |                                            |   |
+           |   |        By fU9ANg <bb.newlife@gmail.com>    |   |
+           |   |                                            |   |
+           |   |                                            |   |
+           (____________________________________________________)
+
+
+--[ Index
+
+  1 - Libpcap
+
+    1.1 - Introduction
+
+    1.2 - An example
+
+    1.3 - How
+
+        1.3.1 - Check or find network device
+
+        1.3.2 - Open device for capturing
+
+        1.3.3 - Data packet filter
+
+        1.3.4 - The loop of capture
+
+        1.3.5 - Close device
+
+    1.4 - Others
+
+  2 - Tcpdump
+
+        2.1 - Introduction
+
+        2.2 - An example
+
+        2.3 - Framework of tcpdump
+
+  3 - Conclusion
+
+  4 - Reference
+
+  5 - Sources (capture & dump)
+
+
+[------------------------------------------------------------------------------]
+
+
+--[  1.1 - Introduction
+
+在很久很久前, 或許我們在網絡上的行為已經被監控了, 因為我們在網絡中交流想法和分享
+一些信息的數據包已經被他們捕獲了, 當然他們下一步的工作就是分析所捕獲的這一些數據
+包, 我們有危險了.
+
+對于今天我們在嘔心的做網絡應用( 分析, 監控, 過濾, 審計, 篩選 )時, 當然在這之前的
+要做的第一步是抓捕數據包; 我們也可以基于現在的操作系統提供的接口, 自已來做第一步
+捕獲數據包工作( 如: 類Unix平臺所提供的原始Socket ), 不過FOSS社區已經有這樣的一個
+比較完善和全面的網絡數據包抓捕框架( Libpcap ), 其實它內部實現也是通過socket 接口
+完成, 在本文章中就討論和分享此框架.
+
+在討論分享此框架前, 還是先來介紹一下它吧！( btw: 最好的方式是去google :-) )
+
+Libpcap的英文全稱為`Packet Capture Library ', 從字面意思我們可以看出就是數據包的
+抓捕庫, Libpcap是一個提供與操作系統無關的抓捕庫,  為不同平臺提供了一個一致的用戶
+級函數接口( 在源代碼中, 可以看到處理平臺細節有關的宏定義 ), 現在所支持的操作系統
+有Linux, Solaris和*BSD, 都是類Unix的系統, 此文章作者的操作系統平臺為Fedora7.
+
+
+--[  1.2 - An example
+
+    如下代碼是用Linux中提供的Socket來寫一個數據包抓捕測試實例步驟, 僅僅為學習.
+>
+    /* 01.) 為捕獲數據包, 創建一個socket句柄 */
+    if(( sock = socket( PF_PACKET, SOCK_RAW, htons( ETH_P_ALL ))) < 0 )
+    {
+        perror( "socket error" );
+        exit( 1 );
+    }
+
+    /* 02.) 為網絡設備捕獲非本機的數據包, 則設置設備為混雜模式 */
+    /* 獲得此網卡的標志 */
+    if(( ret = ioctl( fd, SIOCGIFFLAGS, &ifr )) == -1 )
+        fprintf( stdout, "[ERROR] : don't get interface flags.\n" );
+
+    /* 設置或取消混雜模式標志 */
+    if( iflag == 0 )
+        ifr.ifr_flags &= ~IFF_PROMISC;
+    else
+        ifr.ifr_flags |=  IFF_PROMISC;
+
+    /* 設置或取消網卡混雜模式 */
+    if(( ret = ioctl( fd, SIOCGIFFLAGS, &ifr )) == -1 )
+        fprintf( stdout, "[ERROR] : don't set interface flags.\n" );
+
+    /* 03.) 由以上創建的sock, 捕獲數據包, 保存在buffer中, handle為捕獲的包長度
+    while( 1 )
+    {
+        handle  = recvfrom( sock, ( char * )buffer, CAP_LEN, 0, NULL, NULL );
+
+        /* 如果數據包被捕獲, 則我們下一步的工作就是分析它 */
+        ...
+    }
+
+    關于例子的詳細代碼, 請查看本文章的Sources部分中的capture.c文件.
+
+
+--[  1.3 - How
+
+    根據LIBPCAP提供的文檔和基于此庫的所有網絡工具中可以得到如下的操作流程: 
+    如下是一個使用Libpcap庫的應用程序架框, 用C語言描述: 
+
+    void
+inetcap_main( void )
+{
+    char*                       dev; /* 網絡接口名 */
+    const  u_char*           packet; /* 數據包字串 */
+    struct bpf_program     bpf_code; /* 用于BPF過濾代碼結構體 */
+    char   errbuf[PCAP_ERRBUF_SIZE]; /* 錯誤BUFFER, 為所有函數返回錯誤字串 */
+    pcap_t*                   descr; /* 捕獲句柄( Libpcap的核心結構體 ) */
+	
+    /* 01.) 查找可用的設備 */
+    dev = pcap_lookupdev( errbuf );
+
+    /* 02.) 為捕獲數據包, 創建句柄 */
+    descr = pcap_open_live( dev, BUFSIZ, 0, -1, errbuf );
+
+    /* 03.) 設置過濾條件, 且編譯和安裝BPF過濾代碼 */
+    pcap_compile( descr, &bpf_code, filter_str, 0, netmask );
+    pcap_setfilter( descr, &bpf_code );
+
+    /* 04.) 重復網絡數據包的捕獲 */
+    while( 1 )
+    {
+        while(( packet = ( char * )( pcap_next( descr, &hdr ))) == NULL );
+        
+        /* 05.) 此時, 所捕獲數據包被放入packet字串中, 以便隨后做進行一步處理 */
+        /* 
+         * 如: 處理10MB以太網類型
+         *
+         * 其實可以用Libpcap庫提供的函數pcap_datalink()來獲取
+         * 數據鏈路層類型(ethernet, fddi等等); 且把所有的協議
+         * 完善了, 便成了今天的FOSS項目(Tcpdump)的功能了. :-)
+         */
+        eth_hdr = ( struct ether_hdr* ) packet;
+        if( eth_hdr->ether_type == ntohs( ETHERTYPE_IP ))
+        {
+            /* TODO: ... */
+        }
+        if( eth->ether_type == ntohs( ETHERTYPE_ARP ))
+        {
+            /* TODO: ... */
+        }
+    }
+    
+    /* 06.) 關閉捕獲句柄 */
+    pcap_close( p );
+}
+
+
+--[  1.3.1 - Check or find network device
+
+    LIBPCAP庫提供的pcap_lookupdev()和pcap_findalldev()函數來支持查找系統中的設備
+    如果找到 -> 則返回設備名( e.g `eth0' )
+    否則     -> 則返回NULL
+
+    以下為pcap_lookupdev()函數在源代碼中的功能架框: 
+>
+    pcap_lookupdev();
+        pcap_findalldevs();
+            /* 第一種方式: 使用系統提供的getifaddr()函數 */
+            getifaddr();
+            add_addr_to_iflist();
+                add_or_find_if();
+                    pcap_open_live();
+                    get_instance();
+                    pcap_close();
+            freeifaddrs();
+            /* 第二種方式: 如以上第一種方式出了任何錯誤, 則采用此方式 */
+            pcap_platform_finddevs();
+                scan_sys_class_net();   /* 檢查且添加/sys/class/net文件夾中的設備 */
+                    pcap_add_if();
+                        add_or_find_if();
+                            pcap_open_live();
+                            get_instance();
+                            pcap_close();
+                scan_proc_net_dev();    /* 檢查且添加/proc/net/dev文件中的設備 */
+                    pcap_add_if();
+                        add_or_find_if();
+                            pcap_open_live();
+                            get_instance();
+                            pcap_close();
+                ANY:                    /* 此處, 添加`any'設備 */
+                    pcap_add_if();
+                        add_or_find_if();
+                            pcap_open_live();
+                            get_instance();
+                            pcap_close();
+                usb_platform_finddevs();/* 添加`usb'設備 */
+                    usb_dev_add(); /* 1. 添加/sys/bus/usb/devices文件夾中的usb設備 */
+                        pcap_add_if();
+                            add_or_find_if();
+                                pcap_open_live();
+                                get_instance();
+                                pcap_close();
+                    usb_dev_add(); /* 2. 添加/proc/bus/usb文件夾中的usb設備 */
+                        pcap_add_if();
+                            add_or_find_if();
+                                pcap_open_live();
+                                get_instance();
+                                pcap_close();
+        pcap_freealldevs();
+------- ------- -------
+
+用如上的pcap_lookupdev()函數架框的功能, 則返回下圖中系統所有設備鏈表(devlist)的
+第一個用設備名給調用者, 詳細查看圖: figure-1
+
+    /* 設備接口( Pcap.h )*/
+    struct pcap_if {
+        struct pcap_if *next;
+        char  *name;               /* name to hand to "pcap_open_live()" */
+        char  *description;        /* textual description of interface, or NULL */
+        struct pcap_addr *addresses;
+        bpf_u_int32 flags;         /* PCAP_IF_ interface flags */
+    };
+    /* 設備接口的地址信息( Pcap.h ) */
+    struct pcap_addr {
+        struct pcap_addr*next;
+        struct sockaddr *addr;     /* address */
+        struct sockaddr *netmask;  /* netmask for that address */
+        struct sockaddr *broadaddr;/* broadcast address for that address */
+        struct sockaddr *dstaddr;  /* P2P destination address for that address */
+    };
+
++------------------------------------------------------------------------------+
+|                                                                              |
+|   +-----------------+    +-----------------+    +-----------------+          |
+| ->| struct  pcap_if |    | struct  pcap_if |    | struct  pcap_if |          |
+|   |-----------------|    |-----------------|    |-----------------|          |
+|   |       next      | -> |       next      | -> |       next      | -> NULL  |
+|   |       name      |    |       name      |    |       name      |          |
+|   |   description   |    |   description   |    |   description   |          |
+|   |       flags     |    |       flags     |    |       flags     |          |
+|   |    *addresses   |    |    *addresses   |    |    *addresses   |          |
+|   +-----------------+    +-----------------+    +-----------------+          |
+|            |   +---------+        |   +---------+        |   +---------+     |
+|            |   |pcap_addr|        |   |pcap_addr|        |   |pcap_addr|     |
+|            |   |---------|        |   |---------|        |   |---------|     |
+|            +-> |  addr   |        +-> |  addr   |        +-> |  addr   |     |
+|                | netmask |            | netmask |            | netmask |     |
+|                |broadaddr|            |broadaddr|            |broadaddr|     |
+|                | dstaddr |            | dstaddr |            | dstaddr |     |
+|                |  *next  |            |  *next  |            |  *next  |     |
+|                +---------+            +---------+            +---------+     |
+|                     |                      |                      |          |
+|                     v                      v                      v          |
+|                +---------+            +---------+            +---------+     |
+|                |pcap_addr|            |pcap_addr|            |pcap_addr|     |
+|                |---------|            |---------|            |---------|     |
+|                |  addr   |            |  addr   |            |  addr   |     |
+|                | netmask |            | netmask |            | netmask |     |
+|                |broadaddr|            |broadaddr|            |broadaddr|     |
+|                | dstaddr |            | dstaddr |            | dstaddr |     |
+|                |  *next  |            |  *next  |            |  *next  |     |
+|                +---------+            +---------+            +---------+     |
+|                     |                      |                      |          |
+|                     v                      v                      v          |
+|                    NULL                   NULL                   NULL        |
+|                                                                              |
+|                                                                              |
+|                                   /* figure-1 */                             |
++------------------------------------------------------------------------------+
+
+
+--[  1.3.2 - Open device for capturing
+
+在以上的查找設備名步驟中, 把系統中的所有可能的情況全部測試, 如果我們已經找到設備
+名為捕獲則打開此找到的設備( e.g `eth0' )
+
+
+    此庫為打開網絡設備的函數是在pcap-linux.c文件中的pcap_open_live(), 格式如下:
+    pcap_t *pcap_open_live( char *device, int snaplen,
+                            int  promisc, int to_ms, char *ebuf );
+    01.) device : 為捕獲數據包指定要打開的網絡設備名.
+    02.) snaplen: 為捕獲數據包的最大字節數.
+    03.) promisc: 為是否將此網絡設備設置為`混雜'模式.
+    04.) to_ms  : 為捕獲數據包指定的超時時間(單位: 毫秒).
+    05.) ebuf   : 為在調用函數錯誤時, 返回的出錯信息.
+    06.) RETURN : 如果調用成功, 返回用結構pcap_t描述的捕獲句柄, 否則返回NULL.
+
+ 
+在版本為1.1的Libpcap中使用sock_raw原始套接字編程來捕獲網絡設備上的數據包如源代碼
+中調用的一個捕獲所有以太網數據幀的原始套接字, 格式如:
+>
+    sd = socket( PF_PACKET, SOCK_RAW, htons( ETH_P_ALL ));
+
+當然這樣的一種原始套接字可以從此網絡設備接收和發送到此網絡設備的所有以太網數據幀
+, 如果我們還要捕獲非本機的網絡設備的數據幀的話, 則還需設置設備為一種叫做混雜模式
+(promisc), 操作為:
+>
+    {
+        ioctl( sd, SIOCGIFFLAGS, &ifr ));   /* 獲得網絡設備的標志 */
+        ifr.ifr_flags |= IFF_PROMISC;       /* 設置為混雜模式標志 */
+        ioctl( sd, SIOCGIFFLAGS, &ifr ));   /* 設置設備為混雜模式 */
+    }
+
+    實現它, 在Libpcap源代碼中調用函數為:
+    pcap_open_live();
+        pcap_create();      /* 為捕獲包的句柄`pcap_t'分配空間, 且初始化此結構*/
+        pcap_set_snaplen(); /* 設置捕獲數據包的最大字節數, 由參數指定 */
+        pcap_set_promisc(); /* 設置網絡設備為混雜模式, 由參數指定 */
+        pcap_set_timeout(); /* 設置超時, 由參數指定 */
+        pcap_activate();    /* 激活此網絡設備 */
+
+    從以上的函數調用的實現代碼來看, 結構非常清晰, 用自然語言描述執行步驟為:
+        01.) 為捕獲句柄`pcap_t'分配內存空間, 如分配成功則設置部分的參數( send_fd,
+             fd, selectable_fd, timeout, timeout, snaplen, promisc ... )
+        02.) 創建socket套接字 ( 怎樣創建的呢? )
+        03.) 設置一些操作函數, 其實用函數指針描述, 分別為( read_op, inject_op,
+             stats_op, setfilter_op, setdirection_op, set_datalink_op, cleanup_op
+             等等. (btw: 其實從這樣的抽象來看, 與linux kernel提供的一致, 如: 字符
+             驅動的讀寫指針)
+
+
+--[  1.3.3 - Data packet filter
+
+每當人們在做決定或者做一件事, 每一個人都是MD一位哲學家, 有他/她自己的一套方法論
+來支持他/她做決定. ( 如: 選擇自己的人生哲學, 選擇某一個文化, 選擇某一種生活方式,
+甚至是選擇他/她的女友/男友的個性 ... )
+
+如今的網絡軟件有它的不同應用目的, 它所期望的網絡數據包類型是不同的, 在某一些特定
+的情況下只需要獲得特定的數據包( 所有網絡數據包中的一小部分); 如你嘔心的做對FTP協
+議數據進行審計或監控, 或許某一家伙做的是端口為25/110的郵件數據包的審計, 或許另一
+家伙比較感興趣的是端口為23且源IP地址為他本機的數據包.
+
+如以上的個性化需求情況我們可以把所有的捕獲數據包在用戶空間來做, 但效率是不高的 ,
+內核提供了一種機制來解決這個問題; 應用層只需簡單的設置一系列的過濾條件, 最終可以
+獲得滿足過濾條件的數據包, 其實過濾機制可以在兩大空間(內核和用戶)執行都行, 包過濾
+機制也是包捕獲中的一個精彩的技術點.
+
+從形而上或數學模型來說, 實現的理論是簡單的, 但實現的代碼會讓你感到它的復雜性:-)
+我們可以舉一些例子, 如下面的包數據:
+
+    00 11 3c 73 5f b3 00 e3  0d 51 5a 52 08 00 45 00
+                                         -----
+    00 54 00 00 40 00 40 01  b6 8e c0 a8 01 66 c0 a8
+                         --
+    01 64 08 00 6a 02 7d 16  00 01 15 03 98 4d 6b 92
+    0d 00 08 09 0a 0b 0c 0d  0e 0f 10 11 12 13 14 15
+    16 17 18 19 1a 1b 1c 1d  1e 1f 20 21 22 23 24 25
+    26 27 28 29 2a 2b 2c 2d  2e 2f 30 31 32 33 34 35
+    36 37
+
+    以上的數據為ethernet_header -> ip_header -> icmp_header
+
+如果過濾條件為只捕獲以太網絡中的IP數據包, 此包也將會被捕獲, 我們可以把以上的數據
+用一字符串buffer存放, 則過濾條件if(( buffer[12] == 0x08)&&(buffer[13] == 0x00 ))
+
+如果過濾條件為基于以太網的IP中的ICMP數據包, 則過濾條件為: if(buffer[23] == 0x01)
+當然最好的方式就是要設計一種機制來滿足以上所有的不同協議, 且不同協議中的子項的過
+濾, 那么這樣的需求所實現的代碼復雜性是很高的.
+
+在Libpcap框架中用到的數據包過濾機制為BPF( Berkeley Packet Filter ), 可以查看主要
+的兩大支持函數(pcap_setfilter和pcap_compile), 關于它在內核中的實現, 期望下一期的
+文章分享.
+
+
+--[  1.3.4 - The loop of capture
+
+關于循環處理每一個捕獲的數據包, Libpcap為我們提供了一個pcap_loop()的函數的回調函
+數來完成, 格式為: int pcap_loop( pcap_t*, int, pcap_handler, u_char* ), 而pcap_h
+andler函數指針就是為處理數據包的回調函數(由用戶層給出), 具體的描述:
+
+    01.) pcap_t   : 為調用以上函數pcap_open_live()所打開的捕獲句柄.
+    02.) int      : 為用戶層只需處理數據包的個數.
+    03.) pcap_handler: 為用戶層的回調函數.
+    04.) u_char   : 用戶自己提供的數據信息, 由此參數傳遞給回調函數.
+
+函數pcap_loop()的實現為基于pcap_t結構體中的fd(socket句柄), 調用系統提供的函數rec
+vfrom( )來獲得一個用戶數據包, 而后調用pcap_handler類型的函數指針對捕獲的數據包進
+行處理. 而常用的Tcpdump工具的功能就是把數據包在進行顯示; 而常用的Wireshark工具則
+是提供一個GUI的顯示接口; 而常用的Snort就是對數據包與預先設定好的規則進行匹配, 檢
+查是否有入侵行為.
+
+
+--[  1.3.5 - Close device
+
+記得我們從兒時起, 老師和家長就告訴我們借了別人的東西, 用完了要還給人家, 一定在做
+一個可信的人; 這是美好的言語.
+
+今天在計算機程序中, 某某書都告訴我們在用C語言進行程序設計時, 用了malloc( ), 還要
+記得用free; 從操作系統中借的東西( 資源 ), 用完了一定要還給操作系統.
+
+在之前的pcap_open_live()函數中, 我們用到了一些資源, 用完了一定要釋放, 有如下:
+01.) 用malloc分配的字符串空間, 需釋放.
+02.) 打開的描述符, 需關閉.
+03.) 設置的網絡設備為混雜模式, 需恢復原來的模式.
+04.) 分配的結構體的鏈表, 需一個一個釋放.
+05.) 如果有為過濾BPF分配了空間, 需釋放.
+
+主要為歸還的工作, pcap提供的函數為pcap_close(), 其實內部實現調用的是由pcap_t的cl
+eanup_op函數指針指向的pcap_cleanup_linux()函數來實現.
+
+
+--[  1.4 - Others
+
+作為一個框架的Libpcap來說, 在源代碼中還提供了一些除以上介紹的函數,還有一些做為輔
+助用到的函數, 在此簡述一下:
+
+01.) pcap_lookupnet();
+    > 獲取指定網絡設備的網絡號和掩碼.
+02.) pcap_datalink();
+    > 獲取數據鏈路層的類型.
+03.) pcap_snapshot();
+    > 獲取由結構pcap_t描述的設備的snapshot值.
+04.) pcap_major_version();
+    > 獲取pcap的主版本號.
+05.) pcap_minor_version();
+    > 獲取pcap的次版本號.
+06.) pcap_geterr();
+    > 獲取pcap庫的出錯信息.
+07.) pcap_strerror();
+    > 獲取出錯信息字符串, 因為在某些平臺上沒有提供strerror()函數.
+08.) pcap_perror();
+    > 打印pcap庫的出錯信息, 在標準輸出設備中.
+09.) pcap_dump_open();
+    > 打開文件.
+10.) pcap_dump_close();
+    > 關閉由pcap_dump_open打開的文件.
+11.) pcap_file();
+    > 獲取被打開的文件(*.pcap)的名稱.
+12.) pcap_fileno();
+    > 獲取被打開的文件(*.pcap)的文件描述符號碼.
+13.) pcap_stats();
+    > 獲取pcap捕獲的數據包的狀態信息, 如: 包數, 丟掉的包數等等.
+14.) pcap_open_offline();
+    > 打開以前保存捕獲網絡數據包文件(*.pcap), 便于以后處理.
+
+
+--[  2.1 - Introduction
+
+在以上的介紹Libpcap中已經提到了Tcpdump, 在此就來介紹一下它吧! 它主要的功能就是把
+先前由Libpcap捕獲的數據包或者將保存到文件數據包在標準輸出給用戶層; 再加上Tcpdump
+提供了很多的參數給用戶層; 關于參數的詳細應用請查看下面參考部分.
+
+
+--[  2.2 - An example
+
+關于在標準輸出中顯示數據包內容, 以下為一個簡單的測試程序.
+>
+    /* 打印由Libpcap捕獲的數據包 */
+        void
+    print_by_hex( sptr, handle )
+        unsigned  char   *sptr ;
+        int             handle ;
+    {
+        int	cnt = 0;
+        int	i   = 0;
+
+        for( i = 0; i < handle; i++ )
+        {
+            cnt++;
+            printf( "%02x ", sptr[i] );
+            if( cnt == 8  ) putchar(' ');
+            if( cnt == 16 ) 
+            {
+                putchar( '\n' );
+                cnt = 0;
+            }
+        }
+        putchar( '\n' );
+        putchar( '\n' );
+    }
+
+    關于例子的詳細代碼, 請查看本文章的Sources部分中的dump.c文件.
+
+
+--[  2.3 - Framework of tcpdump
+
+通過上面簡單的測試例子來看, Tcpdump 工具提供了為顯示的一個很棒的框架, 具體我們去
+查看它的源代碼.
+>
+/* 定義兩個函數指針 */
+typedef u_int (*if_printer)(const struct pcap_pkthdr *, const u_char *);
+typedef u_int (*if_ndo_printer)(struct netdissect_options *ndo,
+                            const struct pcap_pkthdr *, const u_char *);
+
+/* 定義兩個包含以上函數指針的結構體 */
+struct printer      {
+        if_printer     f;
+        int type;
+};
+struct ndo_printer  {
+        if_ndo_printer f;
+        int type;
+};
+
+/* 定義兩個結構體數組, 且賦值 */
+static struct printer printers[] = {
+        { arcnet_if_print,      DLT_ARCNET },
+        { ether_if_print,       DLT_EN10MB },
+        { raw_if_print,         DLT_IPV4   },
+        { raw_if_print,         DLT_IPV6   },
+        ...
+        { NULL,                 0 },
+};
+static struct ndo_printer ndo_printers[] = {
+        { ipnet_if_print,       DLT_IPNET  },
+        { NULL,                 0 },
+};
+
+以上的為顯示框架所用到的核心數據結構; 通過查看 Tcpdump的源代碼, 可以看到有很多的
+print-XX.c文件, 主要就是給用戶層提供很多不同協議的打印顯示; 而它的支持就是通過用
+以上的數據結構完成.如我們的數據包為DLT_EN10MB類型的話( 通過Libpcap庫中的pcap_dat
+alink()函數完成), 而它就用去調用ether_if_print()函數進行打印顯示; 當然或許你在將
+來也可以加上對你自己的協議進行打印顯示. :-)
+
+
+--[  3 - Conclusion
+
+Libpcap框架有三個比較棒的地方 -- 抓捕( 什么平臺, 怎樣抓包 )
+    1.) 用什么方式捕獲網絡數據包以及效率
+    2.) 怎樣過濾我們所需的數據包以及效率
+    3.) 在多平臺下怎樣提供一個獨立于操作系統的統一應用接口
+
+Tcpdump框架有一個比較棒的地方 -- 處理( 分析, 監控, 過濾, 審計, 篩選 )
+    1.) 要實現在很多不同的數據鏈路層(DLT_xx)情況下, 怎樣抽象一個統一的接口給將來
+        可能還要擴展的新的數據鏈路層和網絡層以及傳輸層的協議. ( 比如在將來你可能
+        搞一個自已的協議族, 且要讓這樣的框架支持顯示打印 )
+
+作為一名new-school的monkey coder來說, 這些技術點都是值得去學習, 但不要花太多的時
+間在這些技術點上. :-)
+
+--[  4 - Reference
+
+[1] - Tcpdump man page
+      http://www.tcpdump.org/tcpdump_man.html
+
+[2] - Pcap man page
+      http://www.tcpdump.org/pcap3_man.html
+
+[3] - Documentation
+      http://www.tcpdump.org/#documentation
+
+
+--[  5 - Sources
+
+begin 644 inetcap.tar.bz2
+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
+5@>+JL+&,EMLDA_XNY(IPH2!KB29&
+`
+end
