@@ -73,18 +73,20 @@ MIT，这个曾经是20世纪黑客的起源地，许多计算机和生物黑客
 (Anarchy)对抗BIG BROTHER的最前线，这种对抗不仅仅是在技术领域，法律领域
 也是如此，NSA对很多在电子世界的"无ZF主义行为"都非常的头疼，密码学首当其
 冲的，因为密码学自诞生以来就是应用于公开化的场景，对早期密码工程有兴趣
-的朋友可以阅读Hacking Secret Ciphers with Python，而随着自由软件运动在
-1980年代的兴起，越来越多的安全领域的黑客抱着professional paranoia的哲学
-加入到了其中，利用受法律保护的自由软件许可证( GPL, BSD, MIT, OPENSSL)发
-布了很多优秀的密码应用工具，这让BIG BROTHER的偷窥成本急速的增长，另外一
-方面，在1990年代出现了很多起违反当时USA密码出口管制的案例，这一系列的故
-事都是从1991年6月Philip Zimmermann在互联网上公布了PGP加密程序的源代码，
-FBI对Philip进行了多年的审讯，之后一名UC Berkeley的研究生以限制言论自由
-之名对US政府进行了诉讼，这个1995年著名的Bernstein v. United States案例
-最终导致了1999年判决打印出密码算法的源代码属于US宪法对言论自由的保护，
-之前的数次诉讼和判例也直接或者间接的让US政府放宽了密码出口管制，1990年
-代USA密码管制直接由国土安全局负责，2000年以后，密码管制已经放开，并且由
-商务部负责，这是对抗NSA在法律层面上的一次胜利。
+的朋友可以阅读Hacking Secret Ciphers with Python。
+
+随着自由软件运动在1980年代的兴起，越来越多的安全领域的黑客抱着
+professional paranoia的哲学加入到了其中，利用受法律保护的自由软件许可证
+( GPL, BSD, MIT, OPENSSL)发布了很多优秀的密码应用工具，这让BIG BROTHER
+的偷窥成本急速的增长，另外一方面，在1990年代出现了很多起违反当时USA密码
+出口管制的案例，这一系列的故事都是从1991年6月Philip Zimmermann在互联网
+上公布了PGP加密程序的源代码，FBI对Philip进行了多年的审讯，之后一名UC
+Berkeley的研究生以限制言论自由之名对US政府进行了诉讼，这个1995年著名的
+Bernstein v. United States案例最终导致了1999年判决打印出密码算法的源代
+码属于US宪法对言论自由的保护，之前的数次诉讼和判例也直接或者间接的让US
+政府放宽了密码出口管制，1990年代USA密码管制直接由国土安全局负责，2000年
+以后，密码管制已经放开，并且由商务部负责，这是对抗NSA在法律层面上的一次
+胜利。
 
 安全问题很多时候都归结于信任问题，请大家思考一下无ZF主义为什么会抱着
 professional paranoia的态度去怀疑一切，其核心是不信任NSA，而FSF和EFF所
@@ -128,7 +130,7 @@ GNU宣言中RMS也谈到了当时GNU项目的进度的情况，支持Lisp语言�
 RMS也谈到了他的动机是为了分享，不管怎么说，GNU宣言的确奠定了后来的自由
 软件哲学的很多内容，也是黑客们在自由软件领域的奥德赛之旅的开始，这漫长
 的旅途经历了快30年直到今天涌现出了无数优秀的自由软件:GNU/Linux, GNU
-Debugger, GCC, GNU Lib C, GNUTLS, GNU Guile, EMACS, etc。从法律层面上，
+Debugger, GCC, GNU Lib C, GnuTLS, GNU Guile, EMACS, etc。从法律层面上，
 GPL( GNU Public License)在北美和欧洲都受到了法律的保护，有法律也有判例，
 这也归功于无ZF主义中的像Eben Moglen这样的法律领域黑客。
 
@@ -204,7 +206,7 @@ Well，其实上面的都不重要，重点是：如果我们
     世界一样，他们和dead walk(行尸走肉)并没太多区别。
 
 我们坚信真正的黑客肯定是同时保持了fun和profit的部分并且有智慧去做一些平
-衡(tradeoff)，好吧，扯的有点远了，但我们还是打算谈谈从Phrack看安全领域
+衡(trade-off)，好吧，扯的有点远了，但我们还是打算谈谈从Phrack看安全领域
 的进化路线图来结束这个section，下面是Phrack从1985年的第1期到2012年的68
 期中Phrack编辑组的信息：
 
@@ -273,8 +275,8 @@ grep –E –e ‘printf\s*\([^”]+[,\)]’ *.c
 无ZF主义一直都不期望任何政府，公司和其他任何大型商业组织来尝试保证个体
 的隐私权利，所以包括FSF和EFF在内的组织致力于开发一系列的密码软件甚至硬
 件来保护隐私，Eric本人就是地球上第一个发布匿名邮件转发服务程序的作者，
-加密方面有一系列的工具都是old school黑客们最喜欢的包括：GNUPG，TOR，
-OTR等等。GNUPG是GNU项目中的其中一个自由软件项目，主要是提供从1024到
+加密方面有一系列的工具都是old school黑客们最喜欢的包括：GnuPG，TOR，
+OTR等等。GnuPG是GNU项目中的其中一个自由软件项目，主要是提供从1024到
 4096位的非对称加密和签名，这个项目我们得感谢Philip Zimmermann和自由软件
 基金会，这里多说2句，根据Snowden的报料，1024位的非对称密钥已经很危险了，
 因为即使是2048位也只相当于对称密钥在密码学级别强度的128位，其实在PGP邮
@@ -376,8 +378,8 @@ Dual_EC_DRBG(双椭圆)是一种伪随机数生成器，在2006年时被NIST提�
 际使用，仅几个月以后就有人指出这可能是NSA的后门，安全领域的大哲学家
 Bruce Schneier在2007年也提出了质疑，Snowden在报料一连串"Big Brother"的
 全球监控计划后，RSA正式建议用户停用 Dual_EC_DRBG(solidot的中文报道)，这
-一事件也影响到了自由软件社区，特别是OpenSSL和GNUTLS的实现，OpenSSL在
-2011年的FIPS模块当中加入了Dual_EC_DRBG，GNUTLS的libnettle和Mozilla-NSS
+一事件也影响到了自由软件社区，特别是OpenSSL和GnuTLS的实现，OpenSSL在
+2011年的FIPS模块当中加入了Dual_EC_DRBG，GnuTLS的libnettle和Mozilla-NSS
 并没有DUAL_EC_DRBG的实现。
 
 在这个问题上Bruce认为并不是所有的安全标准都存在安全隐患，他认为AES仍然
@@ -390,8 +392,8 @@ Bruce Schneier在2007年也提出了质疑，Snowden在报料一连串"Big Broth
 
 ----[ 2.3 哪些工具我们可以信任？
 
-从用户的角度，GNUPG, Tor, OTR都是可以信任的，从开发者的角度，OpenSSL,
-GNUTLS是可以信任的，因为这些自由软件项目的参与者们有一些是
+从用户的角度，GnuPG, Tor, OTR都是可以信任的，从开发者的角度，OpenSSL,
+GnuTLS是可以信任的，因为这些自由软件项目的参与者们有一些是
 security/crypto paranoia，他们的daily bread就是思考NSA会如何攻击这些项
 目，从设计和实现的角度，很多自由软件都非常不错。
 
@@ -495,7 +497,7 @@ review？如果都不信那就得A亲自去做code audit，如果代码多到lib
 --[ 4. 结语
 
 自由软件运动，电子朋客运动和地下安全世界，这看似三个完全不相干的群体却
-有着共同的哲学背景：黑客伦理，或者直接叫黑客精神吧，是黑客精神把这几群
+有着共同的哲学背景：黑客伦理，或者直接叫黑客精神吧。是黑客精神把这几群
 人聚集在了一起，他们是来自不同领域的黑客，但他们都有一个共同的并且强大
 的敌人：NSA。
 
@@ -503,10 +505,10 @@ review？如果都不信那就得A亲自去做code audit，如果代码多到lib
 额外"的工作量，使用自由开源方案并不代表着就一定安全，一个自由开源软件是
 否安全取决于社区的活跃程度，参与者的代码审计的水平，从企业使用开源方案
 的角度，代码review+audit也是必须的，更重要的是需要对信息安全管理流程进
-行"加固"，更....更重要的是,得回馈社区，只有生态链的成形才能保证最大程度
-的安全性。
+行"加固"，更... ...更重要的是,得回馈社区，只有生态链的成形才能保证最大
+程度的安全性。
 
-Snowden事件证明了FSF和EFF从来没说过谎，2013年的自由软件社区从未如此强大
+2013年，Snowden事件证明了FSF和EFF从来没说过谎，自由软件社区从未如此强大
 过，刚结束的30C3上也聚集无数的黑客商讨对抗NSA的方案，2014年有可能会成为
 地下精神回归的元年....
 
@@ -525,7 +527,7 @@ PHRACK magazine. We look forward to the next 20 years"，甚至地下精神最
 
 感谢诸多朋友们的宝贵意见和修正拼写错误，感谢的人排名不分先后：deftsp,
 LittleFater, phreaker, Robin Lee, Samson, Mike Bai, 修炼中的小鱼，
-yazhouli, yifan, 百由服务员。
+yazhouli, Yifan Jiang, 百由服务员, Tom Li。
 
 
 --[ 6 - References
