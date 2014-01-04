@@ -523,8 +523,10 @@ there will be hackers. As long as there are hackers, there will be
 PHRACK magazine. We look forward to the next 20 years"，甚至地下精神最
 好的体现就是Phrack本身。
 
-感谢诸多朋友们的宝贵意见和修正拼写错误，感谢的人排名不分先后：defsp, 小
-胖, phreaker, Robin, Samson, quickbundle, 小鱼，yazhouli, yifan。
+感谢诸多朋友们的宝贵意见和修正拼写错误，感谢的人排名不分先后：deftsp,
+LittleFater, phreaker, Robin Lee, Samson, Mike Bai, 修炼中的小鱼，
+yazhouli, yifan, 百由服务员。
+
 
 --[ 6 - References
 
