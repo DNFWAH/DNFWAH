@@ -134,9 +134,12 @@ Debugger, GCC, GNU Lib C, GnuTLS, GNU Guile, EMACS, etc。从法律层面上，
 GPL( GNU Public License)在北美和欧洲都受到了法律的保护，有法律也有判例，
 这也归功于无ZF主义中的像Eben Moglen这样的法律领域黑客。在无ZF主义看来，
 苹果和微软都是邪恶的软件帝国，这个帝国尝试用看似很酷的设计把一群傻瓜用
-户禁锢在数字世界的监狱里，甚至最极端的无ZF主义会认为购买M$和苹果的产品
-( windows, office, ipad, iphone, ishit)是为财团提供了研究各种"邪恶"项目
-(比如gene-modified food)的资金,好吧，这是另外一个故事了。
+户禁锢在数字世界的监狱里，此外，从安全性和保护隐私的角度，使用苹果和微
+软的产品也是非常不理智的，比如微软曾经在win98中放置NSA的public key和苹
+果应用商店里那600-700个所谓的白名单应用在old school黑客圈里并非秘密，甚
+至最极端的无ZF主义会认为购买M$和苹果的产品( windows, office, ipad,
+iphone, ishit)是为财团提供了研究各种"邪恶"项目(比如gene-modified food)
+的资金,好吧，这是另外一个故事了。
 
 
 ----[ 1.2 一名黑客的宣言
