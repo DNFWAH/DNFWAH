@@ -46,7 +46,9 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 
 4. Epilogue
 
-5. Reference
+5. Gratitude
+
+6. Reference
 
 
 --[ 0. 纪念Aaron Swartz离开地球一周年
@@ -512,7 +514,19 @@ Snowden事件证明了FSF和EFF从来没说过谎，2013年的自由软件社区
 May the L0rd's hacking spirit guide us!!!
 
 
---[ 5 - References
+--[ 5. 感谢
+
+首先感谢过去几十年中与NSA对抗的黑客们，没有你们也不会有今天的一切，也感
+谢Phrack多年来的作者们，没有Phrack，old school圈里很多人或许不会进入安
+全领域，Phrack Issue 63的intro也写到："As long as there is technology,
+there will be hackers. As long as there are hackers, there will be
+PHRACK magazine. We look forward to the next 20 years"，甚至地下精神最
+好的体现就是Phrack本身。
+
+感谢诸多朋友们的宝贵意见和修正拼写错误，感谢的人排名不分先后：defsp, 小
+胖, phreaker, Robin, Samson, quickbundle, 小鱼，yazhouli, yifan。
+
+--[ 6 - References
 
 Hacking Secret Ciphers with Python
 http://inventwithpython.com/hackingciphers.pdf
