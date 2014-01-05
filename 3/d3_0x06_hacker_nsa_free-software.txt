@@ -1,0 +1,573 @@
+
+[sth0r@shawn-fortress]$ uname -a
+Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linux
+
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #3 File 0x06 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------=[漫谈: 黑客，NSA与自由软件]=------------------=|
+|=-----------------------------------------------------------------=|
+|=-------------------=[ By Shawn the R0ck   ]=---------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ Jan 1 2014  ]=------------------------=|
+|=-----------------------------------------------------------------=|
+
+--[ CONTENTS
+
+0. Aaron Swartz - We should not forget
+
+   0.1 Intro
+
+1. * Manifestos - 3 branches are forked by Hacking spirit
+
+   1.1 GNU Manifesto
+
+   1.2 A Hacker's Manifesto
+
+   1.3 A Cypherpunk's Manifesto
+
+   1.4 extra bonus -- A Biopunk Manifesto 
+
+2. What do we learn from Snowden's disclosure?
+
+   2.1 NSA in your threat model - use crypto
+
+   2.2 Cybersecurity industry standard corruption
+
+   2.3 Tools we can trust
+
+   2.4 Cyberwarfare: Inevitable shit
+
+3. FOSS solution
+
+   3.1 Leap of faith
+
+4. Epilogue
+
+5. Gratitude
+
+6. Reference
+
+
+--[ 0. 纪念Aaron Swartz离开地球一周年
+
+MIT，这个曾经是20世纪黑客的起源地，许多计算机和生物黑客都是在那里成长的，
+这样的一个黑客心目中的圣地却对Aaron Swartz作出了过分的事情，虽然Aaron离
+开我们快1年了，但这样的黑客我们不应该忘记他，纪念Aaron Swartz离开这个星
+球一周年是我们写作的动机之一。
+
+
+----[ 0.1 Intro
+
+                          The natural flow of technology tends to move
+            
+       in the direction of making surveillance easier, and the ability
+       
+       of computers to track us doubles every eighteen months.
+
+                                                Zimmerman's Law
+
+过去的20多年中，FSF(自由软件基金会)和EFF(电子前哨基金会)一直是无ZF主义
+(Anarchy)对抗BIG BROTHER的最前线，这种对抗不仅仅是在技术领域，法律领域
+也是如此，NSA对很多在电子世界的"无ZF主义行为"都非常的头疼，密码学首当其
+冲的，因为密码学自诞生以来就是应用于公开化的场景，对早期密码工程有兴趣
+的朋友可以阅读Hacking Secret Ciphers with Python。
+
+随着自由软件运动在1980年代的兴起，越来越多的安全领域的黑客抱着
+professional paranoia的哲学加入到了其中，利用受法律保护的自由软件许可证
+( GPL, BSD, MIT, OPENSSL)发布了很多优秀的密码应用工具，这让BIG BROTHER
+的偷窥成本急速的增长，另外一方面，在1990年代出现了很多起违反当时USA密码
+出口管制的案例，这一系列的故事都是从1991年6月Philip Zimmermann在互联网
+上公布了PGP加密程序的源代码，FBI对Philip进行了多年的审讯，之后一名UC
+Berkeley的研究生以限制言论自由之名对US政府进行了诉讼，这个1995年著名的
+Bernstein v. United States案例最终导致了1999年判决打印出密码算法的源代
+码属于US宪法对言论自由的保护，之前的数次诉讼和判例也直接或者间接的让US
+政府放宽了密码出口管制，1990年代USA密码管制直接由国土安全局负责，2000年
+以后，密码管制已经放开，并且由商务部负责，这是对抗NSA在法律层面上的一次
+胜利。
+
+安全问题很多时候都归结于信任问题，请大家思考一下无ZF主义为什么会抱着
+professional paranoia的态度去怀疑一切，其核心是不信任NSA，而FSF和EFF所
+推动的自由软件项目又吸引了大批的old school黑客和普通用户，其核心是信任，
+怀疑权威一直以来都是黑客精神中的重要组成部分，即使Pekka从社会学的工作伦
+理的层面上研究的结果也是如此，某哲人讲过：适当怀疑论是必要的，其实安全
+威胁建模考虑NSA和设备供应商就是怀疑权威的体现。
+
+在过去的20多年里，FSF和EFF都不断的在告诉人们真相，可惜大众并没有把"真相
+"当成真相，而这种情况在2013年的Edward Snowden报料了NSA的一系列恶心的偷
+窥行为后，整个世界会由此发生一些变化，虽然不会太大，但也不会太小，在这
+篇文章里我们尝试以无ZF主义的角度，在"后棱镜"的时代性背景下去聊一些有趣
+的故事，内容可能比较零散，聊到哪算哪吧:-)
+
+
+
+--[ 1. 有很多宣言
+
+这个星球上已经存在了很多xxx宣言s，通常人们谈到“宣言"这个词的时候都有一
+种打算向外界公告一些立场，或者我们称为是哲学或者态度的东西，或许对于生
+活在信息时代的黑客们不需要关心太多的"宣言s"，但有那么几个宣言是必须了解
+和明白的，因为他们或多或少的代表了我们的哲学，甚至影响了我们探索个体人
+生意义的道路。
+
+
+----[ 1.1 GNU宣言
+
+		   The best way to predict the future is to invent it.
+
+                                                              Alan Kay
+
+GNU宣言是自由软件运动的发起人RMS于1983年3月发布的，这部宣言是一部里程碑
+式的事件，RMS在其中讲述了GNU项目( GNU's Not Unix)的目标是以纯粹的自由软
+件替代UNIX，虽然GNU项目里的程序都能在UNIX上运行，但GNU系统并不等同于
+UNIX（注:翻看UNIXv7被重写成x86平台的源代码，当年的UNIX的确是所有的软件
+都打包成一个distro然后发布，里面包括了内核,shell以及相关的*utils），在
+GNU宣言中RMS也谈到了当时GNU项目的进度的情况，支持Lisp语言的Emacs编辑器，
+源代码级别的调试器（从时间表看应该就是GDB），兼容yacc的语法分析器，连接
+器和35个工具。
+
+RMS也谈到了他的动机是为了分享，不管怎么说，GNU宣言的确奠定了后来的自由
+软件哲学的很多内容，也是黑客们在自由软件领域的奥德赛之旅的开始，这漫长
+的旅途经历了快30年直到今天涌现出了无数优秀的自由软件:GNU/Linux, GNU
+Debugger, GCC, GNU Lib C, GnuTLS, GNU Guile, EMACS, etc。从法律层面上，
+GPL( GNU Public License)在北美和欧洲都受到了法律的保护，有法律也有判例，
+这也归功于无ZF主义中的像Eben Moglen这样的法律领域黑客。在无ZF主义看来，
+苹果和微软都是邪恶的软件帝国，这个帝国尝试用看似很酷的设计把一群傻瓜用
+户禁锢在数字世界的监狱里，此外，从安全性和保护隐私的角度，使用苹果和微
+软的产品也是非常不理智的，比如微软曾经在win98中放置NSA的public key和苹
+果应用商店里那600-700个所谓的白名单应用在old school黑客圈里并非秘密，甚
+至最极端的无ZF主义会认为购买M$和苹果的产品( windows, office, ipad,
+iphone, ishit)是为财团提供了研究各种"邪恶"项目(比如gene-modified food)
+的资金,好吧，这是另外一个故事了。
+
+
+----[ 1.2 一名黑客的宣言
+
+"It's been a long long time,
+I kept this message for you, Underground
+But it seems I was never on time
+Still I wanna get through to you, Underground..."
+
+
+这个section可能是更多安全领域的old school hacker们所熟悉的内容，如果觉
+得无聊请跳过;-)
+
+从规模性的涌现来看，地下黑客社区是从1980年代形成的，Phrack和2600都是那
+个时代的符号，即使到今天，很多人依然认为Phrack是世界上最优秀的地下电子
+杂志，其实DNFWAH也是受到了Phrack的启发而诞生的，不是吗？
+
+1950年代后期，第1代黑客们正在MIT玩弄着各种有趣的设备，当然也包括无线电
+方面的，在之后的30年中涌现了一大帮电话飞客，也就是今天意义上的通信黑客
+的前身，关于那一段历史可以参阅一本重要的著作EXPLODING THE PHONE: The
+Untold Story of the Teenagers and Outlaws Who Hacked Ma Bell，几乎所有
+的old school hacker们都会收藏这本书。
+
+经历了无数的hacking和对抗后，终于有一些年轻人觉得该总结一些东西了并且分
+享给整个社区，1985年11月17日，Taran King和Knight Lightning开启了Phrack
+Issue 1，在之后的1年里无数的黑客都在Phrack上分享了自己有趣的hacking经历，
+时间转眼到了1986年:
+
++------------------------------------------------------------------
+| GNU项目按照标准的速度进行着，GDB正式发布，GCC正准备用C重写....
++------------------------------------------------------------------
+| 因为毒刺和吹管，苏联入侵阿富汗陷入僵局.............
++------------------------------------------------------------------
+
+但这些事件都不是最重要的，重头戏是早期的玩Phreaking的电话飞客们开始转战
+计算机领域，这就是地下世界传说中的后来有一群既精通通信又精通*NIX系统的
+黑客，抽着大麻，喝着啤酒，唱着自由软件之歌，用着各种自己开发的能运行在
+各种操作系统(GNU/Linux, *BSD, Solaris, AIX, DEC-*, Windows, Macintosh)
+上的工具对整个corenetwork进行着有趣的"研究"......
+
+1986年9月，Phrack Issue 7上刊登了一篇名为"一名黑客的宣言"的文章，由一名
+叫The Mentor的年轻人所写，这份宣言的意义在于他是完全站在个体
+(individual)的角度来诠释了被后来Pekka Himanen称为社会学意义上的黑客伦理，
+这也算地下黑客社区第一次公开的发表关于地下黑客哲学的内容，向人们展示了
+hacking的动机，选择hacking之路主要目的是为了不断的学习和进化，因为不同
+地区（北美，欧罗巴，亚太，南美，etc）的地缘文化所代表的"标准型"无聊社会
+通常给黑客们无数的限制，这自然是黑客们所不喜欢的，所以地下精神(哲学)和
+不同地区的标准型社会主流哲学的对抗从未停止过，黑客想要的其实很简单，就
+是真相，至少在哲学层面上是这样，当然，在Aleph1在Phrack Issue 49发表了那
+篇震撼整个安全领域的论文Smashing The Stack For Fun And Profit的标题就具
+有很深的哲学性隐喻，Fun和Profit并非对立，而为了Profit而选择从hacker成为
+了security professional也不应该受到论断，这2者的关系非常的微妙:
+
+＊Fun，对于一些黑客，hacking是生命的一部分，如果停止了hacking甚至他们无
+法存活下去，记得黑客们都讨厌无聊的社会生活？对于安全领域的黑客们在编写
+poc/exploit时肯定会体验到上帝创世时的快感，比吸大麻或者可卡因更有快
+感？;-)
+
+* Profit，金钱，当然很重要，Whitehat为商业公司而工作，那Blackhat呢？
+
+==> 当然，不论whitehat还是blackhat都可能销售exploit或者干着地下的勾当
+;-) 所以少一些道德上的批判是正确的，不是吗？
+
+Well，其实上面的都不重要，重点是：如果我们
+
+--> 只有Fun的部分，太精神化了点吧，这很难让人们(业界)相信你真是一名
+    real-life安全工程师，更重要的是，这会失去反思你和业界(世界)的关系的
+    机会，而这不利于个体探索人生意义。
+
+--> 只有Profit的部分，wow...这会更糟糕，就像一堆会棍拿着一篇议题跑遍全
+    世界一样，他们和dead walk(行尸走肉)并没太多区别。
+
+我们坚信真正的黑客肯定是同时保持了fun和profit的部分并且有智慧去做一些平
+衡(trade-off)，好吧，扯的有点远了，但我们还是打算谈谈从Phrack看安全领域
+的进化路线图来结束这个section，下面是Phrack从1985年的第1期到2012年的68
+期中Phrack编辑组的信息：
+
+DATE        NAME                                        PHRACKZ
+----------+-------------------------------------------+--------------------
+2010-11-17 The Phrack Staff				(p67..p68)
+2007-05-27 The Circle of Lost Hackers			(p64..p66)
+2001-08-11 The Phrack Staff   			       	(p57..p63)
+1997-09-01 route                                        (p51..p56)
+1997-04-09 route, Datastream Cowboy                     (p50)
+1996-11-08 route, Datastream Cowboy, Voyager            (p49)
+1996-09-01 Voyager, ReDragon, route                     (p48)
+1993-03-01 Erik Bloodaxe                                (p42..p47)
+1991-09-15 Dispater                                     (p33..p41)
+1990-05-28 Crimson Death                                (p31..p32)
+1988-10-12 Taran King + Knight Lightning                (p20..p30)
+1988-06-07 Crimson Death                                (p18..p19)
+1988-04-07 Shooting Shark                               (p17)
+1987-11-01 Elric of Imrryr                              (p16)
+1985-11-17 Taran King + Knight Ligthning                (p01..p15)
+
+1985年到1991年是Phrack也是地下世界最狂热的涌现的时期，在这一时期大部分
+黑客开始接触到了UNIX，并应用之前在电话飞客时代的经验和方法论开始探索新
+的领域：计算机硬件，软件和网络，到了1990年代初期，无ZF主义发起了
+Anti-Security movement(反安全运动)，他们倡导把所有的安全信息都给完全公
+开，这也是Full Disclosure邮件列表诞生的时期，在1993年有一群黑客开始把精
+力放在了互联网的协议TCP/IP的研究上，另外一些人则继续享受挖掘栈的缓冲区
+溢出的乐趣，栈的缓冲区溢出在1988年的Morris蠕虫传播中发挥了巨大的作用，
+1995年Thomas Lopatic发布了过去一年中在Bugtraq邮件列表中关于栈缓冲区溢出
+的研究，1996年Aleph1发布了那篇里程碑式的论文: Smashing the Stack for
+Fun and Profit，之后也出现了著名的字符串格式化漏洞，这就是为什么2000年
+左右的代码审计都是这样做的;-):
+
+-----------------------------------------------
+grep strcpy *.c
+
+grep –E –e ‘printf\s*\([^”]+[,\)]’ *.c
+-----------------------------------------------
+
+还有另外一件时期，Phrack在1990年代和2000年代的影响力巨大而且爆光了很多
+厂商的漏洞，最终US政府在2005年强行关闭了Phrack，为此EFF和FSF都出资跟US
+政府打官司，这期间Steve Wozniak还赞助了一些费用，最终胜诉，这是无ZF主义
+在北美的再一次胜利，这激励了在其他地区生活的黑客们，2007年Phrack重开，
+2007年到现在一共发布了5期，第64期一定不能错过;-)
+
+好吧，讲一个黑客宣言扯了这么一堆东西，希望你还在读.....
+
+
+----[ 1.3 一名电子朋克的宣言
+
+                                          May this night carry my will
+               And may these old mountains forever remember this night
+
+                                        May the forest whisper my name
+          And may the storm bring these words to the end of all worlds
+
+                                                    Ihsahn, "Alsvartr"
+
+电子朋客运动是1990年代由美国数学家Eric Hughes等人发起的，Eric也是“一名
+电子朋客的宣言“的作者，电子朋客运动的主要目的是为了保证个体在信息时代的
+隐私问题，隐私和秘密不是相同的含义，隐私是一些不想让整个世界知道的事情，
+而秘密是一些不想让所有人知道的事情，黑客们认为隐私对于一个开放社会是必
+须的，但如何保证信息时代的隐私呢？答案还是和对抗NSA的问题一样：密码学是
+最有效的途径。
+
+无ZF主义一直都不期望任何政府，公司和其他任何大型商业组织来尝试保证个体
+的隐私权利，所以包括FSF和EFF在内的组织致力于开发一系列的密码软件甚至硬
+件来保护隐私，Eric本人就是地球上第一个发布匿名邮件转发服务程序的作者，
+加密方面有一系列的工具都是old school黑客们最喜欢的包括：GnuPG，TOR，
+OTR等等。GnuPG是GNU项目中的其中一个自由软件项目，主要是提供从1024到
+4096位的非对称加密和签名，这个项目我们得感谢Philip Zimmermann和自由软件
+基金会，这里多说2句，根据Snowden的报料，1024位的非对称密钥已经很危险了，
+因为即使是2048位也只相当于对称密钥在密码学级别强度的128位，其实在PGP邮
+件应用中，old school黑客们已经使用4096位(相当于对称密钥强度的256位)很多
+年了。
+
+电子朋客宣言中提到了另外一个对于开放社会非常重要的问题：必须保证匿名性。
+过去的很多个世纪以来要保证隐私是很难的，但在信息时代这成为了可能，但要
+实现匿名性的核心关键还是在于密码学技术，今天最成功的匿名网络Tor是由EFF
+赞助的项目，其诞生也或多或少的受到了1990年代电子朋客宣言的影响。再谈一
+点关于NSA为什么痛恨Tor?因为Tor自从项目开启后就定期的有研讨会，研讨的题
+目主要集中在“如果我们这样设计,NSA会怎么做？....如果我们这样实现，NSA会
+怎么日我们？"。
+
+
+----[ 1.4 一名生物朋客的宣言
+
+对抗NSA的议题看似跟生物黑客无关，因为今天的主战场还是在信息技术领域，但
+为什么我们还是聊聊生物黑客呢?因为生物黑客和计算机黑客的进化轨迹几乎一模
+一样，连诞生的物理位置都几乎一样，这是巧合？还是涌现？计算机黑客是1950
+年代从MIT起源，之后传播到了西海岸的UC Berkeley，之后影响到了欧洲，之后
+全世界，生物黑客的进化地图和计算机黑客几乎一模一样，这里我们只是给自己
+一个提醒：下一个对抗NSA的战场可能是生物领域，或许战争已经开始。
+
+一名生物朋客的宣言是由现居比利时的美女生物黑客Meredith L. Patterson在
+2010年1月30日所写,这份Manifesto的内容对于计算机黑客而言很容易理解,黑客
+伦理影响的第一大领域当然是计算机领域,Creative Commons许可证作为类GPL在
+艺术领域的变种一直支撑着像Clearbits(当年的beta legal torrents)这样的艺
+术黑客社区的发展.但这个时代性的背景毋庸置疑的指向了科技,而能改变未来的
+三大科技就是AI, Biotechnology和Quantum Mechanics,如果非要用
+Singularitarian的术语:G(enetic), N(anotechnology), R(obtics);whatever,
+所有的技术的方向都是朝着Strong AI进军.当然这个过程会经历几个阶段,而这个
+阶段(2011--2022)则是生物科技商业化的最后预备阶段,难怪Bill Gates也在劝大
+家去研究molecular biology,生物黑客至今的影响力已经超过艺术黑客,成为黑客
+伦理直接影响下的第2大社区.
+
+从James Weis的文章Biohacking: The Beginning of the Biological
+Revolution(生物hacking:生物革命的开始)中可以看到越来越多的黑客开始关注
+生物领域，在1950年代诞生于美国东海岸的MIT的黑客伦理直接开创了电子计算机
+革命的产生，在车库里进行有趣hacking的范式也开始出现在了生物领域，黑客们
+通过自己亲手来制造一些设备比如用于操作和拷贝DNA的开源的openPCR的成本已
+经降到了500美刀，而像DIYbio，Genspace和Biohack这样的生物黑客社区也开始
+出现在了美国东海岸，黑客伦理再一次的在非计算机领域中涌现出了无数的黑客，
+过去的Cyberpunk变成了今天的Biopunk,今天的生物黑客将会成为明天的技术界领
+袖，或许早期的黑客Bill Gates的观点是正确的：“如果你想为世界带来巨大的变
+化，就应该研究分子生物学。这一领域的研究也需要黑客精神，而且将对人类产
+生同样深远的影响。” 20世纪的物理学的迅猛发展让人类制造计算机硬件成为了
+可能，形式化系统则成为了人类设计软件的房角石，但随着抽象层(abstract
+layer)和交叉学科中耦合度的增加让人类在复杂系统面前变成了弱智，我们不得
+不从已经习以为常的还原论哲学转向对整体论的思考，从Unix系统诞生至今40年
+的过程中，我们从计算机软硬件设计中获得了无数处理复杂性的经验，这些经验
+将把我们带向下一个范式的转移---生物领域，愿科技之神光照Alonzo Church,
+Alan Turing, John von Neumann的后代.....................
+
+
+--[ 2. 我们从Snowden的报料中学到些什么？
+
+通过Snowden的报料不同的黑客肯定会有不同的解读，我们在这里主要以无ZF主义
+的个体和自由软件社区的角度来讨论从此次事件中学习到的东西，这个section有
+一些内容是参考了安全领域的大哲学家Bruce Shneier和自由软件法律领域黑客
+Eben Moglen的访谈议题：斯诺登，NSA和自由软件。Bruce Schneier相信不容介
+绍了，这里顺便提一下Eben Moglen是美国哥伦比亚大学法律及法律史教授，自由
+软件基金会理事会成员及义务首席法律顾问，软件自由法律中心创办人及主席，
+在"棱镜"事件以后，Eben以Snowden and the Future为议题有一系列的研讨会，
+有兴趣的朋友可以看看。
+
+
+----[ 2.1 NSA在你的威胁建模里 - 使用密码工程
+
+很多人说不care很多潜在的安全性问题，甚至不少人相信AES是绝对安全的，在安
+全领域当听到“绝对”这个词时你得去反思了，这是professional paranoia基本的
+态度，当然，在绝大部分情况下AES还是是安全的，但如果你的威胁建模中有NSA
+呢？是否需要重新来评估下这个对称加密系统选型的问题？
+
+虽然报料中看到NSA的所作所为就跟硬科幻小说里描写的一样，即使如此NSA肯定
+还是有成本限制的问题，NSA也需要一大群工程师来完成那些巨大的工程，合理的
+假设应该是"NSA会有一些我们不知道的密码技术"，信息的不对称是客观存在的，
+过去的多年里NSA都知道自由软件社区在干些什么，但我们很少知道NSA在干些什
+么，从这个角度，或许我们应该感谢Snowden在某种程度上打破了这种信息的不对
+称。
+
+另外一方面，自动化攻击平台是NSA的必备武器，原因很简单，即使是NSA也不可
+能随便在街上找个人并且能在短期内把他们训练成old school黑客，old school
+黑客在这里主要指那些精通*NIX系统，网络（互联网和电信网），逆向工程技术，
+密码学，C/ASM的代码审计等底层技术的人。
+
+为什么密码学特别是端到端的加密是对抗NSA的有效途径呢？因为从报料的内容来
+看，密码学本身很难攻破，NSA并非在数学层面上具有优势，而更多的是通过盗取
+私钥，伪造证书和采用其他非密码学手段来达成那些肮脏的目的。甚至在对
+Google监听的案例中，NSA也没有破解从用户浏览器到Google服务器的加密数据，
+因为Google默认使用了客户端SSL/TLS认证，但NSA成功的监听了Google数据中心
+之间的流量，可能是因为成本问题Google并没有在数据中心的数据传输中加密。
+不管从什么角度，密码学仍然是最好的对抗NSA的手段之一。
+
+
+----[ 2.2 信息安全行业标准的腐化问题
+
+Dual_EC_DRBG(双椭圆)是一种伪随机数生成器，在2006年时被NIST提案可作为国
+际使用，仅几个月以后就有人指出这可能是NSA的后门，安全领域的大哲学家
+Bruce Schneier在2007年也提出了质疑，Snowden在报料一连串"Big Brother"的
+全球监控计划后，RSA正式建议用户停用 Dual_EC_DRBG(solidot的中文报道)，这
+一事件也影响到了自由软件社区，特别是OpenSSL和GnuTLS的实现，OpenSSL在
+2011年的FIPS模块当中加入了Dual_EC_DRBG，GnuTLS的libnettle和Mozilla-NSS
+并没有DUAL_EC_DRBG的实现。
+
+在这个问题上Bruce认为并不是所有的安全标准都存在安全隐患，他认为AES仍然
+是安全的，我们很难将Dual ECC的问题怪罪于安全标准的制定流程，实现更为重
+要，国际手机标准的密码算法A5/1并没有NSA的参与，但事实证明安全性存在很严
+重的问题，安全标准的问题的关键在于是否有公众的参与，要想保证安全标准不
+会腐化，必须有不同类型的人的参与，笔者认为得有自由软件的狂热分子，哲学
+性的无ZF主义以及像Bruce这样的人参与。
+
+
+----[ 2.3 哪些工具我们可以信任？
+
+从用户的角度，GnuPG, Tor, OTR都是可以信任的，从开发者的角度，OpenSSL,
+GnuTLS是可以信任的，因为这些自由软件项目的参与者们有一些是
+security/crypto paranoia，他们的daily bread就是思考NSA会如何攻击这些项
+目，从设计和实现的角度，很多自由软件都非常不错。
+
+
+----[ 2.4 网络战：不可能避免的狗屎
+
+有人问Bruce当NSA盯上你了怎么办，Bruce认为如果作为个体被NSA这种级别的机
+构盯上几乎无能为力。这可是超级APT啊;-) 回到正题，网络战会结束吗？几乎很
+难，如果国家间的对抗哲学都认为是要先发制人的话，其实最后双方都会成为受
+害者。在这种背景下是否我们变得没有希望呢？Bruce对于这个的看法倒是挺积极
+的:"社会的进步是因为人们勇于去思考那些unthinkable的事情，然后20,30年以
+后每个人都会说那是个很好的idea，当然这会需要很长的时间，但必须得有个开
+始。"
+
+
+--[ 3. 自由软件的解决方案
+
+Bruce Schneier认为自由开源软件比闭源然就更安全。基于2个基本的理由：
+
+1，任何人都可以阅读源代码
+
+2，很难植入后门
+
+我们大概不需要那么的担心（但不是不担心）NSA会往像linux内核，GCC，Glibc，
+OpenSSL这些基础性的自由软件中植入后门。根据爆光的文档表明，NSA其实是极
+端不愿意冒任何风险，NSA非常不愿意被爆光，所以NSA通常会选择"安全"的途径
+去行动，NSA时刻都在反思着他们的原则：“老子干坏事千万别被逮到。”，而自由
+软件社区有很多old school黑客在过去的20多年中为无数的项目都做代码审计和
+commit review，这也是为什么要给编译器植入后门并非易事。
+
+而很多企业客户在使用硬件盒子产品(传统三层状态防火墙, IDS/IPS, UTM,
+NGFW, etc)也遭受了空前的安全隐患，很多硬件盒产品在部署很多年都没有更新
+规则，甚至都没有更新已公开漏洞的补丁，一些商业厂商为了推销产品而灌输了
+一些错误的观念给客户：部署了硬件盒子就"安全"了，这一基本的理念完全违反
+了old school安全原则：
+
+---------------------------------------------------
+安全不是：
+
+安全不是安装一堆防火墙
+安全不是一个产品或者服务...( by Bruce Schneier)
+安全不是一个产品，而是一个持续不断的过程...( by Bruce Schneier)
+安全审计不是"扫描一堆端口"
+---------------------------------------------------
+
+---------------------------------------------------
+安全是：
+
+安全是考虑"你能在不影响业务的情况下组织不被入侵吗？"
+
+安全是最薄弱的防线将成为你的短板
+
+安全是你所在企业的资源(机器和人)的风险管理，需要专业技能，时间管理，实
+施成本，数据备份/恢复的一系列流程
+
+安全是关乎过程，方法论，成本，策略和人
+
+安全是考虑"有人能社工进入公司并且访问计算机，磁盘和磁带..."
+
+安全是24 * 7 * 365...持续不断..并且永不停止
+---------------------------------------------------
+
+过去的几年里，越来越多的企业管理层意识到了那些硬件盒子并不能解决真正的
+问题，这里还得指出的是其实那些硬件盒子里运行着很多自由开源软件(linux内
+核, snort, surricata, BRO, l7, etc)但很多厂商从来没有为社区有所贡献。真
+正的企业安全是得靠雇佣old school黑客们在日常的工作流程中持续不断的去改
+进，当然，主流市场宣传"盒子万能论"和很难找到合适的old school黑客是2件事
+情;-)
+
+站在自由软件支持者的角度，我们并非认为那些硬件盒子不重要，而是需要其他
+的一些组合。Design for failure是无奈现状下的唯一现实出路，商业盒子加上
+开源方案的组合并非不可能，这样可以把不放心的部分相互cover一下，这是一种
+很重要的模式；大家因该把关注点从“盒子”，“产品”，“技术”更多往实处落，怎
+么设计，怎么开发，怎么配置？没有这些细节，都是夸夸其谈！而自由开源社区
+和old school黑客们在这方面给大家打好了很多基础。
+
+另一方面，自由开源软件可以为中小企业极大的降低成本，比如说加固服务器的
+需求，自由开源软件的解决方案可以非常快速的使用
+iptables/snort/psad/tcpwrapper/apparmor/openssl/apache搭建出系统层面的
+加固方案，而WEB层面也可以借助像DJANGO的内在规则以及mod_security来实现。
+
+
+----[ 3.1 信仰的飞跃
+
+好吧，我们讲了一大堆，其实上面的内容并不像听上去的那么靠谱，或许你也觉
+得听上去也不怎么靠谱？:-)
+
+事实上没人能保证100%的安全，没有个体或者公司有能力去审计他们使用的所有
+软件的源代码，即使你有无限的资源也很难下定决心去这么干，MIT的CS第一门课
+程就告诉了未来的monkey-coder们，编程从本质上是一个信仰问题，即Leap of
+faith(信心的飞跃)，这个词常被哲学界用于描述跨越本质界和现象界的鸿沟的唯
+一途径，回到正题，如果程序员A在写程序F时需要引用库H，但H又是由程序员B所
+编写，那你在写程序时就需要完全的信任B。但凭什么A会信任B所编写的程序H？
+因为我们做过code audit？或者是我们信任某自由软件社区曾经做过仔细的
+review？如果都不信那就得A亲自去做code audit，如果代码多到libreoffice这
+种级别呢？如果BOSS要求A必须在1个月内完成开发，那A只能被迫的信任B所编写
+的库H，最终A完成了信仰的飞跃。如果是使用GCC，你还是得多给自己点信心，克
+尔凯郭尔会怀疑GCC吗？;-)
+
+
+--[ 4. 结语
+
+自由软件运动，电子朋客运动和地下安全世界，这看似三个完全不相干的群体却
+有着共同的哲学背景：黑客伦理，或者直接叫黑客精神吧。是黑客精神把这几群
+人聚集在了一起，他们是来自不同领域的黑客，但他们都有一个共同的并且强大
+的敌人：NSA。
+
+这场没有硝烟的战争还会持续下去，相信NSA还是会不断的给自由软件社区带来"
+额外"的工作量，使用自由开源方案并不代表着就一定安全，一个自由开源软件是
+否安全取决于社区的活跃程度，参与者的代码审计的水平，从企业使用开源方案
+的角度，代码review+audit也是必须的，更重要的是需要对信息安全管理流程进
+行"加固"，更... ...更重要的是,得回馈社区，只有生态链的成形才能保证最大
+程度的安全性。
+
+2013年，Snowden事件证明了FSF和EFF从来没说过谎，自由软件社区从未如此强大
+过，刚结束的30C3上也聚集无数的黑客商讨对抗NSA的方案，2014年有可能会成为
+地下精神回归的元年....
+
+
+May the L0rd's hacking spirit guide us!!!
+
+
+--[ 5. 感谢
+
+首先感谢过去几十年中与NSA对抗的黑客们，没有你们也不会有今天的一切，也感
+谢Phrack多年来的作者们，没有Phrack，old school圈里很多人或许不会进入安
+全领域，Phrack Issue 63的intro也写到："As long as there is technology,
+there will be hackers. As long as there are hackers, there will be
+PHRACK magazine. We look forward to the next 20 years"，甚至地下精神最
+好的体现就是Phrack本身。
+
+感谢诸多朋友们的宝贵意见和修正拼写错误，感谢的人排名不分先后：deftsp,
+LittleFater, phreaker, Robin Lee, Samson, Mike Bai, 修炼中的小鱼，
+yazhouli, Yifan Jiang, 百由服务员, Tom Li。
+
+
+--[ 6 - References
+
+Hacking Secret Ciphers with Python
+http://inventwithpython.com/hackingciphers.pdf
+
+Bernstein v. United States
+http://en.wikipedia.org/wiki/Bernstein_v._United_States
+
+Bruce Schneier and Eben Moglen: Snowden, NSA and free software
+https://www.schneier.com/blog/archives/2013/12/eben_moglen_and.html
+
+Interview with Snowden
+http://v.youku.com/v_show/id_XNTcwMTQ5MjI0.html
+
+Snowden and the Future
+http://snowdenandthefuture.info/
+
+The GNU Manifesto by RMS
+https://www.gnu.org/gnu/manifesto.html
+
+Hacker's Manifesto by _The Mentor, Phrack Issue 7
+http://phrack.org/issues.html?issue=7&id=3&mode=txt
+
+A Cypherpunk's Manifesto by Eric Hughes
+http://w2.eff.org/Privacy/Crypto/Crypto_misc/cypherpunk.manifesto
+
+The Many Flaws of Dual_EC_DRBG
+http://blog.cryptographyengineering.com/2013/09/the-many-flaws-of-dualecdrbg.html
+
+Trends in Cyber Security by Dan Geer
+http://geer.tinho.net/geer.nro.6xi13.txt
+
+Anarchism Triumphant: Free Software and the Death of Copyright
+http://old.law.columbia.edu/my_pubs/anarchism.html
