@@ -1,0 +1,554 @@
+[sth0r@shawn-fortress]$ uname -a
+Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linux
+
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #3 File 0x03 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------=[Security shit in QA work]=-------------------=|
+|=-----------------------------------------------------------------=|
+|=-------------------=[ By Shawn the R0ck   ]=---------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ Jan 21 2013  ]=-----------------------=|
+|=-----------------------------------------------------------------=|
+
+--[ Contents
+
+0. Motivation
+
+1. Current situation
+
+2. Daily bread in Security QA
+
+   2.1 Examples( CVE-2012-3524, CVE-2012-0056)
+
+   2.2 Is automation testing possible?
+
+3. Static Analysis
+
+   3.1 Source code scene
+
+   3.2 Binary scene
+
+4. Conclusion
+
+   4.1 Gratitude
+
+5. References
+
+6. Further reading
+
+
+
+--[ 0. Motivation
+
+MIT, the origin of hacker ethic in 20th century. Many computer/Bio
+hackers grew in there. It was the "sacred" place in hacker's heart for
+years. But what it did to Aaron[1] recently really shocked me. MIT,
+What the fuck have you done?  This is my 1st time to point my fucking
+mid-finger to you. Fuck you, MIT! Aaron was a great hacker. He
+followed the hacker ethic and fought for individual/information
+freedom in his short/valuable life. He had done much more than I
+do. This article will be dedicated to him! I won't forget him. We, as
+the whole hacker community won't forget him. This is my 1st reason to
+write this article.
+
+My second reason is that I'm a QA engineer. My day job is doing some
+sort of boring stuff, like functional testing. However, I've been
+hacking on some security stuff as my night job in past few
+months. Then I figured out even in daily QA work, there are still a
+lot of fields waiting for your hack-in. I'd like to share something
+with you guys in this very introduction-level article.
+
+
+--[ 1. Current situation
+
+Before we dive into the security world. We are going to discuss the
+situation we have today in QA process when we face the security
+issues. Most QA dept only concern the functional testing with very
+little time figuring out or measuring for security risks. Meanwhile,
+both the commercial project or open source project are lack of
+time/budget to do the security testing in QA. Think about this scene:
+What would a experienced QA engineer do when he do a new test task in
+the 1st place? He is most likely to expect the behavior of the
+software acting like he did before, isn't he? That means, most QA guys
+would expect the testing result is what he/she expected. Well, sounds
+weird...sometimes, the truth also sounds absurd.
+
+Well, Rafal Los's article "Why QA Doesn't Do Security Testing"[2] might
+give you a better explanation.
+
+
+--[ 2. Daily bread in Security QA
+
+Even in the most creative job position there are still sort of boring
+routine things have to be done, so does the security QA work. The
+workflow is more or less like the figure below:
+
+Figure 1: Security QA routine
+
+      +-----+    +----------------+   +----------------+   Yes    +--------+ invalid  +-------------+
+  --->| BUG |--->| Security issue?|-->| exploit exist? |--------->| Verify |--------->| Smoke break |
+      +-----+    +----------------+   +----------------+          +--------+          +-------------+
+                                            | No                      | valid
+                                           \*/                       \*/
+                                      +----------------+          +-----------+
+                                      | Write your own |          | Automated |
+                                      +----------------+          +-----------+
+
+
+Firstly, QA guy must find the bug which leads to an security
+issue. The question is where the hell these sources are from. The
+source could be from an mailinglist, such as Full-disclosure[3] and
+OSS-security[4], or from some exploit collection website, like
+exploit-db[5]. Yes, it also may be from the underground
+community. When you know an security issue occurs, the next thing you
+possibly could do is info collection. Check the issue if someone
+already filed an CVE. If it has an CVE-id[6], you could check it out
+in the website.
+
+Once you figure out what shits cause the issue. You should do
+more. Search the exploit and verify it. Or even you could write your
+own exploit if you like. Finally, an verified( valid ones) exploit
+should be added into the QA automation process that would be make it
+easier to do regression testing in the next release.
+
+
+----[ 2.1 Examples( CVE-2012-3524, CVE-2012-0056)
+
+I'll give two real life examples for demonstration. The 1st one is an
+security issue happened in CVE-2012-3524( dbus) last year. In an
+amazing mid-night( who can tell which mid-night is not amazing), I was
+walking around on exploit-db *street*... Then I found( Source) this:
+
+http://www.exploit-db.com/exploits/21323/
+
+Sebastian Krahmer wrote this exploit and shared with the
+community. This issue already had an CVE-id. Then I searched the
+information about this issue:
+
+http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2012-3524 
+
+and also searched in SUSE bugzilla:
+
+https://bugzilla.novell.com/show_bug.cgi?GoAheadAndLogIn=1&id=697105
+
+According to the description from CVE site:"libdbus 1.5.x and earlier,
+when used in setuid or other privileged programs in X.org and possibly
+other products, allows local users to gain privileges and execute
+arbitrary code via the DBUS_SYSTEM_BUS_ADDRESS environment
+variable. NOTE: libdbus maintainers state that this is a vulnerability
+in the applications that do not cleanse environment variables, not in
+libdbus itself: 'we do not support use of libdbus in setuid binaries
+that do not sanitize their environment before their first call into
+libdbus.'"
+
+That description was pretty clear. I'm not an libdbus developer but I
+thought I knew what happened in there, basically. What next? Yeah, the
+simplest step is to verify the exploit:
+
+1st round
+------------------------------------------------
+Testing: SLES 11 SP2 with kernel 3.0.13-0.27-default
+shawn@localhost:~> ./a.out
+[*] Waiting 10s for dbus-launch to drop boomshell.
+......
+...
+[!] Hurra!
+bash-3.2# id
+uid=0(root) gid=100(users) groups=0(root),16(dialout),33(video),100(users)
+Result: It works.
+-------------------------------------------------
+
+2st round
+-------------------------------------------------
+Testing: SLES 11 SP2 with kernel 3.0.38-0.5-default
+shawn@linux-ije7:~> ./a.out
+[*] Waiting 10s for dbus-launch to drop boomshell.
+..........
+(EE) Failed to load module "freetype" (module does not exist, 0)
+(EE) FBDEV(0): FBIOPUTCMAP: Invalid argument
+(EE) FBDEV(0): FBIOPUTCMAP: Invalid argument
+............
+-------------------------------------------------
+
+Result: This bug seems fixed.
+
+For more detail log:
+
+https://github.com/citypw/security-regression-testing-for-suse/blob/master/sle11-sp2/lib/21323-dbus_local_pri_esc.log
+
+
++--------------------------------------+
+| Okidoki, let's roll the next example |
++--------------------------------------+
+              |
+              |
+             \*/
+
+CVE-2012-0056, Local Root Privilege Escalation. The same steps like
+above: SOURCE/INFO COLLECTION/VERIFY.
+
+In an amazing mid-night, I walked again...then I got the exploit:
+
+http://www.exploit-db.com/exploits/21323/
+
+Then found the latest version:
+
+http://git.zx2c4.com/CVE-2012-0056/tree/mempodipper.c
+
+SUSE bugzilla:
+
+https://bugzilla.novell.com/show_bug.cgi?id=742279
+
+
++-----------------------------------------------------------------------+
+| Right now, let's find out what caused this issue. This is not a quite |
+| long story but very interesting:                                      |
++-----------------------------------------------------------------------+
+                 |                                 |
+                \*/                               \*/
+
+Mar 2011, GNU/Linux kernel developers were thinking that always
+“trusting” users was not a bad idea. They believed
+__check_mem_permission() was the silver bullet for security
+checking. Then they modified a few lines of source code to allow users
+to write anything to /proc/self/mem since 2.6.39:
+
+http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=198214a7
+
+I tested this exploit on Slackware 13 with kernel 2.6.39 and it
+worked. The normal user actually got the root privilege. But it failed
+on SLES 11 SP2 with kernel 3.0.13-0.27-default, why? I took a glance
+at the source code, the below snippet was still in SUSE kernel:
+
+-#define mem_write NULL
+-
+-#ifndef mem_write
+-/* This is a security hazard */
+
+Aha, it seemed a SUSE fix, I guessed! Because the upstream fix should
+be like this:
+
+http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=e268337
+
+When I ran the exp...
+
+shawn@localhost:/data> ./a.out
+......
+[+] Ptrace_traceme'ing process.
+[+] Error message written. Single stepping to find address.
+
+See, PIE hardening was working though. But this was a vendor fix from
+SUSE. Fortunately, kernel 3.0.18 fixed this bug in upstream.
+
++-----------------------------+
+|Comment from Marcus Meissner |
++-----------------------------+
+             |
+            \*/
+
+The kernel changes entry shows where CVEs and bugs are fixed and with
+what patch:
+
+(rpm -q --changelog kernel-default)
+-------------------------------------------------------------------
+Fri Jan 20 16:02:01 CET 2012 - mhocko@suse.cz
+- patches.fixes/proc-enable-writing-to-proc-pid-mem-revert.patch:
+proc: enable writing to /proc/pid/mem (bnc#742279
+CVE-2012-0056).
+so this specific bug was fixed before the shipment of SLES 11 SP2
+itself with a regular patch backport.
+
+
+Result: this exploit failed on SLES 11 SP2.
+-------------------------------------------------------------------
+
+----[ 2.2 Is automation testing possible?
+
+Is it possible to make exploit testing automated? Yes, it is. Because
+CTCS( Cerberus Test Control System[7]) is the proper tool that we can
+use. Firstly, install the ctcs toolkit:
+
+apt-get install ctcs
+
+I created a example here:
+https://github.com/citypw/security-regression-testing-for-suse/tree/master/automation_testing/qa_test_security
+
+Download it and move the "qa_test_security" directory to /usr/lib/ctcs:
+
+shawn@bt:/security-regression-testing-for-suse/automation_testing$ cp -af qa_test_security /usr/lib/ctcs/
+
+root@bt:/usr/lib/ctcs# cd qa_test_security/
+root@bt:/usr/lib/ctcs/qa_test_security# ls
+qa_security.tcf  README  sec.sh  uname26-kernel-info-leak.c
+root@bt:/usr/lib/ctcs/qa_test_security# ctcs qa_security.tcf 
+Initializing test run for control file qa_security.tcf...
+Current time: Thu Jan 17 23:43:28 CST 2013
+**** Test in progress ****
+\33[31m\33[5m\33[1mThu Jan 17 23:43:28 CST 2013: security FAILED: on 1/1 after 0s\33[0m
+**** Test run complete ****
+Current time: Thu Jan 17 23:43:29 CST 2013
+Exiting test run..
+Displaying report...
+Total test time: 1s
+Tests FAILED:
+security ran 1 times in 1s, failed on 1 attempts.
+**** Test run completed with errors ****
+
+Take a look at the log:
+--
+3.2.6
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+2.6.42
+55f604000000730010005f770b00e0d677c10000000000000000a03fe3f1358e04c100ec19f1309455c18c3fe3f1e0d677c1a03fe3f189e529c1
+Leaked 58 bytes!
+Leaked
+Thu Jan 17 23:45:45 CST 2013: security FAILED: on 1/1 after 1s
+1 fail 0 succeed 1 count
+
++-------------------------------------------+
+| Keep this in mind: fail ==> exploit works |
++-------------------------------------------+
+
+
+--[ 3. Static Analysis
+
+OKidoi, I did bullshit a lot, didn't I? The discussion of
+functional-level exploit testing is almost finished. This section will
+talk about static analysis. Static analysis is the one of the
+important paths that bug-hunter would use for bug hunting. The
+analysis targets are source code and binary. SUSE is a free/open
+source community-based company. We do review the source code for bug
+hunting in most time. In my point of view, reviewing the source code
+of the part which static analysis tools generates the report is very
+important in QA. Because security emergence response team has a high
+daily workload and the security research guys also don't have enough
+time to review the huge number of false alerts.
+
+----[ 3.1 Source code scene
+
+According to FX's slide[8], it's quite easy to do bug hunting in
+1990s. Only one line of script could do the static analysis work:
+
+grep strcpy *.c
+
+Hackers never stopped digging more shit. Until 2000s, string format
+vulnerability became a big issue. Then bug hunter was trying to find
+them:
+
+grep –E –e ‘printf\s*\([^”]+[,\)]’ *.c
+
+Today, we use static analysis tools instead of simple script. Let's
+see a real life example of static analysis for the bug hunting. I
+will only use one of the open source static analysis tools
+"flawfinder"[9] in the demonstration.
+
+This one is CVE-2012-5580. I'm not sure if Matthias Weckbecker found
+this issue by static analysis[10]. But we can use flawfiner to
+retrospect the virtual bug hunting scene. Download the libproxy 0.3.1
+at first:
+
+http://libproxy.googlecode.com/files/libproxy-0.3.1.tar.bz2
+
+shawn@shawn-fortress ~/Downloads/libproxy-0.3.1 $ flawfinder src/
+............
+............
+src/bin/proxy.c:92:  [4] (format) printf:
+  If format strings can be influenced by an attacker, they can be
+  exploited. Use a constant for the format specification. 
+............
+............
+Hits = 106
+Lines analyzed = 4845 in 0.79 seconds (16797 lines/second)
+Physical Source Lines of Code (SLOC) = 2910
+Hits@level = [0]   0 [1]  66 [2]  19 [3]  11 [4]  10 [5]   0
+Hits@level+ = [0+] 106 [1+] 106 [2+]  40 [3+]  21 [4+]  10 [5+]   0
+Hits/KSLOC@level+ = [0+] 36.4261 [1+] 36.4261 [2+] 13.7457 [3+] 7.21649 [4+] 3.43643 [5+]   0
+Minimum risk level = 1
+Not every hit is necessarily a security vulnerability.
+There may be other security vulnerabilities; review your code!
+
+              /*\            
+               |
++--------------------------------+
+| This one is not false positive |
++--------------------------------+
+
+Take a look at this snippet:
+
+void
+print_proxies(char **proxies)
+{
+        for (int j = 0; proxies[j] ; j++)
+        {
+                printf(proxies[j]); /* &^*%#$@~! */
+
++----------------------------------+
+| printf( intput-string-from-user) |
++----------------------------------+
+          |
+          |     +--------------------------------------------------+
+          +---> | is a classic type of string format vulnerability |
+                +--------------------------------------------------+
+
+Yes, you caught the bug, after reviewing hundreds even thousands
+LOC finally you did it. Probably there are two points we could improve
+our work and reduce time cost.
+
+1, Review the higher level priority report at first even the false
+positives are lot out there.
+
+2, Buying the commercial static analysis tools could decrease the
+number of false positive reports, such as Coverity.
+
+Which means, security QA guys still have a lot of work to do. I
+reviewed every reports about string format vulns for openssl-0.9.8j
+and verified them all as false positive. It took hours and then got
+nothing "aha" news. This is a kind of code audit work, isn't it?
+
+----[ 3.2 Binary scene
+
+Binary static analysis is very popular in closed-system like
+M$-Windows/Mac OSX. Most security issues happened in GNU/Linux are
+only matter of open source. So, the binary scene in GNU/Linux is much
+less than closed-system at least for now. But, there are still some
+exceptions out there. Wirenet.1 is one of them and it was the only
+binary stuff I handled in 2012. I won't discuss this topic any further
+because I'm not good at binary static analysis. You may want to take a
+look at the testing log for Wirenet.1:
+
+https://github.com/citypw/security-regression-testing-for-suse/tree/master/virus-trojan
+
+
+--[ 4. Conclusion
+
+Information security is an interdisciplinary field. When you read The
+Circle of Lost Hackers's paper[11] in Phrack Issue 64, Steve Levy's
+book Hackers: Heroes of the Computer Revolution[12], Pekka Himanen's
+book The Hacker Ethic: and the Spirit of the Information Age[13],
+Kevin Mitnick's book The Art of Intrusion, and many great materials
+like them, you will feel how huge of this interdisciplinary field is.
+It includes philosophy, psychology, sociology, computer science,
+software engineering( secure coding), cryptography, communication,
+ethic, etc. Yes, it's a complex system. So I list my conclusion for
+the work in past few months:
+
++-------------------------------------------------------------------------+
+| No one can know all of these shits!                                     |
++-------------------------------------------------------------------------+ 
+| Security is not only the security guys' problem.                        |
++-------------------------------------------------------------------------+
+| ASLR/PIE/RELRO/FORMAT_FORTIFY/STACK CANARY/NX hardenings are needed     |
++-------------------------------------------------------------------------+
+| Security testing is only a technique starting point.                    |
++-------------------------------------------------------------------------+
+| Security is an idea. Idea is that no matters, you can't destroy an idea |
++-------------------------------------------------------------------------+
+                             |
+                            \*/
+        +-----------------------------------------------------------------+
+        | Security is an endless topic, it will longer live than our life |
+        +-----------------------------------------------------------------+
+
+
+----[ 4.1 Gratitude
+
+I know nothing about software security 8 months ago. I've started my
+hacking journey at io-wargame in May 2012. Then I hacked some old
+school tricks while I was reading the Phrack. Then I did these
+security testings. I wrote simple example as POC code while learning
+the security stuff. And most examples I've been uploaded into my
+repo[14].
+
+In the past 8 months, there are a lot of people I want to thank: ea,
+bla, narhen, Nobody-RC...And I really appreciate that SUSE security
+guys taught me a lot of valuable shits. You guys are fucking awesome!
+
+Finally, thanks to Phrack[15] editors/authors again. Without you guys'
+contribution to Phrack, I really have no idea about where should I
+wired in.
+
+btw: The people who are reading here means you've been offering
+mins/hrs of your valuable life time to review my shit! Thanks for your
+patience! I hope my shit won't fuck you mind. If it does, I'll give
+you a cigarette.
+
+
+|=-----------------------------------------------------------------------=
+|=--M A Y   L 0 R D ' s  H A C K I N G  S P I R I T  G U I D E  U S !!!--=
+|=-----------------------------------------------------------------------=
+
+
+--[ 5. References
+
+[1] Aaron Swartz Commits Suicide
+http://news.slashdot.org/story/13/01/12/1240255/aaron-swartz-commits-suicide
+
+[2] Why QA Doesn't Do Security Testing
+http://www.infosecisland.com/blogview/10736-Why-QA-Doesnt-Do-Security-Testing.html
+
+[3] Full-Disclosure:
+http://lists.grok.org.uk/pipermail/full-disclosure/
+
+[4] OSS-security:
+http://www.openwall.com/lists/oss-security/
+
+[5] Exploit-db:
+http://www.exploit-db.com/
+
+[6] CVE-id:
+http://web.nvd.nist.gov/view/vuln/search?execution=e2s1
+
+[7] Cerberus Test Control System
+http://sourceforge.net/projects/va-ctcs/
+
+[8] Try Harder 2 Be Yourself
+http://phenoelit.org/stuff/Zeronights_Keynote.pdf
+
+[9] Flawfiner
+http://www.dwheeler.com/flawfinder/
+
+[10] libproxy CVE request 
+http://www.openwall.com/lists/oss-security/2012/11/27/5
+
+[11] A brief history of the Underground scene
+http://www.phrack.org/issues.html?issue=64&id=4&mode=txt
+
+[12] Hackers: Heroes of the Computer Revolution
+http://hfg-resources.googlecode.com/files/levy_ann.tar.gz
+
+[13] The Hacker Ethic: and the Spirit of the Information Age
+http://hfg-resources.googlecode.com/files/The.Hacker.Ethic.pdf
+
+[14] Simple examples wrote in the hacking journey
+https://github.com/citypw/citypw-SCFE/tree/master/security
+
+[15] Phrack
+http://www.phrack.org/
+
+
+--[ 6. Further reading
+
++-----------------------------------------------------------------------+
+|    N A M N                                     |   A U T H O R / s    |
++-----------------------------------------------------------------------+
+| Hacking: The Art of Exploitation, 2nd Edition  | Jon Erickson         |
++-----------------------------------------------------------------------+
+| A Bug Hunter’s Diary                           | TOBIAS KLEIN         |
++-----------------------------------------------------------------------+
+| HACKING EXPOSED LINUX 3rd edition              | Many authors         |
++-----------------------------------------------------------------------+
+| The Shellcoders Handbook 2nd edition           | A, H, L, R           |
++-----------------------------------------------------------------------+
+| Secure Programming for Linux and Unix HOWTO    | David A. Wheeler     |
++-----------------------------------------------------------------------+
+| Security Engineering 2nd edition               | Ross J. Anderson     |
++-----------------------------------------------------------------------+
+| APPLIED CRYPTOGRAPHY 2nd edition               | Bruce Schneier       |
++-----------------------------------------------------------------------+
+| Cryptography Engineering                       | Bruce Schneier       |
++-----------------------------------------------------------------------+
+| The Art of Intrusion                           | Kevin Mitnick        |
++-----------------------------------------------------------------------+

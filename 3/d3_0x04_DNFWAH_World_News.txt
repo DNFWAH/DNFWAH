@@ -1,0 +1,184 @@
+﻿[foRsaken@localhost ~]$ uname -a
+Watson D W N GNU/xXx 2.8.13
+
+[foRsaken@localhost ~]$ cat DNW
+
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+            DWN  DO                                         FUCK    DWN
+            DWN        D n f w a h   W o r l d   N e w s            DWN
+            DWN  NOT   ~~~~~~~~~~~   ~~~~~~~~~   ~~~~~~~    WITH    DWN
+            DWN                    Issue 3                          DWN
+            DWN  A                                          HACKER  DWN
+            DWN                 Jan 1, 2014                         DWN
+            DWN                                                     DWN
+            DWN          Created, Written, and Edited               DWN
+            DWN                 by f0Rsaken                         DWN
+            DWN                                                     DWN
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+
+
+作为目前dnfwah编辑的f0Rsaken在寻找一些有趣的新闻来作为World News的分享,这
+些news包括永恒性背景的(宗教,哲学,艺术),也包括时代性背景的(科幻,科学,工
+程),当然也包括两者交叉的领域比如游戏,音乐等领域,只要是hacker们感兴趣的
+领域的news我们都会关注.
+
+但你也知道,我们不是全知全能的人物,所以我们需要hacker们的帮忙,如果你对某
+个有趣领域的news具有很大的热情,请编辑好了发给我们,我们最乐于接受慷慨
+hacker的contribution.
+
+
+通用计算的未来之战
+http://it.solidot.org/it/11/12/31/0649249.shtml
+
+
+教授称学习习惯的常识都是错误的
+http://science.solidot.org/science/12/01/30/098247.shtml
+
+Kelihos僵尸网络作者之一为杀毒软件公司工作 
+http://it.solidot.org/article.pl?sid=12/01/25/1218236
+
+律师要求查看心脏起搏器源代码 
+http://opensource.solidot.org/article.pl?sid=12/01/23/1432206
+
+以色列和巴勒斯坦黑客发动网络战
+http://internet.solidot.org/article.pl?sid=12/01/19/0442236
+
+NASA的开源努力
+http://opensource.solidot.org/opensource/12/01/13/0836203.shtml
+
+NASA开源飞行器设计软件
+http://opensource.solidot.org/opensource/12/01/16/0440233.shtml
+
+统计学家揭示连环杀手数学
+http://science.solidot.org/article.pl?sid=12/01/17/132229
+
+FreeBSD 9.0发布
+http://opensource.solidot.org/article.pl?sid=12/01/13/0641247
+
+feb:
+挪威第一个将DNA测序纳入全民医疗保障体系
+http://science.solidot.org/science/12/02/03/099244.shtml
+
+卫星电话加密算法被破解
+http://it.solidot.org/it/12/02/05/0827203.shtml
+
+Nouveau驱动支持OpenCL加速
+http://opensource.solidot.org/opensource/12/02/08/0842207.shtml
+
+下一代主机是否应该可升级？
+http://games.solidot.org/games/12/02/08/0634230.shtml
+
+美国内华达州批准自主驾驶汽车法规
+http://it.solidot.org/it/12/02/17/1132239.shtml
+
+Raspberry Pi 35美元电脑供不应求Raspberry Pi基金会在周二晚上发布35美元
+Linux电脑，结果它的两大在线零售合作伙伴无法处理纷涌而来的巨大流量，网站
+服务器因DDOS的效应而瘫痪，直到一天后才恢复正常访问，Raspberry Pi基金会
+在Twitter上为此事向客户道歉。Raspberry Pi 基金会的目标是向学生提供能学
+习编程的廉价电脑，35美元电脑配备了700MHz ARM11 CPU ，256MB内存，以及可
+解码高清视频的GPU。昨天刚刚发布不到一小时，零售商 Premier Farnell和RS
+Components的网站就因为巨大的流量而下线。
+
+http://hardware.solidot.org/hardware/12/02/29/1238225.shtml
+
+Red Hat如何成为第一家收入超10亿美元的开源公司 
+http://linux.solidot.org/linux/12/02/29/1547245.shtml
+
+Mar
+MINIX 3.2.0正式版发布
+http://opensource.solidot.org/opensource/12/03/01/018229.shtml
+
+IBM Watson将到华尔街投行工作
+http://hardware.solidot.org/hardware/12/03/06/090228.shtml
+
+开源手术机器人
+http://opensource.solidot.org/opensource/12/03/07/1026236.shtml
+
+手术的过去，现在和手术机器人化的未来
+http://v.163.com/movie/2011/9/O/J/M7CE7UH6G_M7CE83ROJ.html
+
+训练免疫细胞杀癌细胞：一种通用策略
+http://science.solidot.org/science/12/03/08/0415258.shtml
+
+为什么只有设计师才能发明流行的新语言 
+http://developers.solidot.org/developers/12/03/08/0635258.shtml
+
+Judea Pearl获2011年图灵奖
+http://it.solidot.org/it/12/03/16/0217205.shtml
+
+April
+通用服务器Ragnarok发布和作者访谈
+http://opensource.solidot.org/opensource/12/04/03/0210254.shtml
+
+庆祝收入超10亿，Red Hat送出10万感谢
+http://opensource.solidot.org/opensource/12/04/03/1329242.shtml
+
+匿名黑客攻击数百家中国政府网站
+http://internet.solidot.org/article.pl?sid=12/04/05/0119244
+
+世界银行宣布开放获取其研究
+http://society.solidot.org/society/12/04/14/1222246.shtml
+
+2012年Revision Demoparty
+http://developers.solidot.org/developers/12/04/15/1251231.shtml
+
+Phrack Issue 68发布
+http://opensource.solidot.org/article.pl?sid=12/04/18/0321201
+
+PSTZINE---唯一的中文安全电子杂志
+http://developers.solidot.org/developers/12/04/26/0221209.shtml
+
+May
+俄罗斯Android黑客社交工程技艺日益娴熟
+http://it.solidot.org/it/12/05/18/076229.shtm
+
+Nerd政治学 
+http://internet.solidot.org/internet/12/05/18/1135235.shtmll
+
+《愤怒小鸟》会导致大屠杀吗？
+http://games.solidot.org/games/12/05/21/0955249.shtml
+
+ABC比特币矿工保住工作
+http://it.solidot.org/it/12/05/21/1044207.shtml
+
+DARPA资助百年星舰计划开发星际飞船 
+http://science.solidot.org/science/12/05/24/1028242.shtml
+
+Stuxnet/Flame/Duqu使用GPL代码
+http://opensource.solidot.org/opensource/12/06/07/0135244.shtml
+
+Crytek自信能挑战Unreal Engine 4
+http://developers.solidot.org/developers/12/06/15/0859207.shtml
+
+Linus Torvalds对NVIDIA说“F**k You”
+http://linux.solidot.org/linux/12/06/17/1229231.shtml
+
+英特尔透露神经形态芯片设计
+http://hardware.solidot.org/hardware/12/06/19/0752228.shtml
+
+Nexus Q因为美国制造所以昂贵
+http://hardware.solidot.org/hardware/12/06/28/0721209.shtml
+
+Android Jelly Bean引入安全功能ASLR
+http://linux.solidot.org/linux/12/07/17/0541254.shtml
+
+Valve证实开发Linux客户端 
+http://linux.solidot.org/linux/12/07/17/059259.shtml
+
+数学家预测2020年的暴力活动
+http://science.solidot.org/science/12/08/05/1246205.shtml
+
+
+Cybersecurity
+
+2013年对于整个信息安全领域是意义重大的一年，至少发生了2件里程碑式的事件：
+1，Mandiant公布了APT1报告:
+http://www.solidot.org/story?sid=33501
+
+至少意味着2个层面的意义，其一是告诉公众已经进入APT的年代，是大规模，高
+技术，可持续性的对抗，其二是为什么Mandiant有如此详细的报告？有2种可能性，
+1)纯属捏造 2)USA的纵深防御水平已经达到了一定的程度，回想一下d18针对中小
+企业的SOC方案, r0ng the bell?
+
+2，Edward Snowden带给这个星球的震撼事件
+http://www.solidot.org/story?sid=37760
