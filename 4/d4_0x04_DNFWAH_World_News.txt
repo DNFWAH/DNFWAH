@@ -1,0 +1,64 @@
+﻿[foRsaken@localhost ~]$ uname -a
+Watson D W N GNU/xXx 2.8.13
+
+[foRsaken@localhost ~]$ cat DNW
+
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+            DWN  DO                                         FUCK    DWN
+            DWN        D n f w a h   W o r l d   N e w s            DWN
+            DWN  NOT   ~~~~~~~~~~~   ~~~~~~~~~   ~~~~~~~    WITH    DWN
+            DWN                    Issue 4                          DWN
+            DWN  A                                          HACKER  DWN
+            DWN                 June 18, 2014                       DWN
+            DWN                                                     DWN
+            DWN          Created, Written, and Edited               DWN
+            DWN                 by f0Rsaken                         DWN
+            DWN                                                     DWN
+            DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN DWN
+
+
+作为目前dnfwah编辑的f0Rsaken在寻找一些有趣的新闻来作为World News的分享,这
+些news包括永恒性背景的(宗教,哲学,艺术),也包括时代性背景的(科幻,科学,工
+程),当然也包括两者交叉的领域比如游戏,音乐等领域,只要是hacker们感兴趣的
+领域的news我们都会关注.
+
+但你也知道,我们不是全知全能的人物,所以我们需要hacker们的帮忙,如果你对某
+个有趣领域的news具有很大的热情,请编辑好了发给我们,我们最乐于接受慷慨
+hacker的contribution.
+
+
+
+中美是否会陷入网络冷战？
+http://www.solidot.org/story?sid=39082
+
+安全专家建议公众重置所有密码
+http://www.solidot.org/story?sid=39080
+
+FSF为OpenSSL漏洞辩护
+http://www.solidot.org/story?sid=39073
+
+互联网公司紧急修正OpenSSL高危漏洞
+http://www.solidot.org/story?sid=39065
+
+
+匿名社交软件的兴起
+http://www.solidot.org/story?sid=39043
+
+OpenSSL严重bug允许攻击者读取64k内存，Debian半小时修复
+http://www.solidot.org/story?sid=39042
+
+白帽黑客为教训客户泄漏数据，遭FBI突袭
+http://www.solidot.org/story?sid=39084
+
+Heartbleed漏洞披露时间表
+http://www.solidot.org/story?sid=39141
+
+Edward Snowden使用的操作系统
+http://www.solidot.org/story?sid=39144
+
+
+Heartbleed漏洞撕破了开源安全的伪装？
+http://www.solidot.org/story?sid=39155
+
+ Theo de Raadt声称OpenSSL代码一团糟
+ http://www.solidot.org/story?sid=39251
