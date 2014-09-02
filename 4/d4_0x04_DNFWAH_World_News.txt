@@ -62,3 +62,15 @@ http://www.solidot.org/story?sid=39155
 
  Theo de Raadt声称OpenSSL代码一团糟
  http://www.solidot.org/story?sid=39251
+
+俄罗斯黑客如何入侵纳斯达克
+http://www.solidot.org/story?sid=40395
+
+中国黑客被指试图窃取以色列铁穹系统机密:
+http://www.solidot.org/story?sid=40537
+
+Tor开发者称NSA和GCHQ泄露Tor的bug
+http://www.solidot.org/story?sid=40845
+
+Tox：隐私优先的Skype替代
+http://www.solidot.org/story?sid=40975
