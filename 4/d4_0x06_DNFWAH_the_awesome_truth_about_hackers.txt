@@ -1,0 +1,243 @@
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #4 File 0x06 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=--------------=[ The Awesome Truth About Hackers ]=--------------=|
+|=-----------------------------------------------------------------=|
+|=-----------------------=[ By Pete Herzog ]=----------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ Sep 17 2014 ]=------------------------=|
+|=-----------------------------------------------------------------=|
+
+
++*************************************************************************+
+! The hacker is basically an expert or enthusiast of any kind. One might  !
+! be an astronomy hacker or carpenter hacker, which means a person can    !
+! be a hacker without having anything to do with computers.               !
+!                                                                         !
+!            --- The HACKER Ethic and the Spirit of the Information Age   !
++*************************************************************************+
+
+
+--[ 1. T H E   R E A L   H A C K E R   I S ...
+
+Whatever you may have heard about hackers, the truth is they do
+something really, really well: discover. Hackers are motivated,
+resourceful, and creative. They get deeply into how things work, to
+the point that they know how to take control of them and change them
+into something else. This lets them re-think even big ideas because
+they can really dig to the bottom of how things function.
+
+Furthermore, they aren't afraid to make the same mistake twice just
+out of a kind of scientific curiosity, to see if that mistake always
+has the same results. That's why hackers don't see failure as a
+mistake or a waste of time because every failure means something and
+something new to be learned. And these are all traits any society
+needs in order to make progress.
+
+Now, there is the expected resistance from authorities. Mostly because
+people don't know what hacking really is. Many people who have been
+called hackers, especially by the media, or who have gotten in trouble
+for "hacking" were not, in fact, hackers. Most all of them were just
+thieves and fraudsters. When you read in the news, *Teen girl hacks
+Facebook to harass a classmate*, what you're seeing is a
+sensationalized headline. What a hacker reads in that headline is:
+*Mean girl watched classmate type in her Facebook password and then
+logged in as her*. That mean people and criminals do bad things with
+communications medium is not a reason to fear people.
+
+Hacking is a type of methodology. It's a way to do research. Have you
+ever tried something again and again in different ways to get it to do
+what you wanted? Have you ever opened up a machine or a device to see
+how it works, read up on what the components are, and then make
+adjustments to see what now worked differently? That's hacking. You
+are hacking whenever you deeply examine how something really works in
+order to manipulate it, often creatively, into doing what you want.
+
+A hacker is a type of hands-on, experimenting scientist, although
+perhaps sometimes the term "mad scientist" fits better, because unlike
+professional scientists they dive right in, following a feeling rather
+than a formal hypothesis. That's not necessarily a bad thing. Some
+sciences have grown more out of trying stuff than following the
+scientific method- like chemistry, materials sciences, and
+economics. And many interesting things have been designed or invented
+by people who didn't follow standard conventions of what was known or
+believed to be true at the time.
+
+
+For example...
+----------------------------------------------------------------------
+
+    * The mathematician, Georg Cantor, proposed new ideas about infinity
+    and set theory that caused outrage amongst many fellow
+    mathematicians to the point that one called his ideas a "grave
+    disease" infecting mathematics.
+
+    * Nikola Tesla is another person considered a "mad scientist" in his
+    day, but he knew more about how electricity behaved than anyone
+    else. He arguably designed the first brushless motor that ran on
+    AC electricity but is mostly known for the Tesla effect and the
+    Tesla coil.
+
+    * Then there was Ignaz Philipp Semmelweis who figured out that
+    doctors need to wash their hands between treating patients to keep
+    diseases from spreading. He wondered if the diseases following him
+    around between patients were his fault, so he decided to try
+    washing hands between his patient visits and sure enough the
+    transmissions disappeared. His ideas went against both the
+    scientific conventions of what was known at the time about germs
+    (nothing) as well as the convenience of the doctors who felt it
+    was too much hassle to keep washing their hands.
+
+----------------------------------------------------------------------
+
+
+It just so happens that the way the Internet is designed and the huge
+number of different applications, systems, devices, and processes it
+has makes it the most common place to find hackers. You could say it's
+a place where information can run free because it was built open and
+free by hackers so it's the best playground for hackers. But it's not
+the only place. You can find great hackers in almost every field and
+industry and they all have one thing in common: they spend time
+learning how things work so they can make them work in a new
+way. These hackers didn't look at something as the original designers
+did, but instead saw bigger or better potential for it and hacked it
+to be something new.
+
+
+--[ 2. H A C K E R S   & & &   C Y B E R S E C   & & &   * * * ?
+
+What you may think you know about hackers is that they can break into
+other computers and take over other people's accounts. They can read
+your email without you knowing. They can look through your web cam
+without your permission and can see you and hear you in the supposed
+privacy of your own home. That's not untrue.
+
+Some hackers see network security as just another challenge, so they
+tinker with ways to trick or fool the system, but really what they're
+trying to do is out-think the network installers or designers. They
+discover as much about the network as they can, where it gets its
+instructions, the rules it uses, and how it interacts with operating
+systems, the other systems around it, the users who have access to it
+and the administrators who manage it. Then they use that to try
+different ways of getting what they want. This kind of hacking can be
+greatly beneficial to the world for understanding how to be safer and
+for building even better technology.
+
+Unfortunately though, sometimes the hacking is done by criminals and
+what they want is illegal, invasive, and destructive. And those are
+usually the only hackers you read about in the news. A hacker is not
+someone who posts to someone's account when they leave a social media
+page open or shoulder-surfs passwords and then logs into their account
+later. That's not hacking. A hacker also is not someone who downloads
+a script kiddie tool to break into someone’s email. Those aren't
+hackers; those are just thieves and vandals.
+
+Hacking itself is not illegal. At least not any more than throwing a
+rock is illegal. It all comes down to intent. If you throw a rock and
+your intent is to injure someone, that's a crime. If your intent is
+not to hurt someone, but someone does get hurt, that may not be a
+crime, but you are responsible for your actions and will have to pay
+restitution. An Institute for Security and Open Methodologies
+(ISECOM)[1] project called the Hacker Profiling Project[2] found that
+the most damage from hacking comes from young, inexperienced hackers
+damaging other people's property by accident. Which is why many
+hackers stick to hacking the things they bought and own.
+
+The caveat to that is that there are cases where it may be illegal to
+hack something you bought and own. There are hackers who have been
+punished for hacking their own devices and computers. These things
+were closed to prevent them from being copied or changed despite that
+they paid for it and own it. These are hackers who hacked programs,
+music, and movies they bought so it looked, behaved, and sounded the
+way they wanted to or played on other devices they bought and owned
+and were prosecuted for it. Especially when they openly shared their
+ideas with others. Hackers will find that any closed source software
+they buy may be illegal to hack, even if it's just to check for
+themselves that it's secure enough to run on their own computer. This
+is because many of the things that you purchase may come with
+Copyright and a contract as an End User License Agreement (EULA) that
+says you can't. And you agree to it when you open or install the
+product, even if you can't read it or find out about it after you've
+opened or installed the product. Yes, that's sneaky and unfair.
+
+But that's all the more reason to have hackers in our society. You
+see, education is open. It can be legally hacked to teach kids to
+think openly, be inspired, be curious, and thus, to be a hacker. What
+hacking is really about is taking control of something if you don't
+like how it works. Why would you do this? To have the freedom to make
+something you own do what you want. And to keep others from changing
+something you own back to the original form or copying all your ideas,
+drawings, writings, and pictures to a cloud somewhere to be controlled
+by someone else who claims it's for your "best interest."
+
+As an adult, you know what your own best interest is. Sometimes you
+buy something and the company you bought it from will attempt to
+forcefully or slyly make sure you can't customize it or change it
+beyond their rules. You can't play it somewhere else or use it any
+other way than as intended, supposedly to protect you but mostly to
+protect their business model. And that might be okay to agree to as
+long as you accept the fact that if you break it then you can't expect
+them to fix it or replace it. That would mean that hacking something
+you own does more than make it yours, it makes it irrevocably and
+undeniably yours. As scary as that may sound to some, it certainly has
+its advantages. Especially if you want to keep others, like the
+company that made it and the marketing company they're re-selling your
+information and habits to, out of your stuff.
+
+And finally, what may seem illogical based on the misinformation
+you've gotten from the news, hackers make us more secure. For many,
+many people, security is about putting a product in place, whether
+that's a lock or an alarm or a firewall or anything that theoretically
+keeps them secure. But sometimes those products don't work as well
+they should, or they come with their own problems that just increase
+your "Attack Surface," when a security product should be shrinking
+it. (The Attack Surface is all the ways, all the interactions, that
+allow for something or someone to be attacked.)
+
+And yeah, good luck getting that product improved in a mass-marketing,
+pay-as-you-go, copyrighted, closed-source, "you bought it as-is and
+that's what you have to live with" kind of world. That's why it's so
+important to have hackers who study how to hack security. A hacker
+wouldn't buy the same padlock you would because a hacker sees locks in
+terms of how many seconds they would need to open it. Hackers can
+analyze a product and figure out where it fails and how to change it
+so it works better-- whether a home security system or a kitchen
+waffle iron. Then they might have to hack it some more to keep that
+company they bought it from, from changing it back to the default!
+
+So hacking in terms of breaking security is just one area that hacking
+is useful, because without being able to do that, you may have to give
+up some freedom or some privacy that you don't want to give up. (And
+some of you may not care right now about certain things you do or say
+or post, but the Internet has a long memory and it's getting better
+and better at helping others recall those memories of you. What goes
+on the net stays on the net. And kids today are pretty much born on
+the net.) Not to mention technology is getting more and more out of
+the typical person's ability to control it. That mobile phone of yours
+or that new flatscreen with built-in camera are likely doing things
+that you don't know and don't control with what they see and hear. (Do
+a quick search and you'll see that it's true, they are, and we know
+this because hackers found out and spread the news.) It takes some
+hacking to wrestle that control back.
+
+Free, open projects like Hacker Highschool[3] can help you develop the
+skills, feeling, and intuition through hacking practice with support
+so you don't break the wrong things. The possibility of breaking
+something is simply part of the process, and should not be a factor
+keeping you from hacking. And support and join ISECOM, an open
+organization that hacks all sorts of problems and solutions for the
+modern world from security to neurology!
+
+
+--[ 3. References
+
+[1] The Institute for Security and Open Methodologies
+http://www.isecom.org/
+
+[2] Hacker Profiling Project
+http://www.isecom.org/research/hpp.html
+
+[3] Hacker Highschool
+http://www.hackerhighschool.org/
