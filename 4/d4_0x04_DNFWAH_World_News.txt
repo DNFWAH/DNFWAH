@@ -83,3 +83,13 @@ http://www.solidot.org/story?sid=41120
 
 WikiLeaks公开间谍软件FinFisher
 http://www.solidot.org/story?sid=41135
+
+
+Shellshock僵尸网络攻击美国国防部
+www.solidot.org/story?sid=41292
+
+Shellshock远程执行代码概念验证攻击
+http://www.solidot.org/story?sid=41285
+
+Bash shell发现严重安全漏洞
+http://www.solidot.org/story?sid=41266
