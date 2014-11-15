@@ -1,0 +1,262 @@
+|=-------------------------------------------------------------------------------=|
+|=----------------------=[ D O N O T F U C K W I T H A H A C K E R ]= -----------=|
+|=-------------------------=[ #4 File 0x08 ]-------------------------------------=|
+|=-------------------------=[SmartOS安全评估报告--0.1]---------------------------=|
+|=------------------------------=[ By Samson(sccxboy@gmail.com) ]=---------------=|
+|=-------------------------------=[ 初稿:Nov 15 2014 ]=--------------------------=|
+|=--------------------------=[Update:]-------------------------------------------=|
+|=-------------------------------------------------------------------------------=|
+
+0.  SmartOS是什么？
+
+是由 Joyent 提供的社区发行版，可以认为是 SmartDataCenter 商业化产品的一部分。
+SmartOS联合了ZFS+DTrace+Zones+KVM这4个非凡的技术，是一个革命性的用于数据中心的操作系统，提供建立在一个可靠的企业存储，高度多租户环境。
+SmarOS 是基于 illumos核心，之后大牛们将KVM移植了进去。
+
+1.  如何安装SmartOS(VMware VM)
+
+下载SmartOS for Vmware iso, download address is:
+http://wiki.smartos.org/display/DOC/Download+SmartOS
+下载后，安装VMware后，打开此VMware vm，运行此虚拟机即可进行，进入后，会启动GRUB程序，一般会显示如下的选择项：
+Live 64-bit (text)
+Live 64-bit (noinstall)
+Live 64-bit (text) + kmdb
+Live 64-bit (ttya) + kmdb
+Live 64-bit (ttya)
+一般选择第一项即可，选择此启动项后进行的系统需要root密码，在https://us-east.manta.joyent.com/Joyent_Dev/public/SmartOS/20141002T182809Z/SINGLE_USER_ROOT_PASSWORD.txt 类似的文件中进行查看随机密码，其中路径中的20141002T182809Z为当前对应的发行版本，此版本号在选择启动项后的登录时wscons login的上方会有显示，对应的版本对应的路径不一样；
+若是不需要网络配置等，那么选择(noinstall)项即可，用户名/密码为:root/root即可登录；
+这里只是一个用于测试的SmartOS的环境的搭建及需要注意的细节之处；其它版本的安装方法请参看：http://wiki.smartos.org/
+
+2  .SmartOS包管理器：
+
+不像其他操作系统，SmartOS的只读镜像不带安装其它软件包的包管理系统，为了填补这一空白，需要手动地安装基于NetBSD包管理套件，也称为pkgsrc.
+pkgsrc是一个跨平台的从源代码构建和分发二进制包的包管理框架。每个包都是由Makefile和一些源数据文件组成的，这些文件指定如何建立软件。
+pkgsrc是不存在于SmartOS Live镜像的系统中，但是可以很容易的进行安装。
+该pkgin工具是典型的包管理软件。使用pkgin AV命令可以列出可用的软件包进行安装。使用pkgin LS命令可以查看已经安装的软件包。使用pkgin in命令可以安装一个包。所有的软件将安装到/opt/local目录下。
+pkgin的使用及相关的目录的具体说明可阅读以下链接内容：
+http://wiki.smartos.org/display/DOC/Working+with+Packages
+/var/db/pkg目录下的配置文件是包含包的安装源的数据库文件，更新源的配置即是在此文件中；对于熟悉Gnu Linux的人来说，这些文件类似于Gnu Linux中的/etc/apt//etc/apt/sources.list.d/目录下的更新源一样的配置文件；
+pkgin的安装过程会下载你需要的bootstart的版本，然后进行pkgin基于bootstart进行数据库的重新生成；所以安装的源是和安装的bootstart版本有关的，而bootstart的最新版本则是对各种CVE、Bug的修补的安全性、健壮性更高的版本；
+多个版本bootstart的下载地址：
+http://pkgsrc.joyent.com/packages/SmartOS/bootstrap/
+按照现在的规律，bootstart每个季度会出一个版本；
+具体如何安装的方法的具体方法可参照以下链接：
+http://wiki.smartos.org/display/DOC/Installing+pkgin
+
+3.  社区构建
+
+讲到SmartOS的社区构建，那么就不得不提SmartOS的父辈们的历史，什么是illumos？ 简单的讲，illumos是OpenSolaris的后续开源项目。万恶的Oracle收购了Sun之后，原有OpenSolaris的开发者基本上都离 开了Oracle，组成了illumos社区，继续对OpenSolaris先进的内核进行维护，更新，以及添加新功能。这种事情在Oracle的 收购史上似乎一再出现，想想MySQL吧。
+当然，OpenSolaris不是完蛋了，其实还存活着。不过因为核心开发者的出走，都在illumos那边玩，很多先进特性（尤以存储和虚拟化方面为甚）都不再回流。
+illumos继承了所有OpenSolaris的先进特性，例如ZFS，Zone，Crossbow和Dtrace。简单的总结如下:
+ZFS可以说是终极文件系统，提供了卷管理，快照，和所有想得到的nb东西在linux里面，这个功能由LVM以及一堆不同的文件系统完成Zone是OS Container，即操作系统隔离，或者叫做轻量级虚拟机linux在Zone出现5年之后，也模仿开发了LXC功能;
+Crossbow是网络虚拟化，说白了就是将网卡硬件和软件设备分离，一块硬件对应好多个软件设备，并且提供了虚拟switch支持linux这部分的成果也基本上进入了内核，在几年之后。
+Dtrace是系统管理员的终极武器，无痛在线勘察系统瓶颈的手术刀
+然后，在joyent公司里面两位神人的努力下，KVM被移植到了illumos内核上，于是illumos也拥有了通常所说的Type 2虚拟化技术。
+于是illumos = ZFS + Zone + Crossbow + Dtrace + KVM。所有云计算的关键服务在这里集合，形成了一个为云计算而生的系统内核。
+但是需要注意的是illumos只是一个内核（正确的说是，内核(OS)加网络层(Network)，即ON）。在geek的手里，它已经完备;放在生产环境，则还欠缺一个包装。
+SmartOS即是joyent在包装illumos方面的成品方案。joyent将illumos内核和必要的组件和命令行工具，打包成为了一个300MB左右的LiveCD，实现了“启动即拥有云计算能力”这个目标。
+
+4.  社区维护
+
+由于以上的种种历史原因，那么SmartOS背后的社区就会有很多了，主要活跃的社区有以下三个，均有irc与mail list：
+smartos：SmartOS官方社区；
+illumos：illumos项目社区；
+joyent：joyent公共云和智能数据中心；
+
+由于joyent是SmartOS的项目，又因为历史原因而造成的很多illumos社区的维护者很多都加入了joyent公司，所以主要的维护人员都是joyent公司的。
+
+5.  社区活跃度
+
+SmartOS背后的社区还是非常活跃的，在SmartOS邮件列表中进行交流沟通的问题会有很多热心的人来帮助解决，当然更即时性的还是irc频道了，在那里能够较及时地得到解决问题的方法；
+就最近30天的统计，平均每天仅SmartOS maillist的邮件数为6封，SmartOS irc频道在线的人数每天都有160人以上， illumos irc频道在线的人数每天都有200人以上，joyent irc频道在线的人数每天都有60人以上，尤其是在irc的频道上交流的更加频繁、更加即时性。在irc问问题得到解答的时间一般在1小时内会有人回复(当然前提是要在加利福尼亚州的上班时间段 ^_*)。
+
+6.  SmarOS基础架构
+
+SmartOS采用的是操作系统虚拟化(Operating System Virtualization)，主要结构如下图：
+|======================================================================================================================================|
+|  Application         |  Application           |  Application         |  Application          |           Application                 |
+| OS Userland          |       OS Userland      |      OS Userland     |   OS Userland         |           OS Userland                 |
+|(Joyent SmartMachine) |  (Joyent SmartMachine) | (Joyent SmartMachine)| (JoyentMachine)       |     (Joyent SmartMachine)             |
+|--------------------------------------------------------------------------------------------------------------------------------------|
+|=========================================================Operating System Knernel=====================================================|
+|===============================================================(SmartOS)==============================================================|
+|--------------------------------------------------------------------------------------------------------------------------------------|
+|=================================================Hardware=============================================================================|
+|=========================CPU=========================Memory===========================Storage================================NIC======|
+|======================================================================================================================================|
+在上图中的Operating System Kernel层即为SmartOS层，SmartOS支持操作系统虚拟化，虚拟出多个Zone，在每个Zone中运行一个SmartMachine。一个SmartMachine看上去就是一个完整的机器，有自己的硬件(存储、网络和处理器)和操作系统以及库文件等。没有格外的虚拟化层，这意味着不同的SmartMachine在同一硬件上共用操作系统(SmartOS)。SmartOS本身也具备了hypervisor的功能，即是一个包含了虚拟机调度管理，主要协调各个SmartMachine对硬件资源的访问，也同时在各个虚拟机之间施加防护。
+ZONES是什么？
+以前被称为Solaris容器，在容器使用灵活的软件应用和服务；每个ZONE都拥有自己的用户层（文件系统、系统类库、网络配置、单个应用程序的进程表）。
+
+7.  SmartOS安全
+
+7.1  各个Zone（虚拟系统）间资源的安全
+
+由于使用SmartOS使用了操作系统虚拟化技术，Zones被用在SmartMachines和Linux/Windows虚拟机中。每个SmartMachine和Linux/Windows虚拟机都 在自己的zone中运行。在一个zone中运行的进程没有权限访问运行在其他zone中的进程。每个zone被赋予了一个ZFS数据集或卷用于存储。运行 KVM实例在他们的zone中意味着万一一个虚拟机有问题，它会在zone中解决，不会对其他租户（zone）带来任何的影响。 每个zone通过crossbow都有自己的虚拟网络栈，与其他zone的网络栈完全隔离，即你无法嗅探其他zone中的网络包。在一个zone中的设备 不会被其他zone访问到。
+资源分配和管理对于每个zone而言也是受控的。资源受控意味着一个zone内可以控制能使用多少内存，多少CPU，多少网络带宽等。
+
+7.2   CVE修复周期
+
+SmartOS的更新源都是由joyent公司进行维护的，所以对于出现的CVE的修复也即是由joyent维护的，对应的漏洞的PATCH修复的情况：
+抽查两个比较知名的漏洞：
+7.2.1  Shellshock (bash ): 近期由于bash可以进行导入函数而造成的可执行越权的指令的漏洞；
+在NVD上报的漏洞共有：
+CVE-2014-6278
+CVE-2014-7187
+CVE-2014-7186
+CVE-2014-6277
+CVE-2014-7169
+CVE-2014-6271
+
+但是在illumos社区的illumos-extra中只查看到CVE-2014-7169 的修复，修复时间为2014-09-25 16:13:57，而CVE-2014-7169上报的时间为：9/24/2014 9:55:04 PM，修复处理时间为18小时，但是好像后续的CVE-2014-6278、CVE-2014-7187、CVE-2014-7186三个bug的修复好像并没有在此进行修复；但事实并不是如此，而是通过在pkgsrc补丁中进行了禁止导入函数的功能，直接在源头上进行了禁止，所以后面的三个bug也就没有在此修复源代码中进行修复了。
+
+7.2.2  Openssl CCS漏洞：
+OpenSSL的ChangeCipherSpec处理流程的不当，可能导致加密通讯的信息泄露，或通信过程中插入中间人的可能。
+此漏洞同时影响服务器和客户端两边，并且能够可靠重复，非常易于制作成自动化的攻击程序，
+CVE-2014-0224：
+报告时间：6/5/2014 5:55:07 PM
+illumos社区修复时间：Thu, 5 Jun 2014 21:27:12 +0000
+修复时间为15小时；
+结论：就这两个公开的漏洞的修复响应能力，可看出illumos社区能够在漏洞发布后小于24小时内进行修复，是能够快速安全修复，安全应急能力还是很强的团队；
+
+7.3  SmartOS作为虚拟机管理者的安全(系统加固)
+
+由于SmartOS本身只提供了基本的操作，很多有关系统的加固需要运维人员进行配置，以下即为对SmartOS系统的加固点的列出：
+
+7.3.1  用户管理
+用户口令文件的权限管理
+/etc/passwd 必须所有用户都可读，root用户可写 –rw-r—r— 
+/etc/shadow 只有root可读 –r-------- 
+/etc/group 必须所有用户都可读，root用户可写 –rw-r—r— 
+执行以下命令修改这些文件的读写权限： 
+chmod 644 /etc/passwd 
+chmod 600 /etc/shadow 
+chmod 644 /etc/group 
+ 
+7.3.2  禁止或删除不必要的系统帐号
+移去或者锁定那些系统帐号，比如sys、uucp、nuucp、listen、lp、adm等等，简单的办法是在/etc/shadow的password域中放上NP字符。还可以考虑将/etc/passwd文件中的shell域设置成/bin/false 
+具体操作方法： 
+userdel   lp        ##表示删除lp用户 
+
+7.3.3  禁用某个用户： 
+编辑/etc/password 和/etc/shadow文件，比如： 
+uucp:NP:5:5:uucp Admin:/usr/lib/uucp: 
+uucp:NP:6445:::::: 
+具体需要禁止的帐号有： 
+bin, daemon, adm, lp, smtp, sys, uucp, nuucp, nobody, noaccess 
+
+7.3.4  修改口令策略
+编辑/etc/default/passwd文件：
+MAXWEEKS=4 口令至少每隔4星期更改一次 
+MINWEEKS=1 口令至多每隔1星期更改一次 
+WARNWEEKS=3 修改口令后第三个星期会收到快要修改口令的信息 
+PASSLENGTH=6 用户口令长度不少于6个字符 
+
+7.3.5  限制使用su的组
+只允许sysadmin组执行su命令 
+#chgrp sysadmin /bin/su 
+#chmod o-rwx /bin/su 
+
+7.3.6  su的纪录 
+编辑/etc/default/su文件,主要为了记录每个使用su命令切换用户的记录。 
+SULOG=/var/adm/sulog 
+SYSLOG=YES 
+CONSOLE=/dev/console 
+PATH=/usr/bin: 
+SUPATH=/usr/sbin:/usr/bin 
+
+7.3.7  禁止root远程登录 
+在/etc/default/login中设置CONSOLE=/dev/null，将只允许普通用户在console登录然后su成root，当存在多个系统管理员的时候， 这种设置提供了更好的安全性。 
+在SSH 配置文件加：permitRootLogin = no ，不允许root直接使用ssh登录系统。 
+
+7.3.8  服务管理
+关闭不使用的系统服务
+检查/etc/rc2.d和/etc/rc3.d目录下的所有"S"打头的脚本文件，将那些启动不必要服务的脚本文件改名，确认新文件名不以"S"打头。重启动确认这些变动生效，检查/var/adm/messages日志文件，用ps -elf检查是否还有无关进程启动。 
+在/etc/init.d/需要关闭的服务： 
+sendmail  
+nscd  
+ 
+7.3.9  关闭系统内各种不使用的网络服务
+检查系统提供的每一种网络服务是否是工作环境所必需的，如果不是，就屏蔽它。其中一部分在启动脚本中设置，另外一部分在/etc/inetd.conf文件中配置，注释掉不必要的网络服务，ps -ef | grep inetd | awk '{print $2;}' | xargs kill -1迫使修改后的/etc/inetd.conf文件生效。
+ 如果要求系统非常安全，应该用一个只包含了telnet和ftp(如果这两个服务是必需的)服务的inetd.conf代替标准的inetd.conf文件。 
+ 
+ 7.3.10  关于NFS服务
+防火墙主机不应该使用NFS，无论是client还是server 
+如果必须将防火墙主机配置成NFS server，应该将输出的文件系统限制成只有特定主机才能访问。尽可能只读输出文件系统，比如，在/etc/dfs/dfstab文件中 
+share -F nfs -o ro=trusted_clients /logs 
+如果必须将防火墙主机配置成NFS client，记得总是使用"nosuid"选项做mount操作。
+
+7.3.11  系统文件权限 
+/etc的存取权限
+用chmod -R g-w /etc命令来移去组用户对/etc的写权限。 
+ 
+7.3.12  修改文件setuid和setgid的权限
+SmartOS上很多setuid、setgid程序只有root或者属主自己才会使用，完全可以取消setuid、setgid设置而不影响普通用户的工作。用如下命令找出系统中所有setuid过的程序 
+       # find / -perm -4000 -print 
+       再考虑取消某些敏感命令的setuid设置； 
+
+       类似的，用如下命令找出系统中所有setgid过的程序 
+       # find / -perm -2000 -print 
+       再考虑取消某些敏感命令的setgid设置； 
+创建一份系统中剩余setuid、setgid程序的列表，定期检查是否有变化，比如多出其他setuid、setgid程序来。 
+  
+7.3.13  umask命令 
+umask设置用户文件和目录的文件创建缺省屏蔽值，若将此命令放入.profile文件，就可控制该用户后续所建文件的存取许可。umask命令与chmod命令的作用正好相反，它告诉系统在创建文件时不给予什么存取许可。 
+安装配置完操作系统之后确认root的umask设置是077或者027，执行/usr/bin/umask -S 确认，即查看当前用户的读写文件的默认权限。 
+
+7.3.14  防止TCP序列号预测攻击(ip欺骗) 
+建议在/etc/default/inetinit中增加如下的生成初始化序列号设置来防止TCP序列号预测攻击(ip欺骗):TCP_STRONG_ISS=2;
+ 
+7.3.14  设置正确的环境变量PATH
+确认root的PATH环境变量设置是安全的，应该只包含/usr/bin:/sbin:/usr/sbin;
+ 
+7.3.15  日志管理
+配置系统syslog日志服务
+缺省情况下，syslog提供了最小程度的系统日志功能，修改/etc/syslog.conf文件，使得syslog记录更多日志信息，根据日志重要程度分别记录到不同地方。任何与安全相关的日志信息应该加密后存放到文件中。不幸的是，必须重启syslog才能读取新的配置文件。
+日志查看：
+在/var区下有个目录adm，在这个目录下有messags，syslog，sulog等诸多日志文件，它们记录着SmartOS系统产生的各种消息日志。 
+messages记载来自系统核心的各种运行日志，inetd等进程的消息及系统特殊状态，如温度超高等的系统消息，可以说它是系统最重要的日志之一。 
+sulog中记载着普通用户尝试su成为其它用户的纪录。它的格式为：发生时间 +/-(成功/失败) pts号 当前用户欲su成的用户。 
+su 11/16 16:35 + pts/6 root-root
+utmp,utmpx这两个文件是不具可读性的，它们记录着当前登录在主机上的用户，管理员可以用w，who等命令来看。
+ 
+7.3.15  系统补丁
+检查补丁列表
+使用命令pkgin命令集可以进行
+
+7.3.16  IpFilter防火墙
+SmartOS采用的防火墙为IP-Filter。
+IP-Filter是目前比较流行的防火墙软件，它目前拥有多种平台的版本（包括：FreeBSD、NetBSD、Solaris、IRIX、HP-UX、Linux、OpenBSD等版本），并且功能强大，安装配置相对比较简单。可以用它来构建功能强大的软件防火墙。 
+IPFILTER 基于内核模式的防火墙和 NAT 机制，这些机制可以通过用户模式运行的接口程序中进行控制。防火墙规则可以使用 ipf 工具来动态地设置和删除。 NAT 规则可以通过 ipnat工具来维护。 ipfstat工具则可以用来显示 IPFILTER 内核部分的统计数据。 最后， 使用 ipmon程序可以把 IPFILTER 的动作记录到系统日志文件中。 
+IPF 最初是使用一组 “以最后匹配的规则为准” 的策略来实现的，这种方式只能支持无状态的规则。 随着时代的进步， IPF 被逐渐增强， 并加入了 “quick” 选项， 以及支持状态的 “keep state” 选项， 这使得规则处理逻辑变得更富有现代气息。 IPF 的官方文档介绍了传统的规则编写方法和文件处理逻辑。新增的功能只是作为一些附加的选项出现，如果能完全理解这些功能， 则对于建立更安全的防火墙就很有好处。 
+ipfilter实例：
+ipf配置文件路径为：/etc/ipf/ipf.conf，根据业务本身进行规则的定制；
+# 默认规则, 关闭阻止所有的包, 关闭所有的通路, 再一步一步打开允许的通道。
+
+
+参考资料：
+National Vulnerability Database
+http://web.nvd.nist.gov/view/vuln/search
+illumos fix project:
+https://github.com/joyent/illumos-extra
+illumos wiki:
+http://wiki.illumos.org
+SmartOS wiki:
+http://wiki.smartos.org/display/DOC/Home
+Working with packages:
+http://wiki.smartos.org/display/DOC/Working+with+Packages
+Installing pkgin:
+wiki.smartos.org/display/DOC/Installing+pkgin
+joyent project:
+https://github.com/joyent
+
+Oracle Solaris 10 Security Guidelines:
+https://docs.oracle.com/cd/E23823_01/html/E23335/s10gdl-2.html
+
+The pkgsrc guide:
+http://www.netbsd.org/docs/pkgsrc/
+smartos mail list history:
+http://www.listbox.com/member/archive/184463
+
+
+
