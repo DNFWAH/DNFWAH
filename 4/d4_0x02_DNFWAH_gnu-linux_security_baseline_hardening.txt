@@ -290,7 +290,74 @@ iptables -A INPUT -i eth0 -p tcp --dport 80 -m state UNTRACKED,INVALID \
 
 echo 0 > /proc/sys/net/netfilter/nf_conntrack_tcp_loose
 
-注意:SYNPROXY是在3.13里加入的NETFILTER特性。
+注意:SYNPROXY是在Linux内核3.13里加入的NETFILTER特性。
+--------------------------------------------------------------
+
+
+TCP FIN-WAIT-2状态保留事件，目前很多发行版的默认时间是60秒，这个值太大
+会造成DOS攻击的风险，太小也有一定概率造成远端机器来不急主动关掉链接，建
+议一般设置成30：
+--------------------------------------------------------------
+参考： 
+http://benohead.com/tcp-about-fin_wait_2-time_wait-and-close_wait/
+
+net.ipv4.tcp_fin_timeout = 30
+/proc/sys/net/ipv4/tcp_fin_timeout
+--------------------------------------------------------------
+
+
+网络抗DOS相关：
+--------------------------------------------------------------
+SYN队列的长度，值越大能处理更多的链接数：
+net.ipv4.tcp_max_syn_backlog = 8192
+/proc/sys/net/ipv4/tcp_max_syn_backlog
+
+设备队列的长度，这个值建议比syn队列小：
+net.core.netdev_max_backlog = 16384
+/proc/sys/net/core/netdev_max_backlog
+
+TIME_WAIT状态的TCP链接最大数，超过这个值系统会自动清除：
+net.ipv4.tcp_max_tw_buckets = 8192
+/proc/sys/net/ipv4/tcp_max_tw_buckets
+
+TIME-WAIT状态的链接重新使用于新的TCP链接，1表示允许：
+net.ipv4.tcp_tw_reuse = 1
+/proc/sys/net/ipv4/tcp_tw_reuse
+
+TIME-WAIT状态的链接快速回收，1表示开启：
+net.ipv4.tcp_tw_recycle = 1
+/proc/sys/net/ipv4/tcp_tw_recycle
+
+TCP KEEPALIVE探测频率，以秒为单位，建议设置在30分钟以内，900为15分钟：
+net.ipv4.tcp_keepalive_time = 900
+/proc/sys/net/ipv4/tcp_keepalive_time
+
+TCP KEEPALIVE探测包的数量：
+net.ipv4.tcp_keepalive_probes = 3
+/proc/sys/net/ipv4/tcp_keepalive_probes
+
+SYN和SYN+ACK的重传次数：
+net.ipv4.tcp_syn_retries = 3
+/proc/sys/net/ipv4/tcp_syn_retries
+
+net.ipv4.tcp_synack_retries = 3 
+/proc/sys/net/ipv4/tcp_synack_retries
+
+TCP ORPHAN的值调大能防止简单DOS攻击，每个ORPHAN消耗大约64k的内存，
+65535相当于4GB内存：
+net.ipv4.tcp_max_orphans = 65536
+/proc/sys/net/ipv4/tcp_max_orphans
+
+TCP链接的内存大小，以PAGE为单位，x86下每个page为4KB大小：
+net.ipv4.tcp_mem = 131072 196608 262144
+/proc/sys/net/ipv4/tcp_mem
+
+每个TCP链接的读，写缓冲区内存大小，单位为Byte：
+net.ipv4.tcp_rmem = 4096 8192 4194304
+/proc/sys/net/ipv4/tcp_rmem
+
+net.ipv4.tcp_wmem = 4096 8192 4194304
+/proc/sys/net/ipv4/tcp_rmem
 --------------------------------------------------------------
 
 
