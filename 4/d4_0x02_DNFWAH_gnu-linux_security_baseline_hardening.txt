@@ -83,6 +83,10 @@ OpenSuSE发行版检查需要安全修复的包：
 
 sudo zypper lp | awk '{ if ($7=="security"){ if ($11=="update") {print $13} else{ print $11 }}}' | sed 's/:$//' | grep -v "^$" | sort | uniq
 
+RHEL/CentOS( 6.4)检查需要安全修复的包和明细：
+sudo yum list-security | grep RHSA
+sudo yum info-security RHSA-NUMBER
+
 
 ----[ 1.2 密码策略
 
