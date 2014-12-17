@@ -298,14 +298,14 @@ echo 0 > /proc/sys/net/netfilter/nf_conntrack_tcp_loose
 --------------------------------------------------------------
 
 
-TCP FIN-WAIT-2状态保留事件，目前很多发行版的默认时间是60秒，这个值太大
+TCP FIN-WAIT-2状态保留时间，目前很多发行版的默认时间是60秒，这个值太大
 会造成DOS攻击的风险，太小也有一定概率造成远端机器来不急主动关掉链接，建
-议一般设置成30：
+议一般设置成15：
 --------------------------------------------------------------
 参考： 
 http://benohead.com/tcp-about-fin_wait_2-time_wait-and-close_wait/
 
-net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_fin_timeout = 15
 /proc/sys/net/ipv4/tcp_fin_timeout
 --------------------------------------------------------------
 
@@ -316,12 +316,16 @@ SYN队列的长度，值越大能处理更多的链接数：
 net.ipv4.tcp_max_syn_backlog = 8192
 /proc/sys/net/ipv4/tcp_max_syn_backlog
 
-设备队列的长度，这个值建议比syn队列小：
+设备队列的长度，这个值建议比syn队列大：
 net.core.netdev_max_backlog = 16384
 /proc/sys/net/core/netdev_max_backlog
 
-TIME_WAIT状态的TCP链接最大数，超过这个值系统会自动清除：
-net.ipv4.tcp_max_tw_buckets = 8192
+listen()的backlog限制数，内存大可以提升到65535：
+net.core.somaxconn = 4096
+/proc/sys/net/core/somaxconn
+
+TIME_WAIT状态的TCP链接最大数，超过这个值系统会自动清除，抗DOS攻击的选项：
+net.ipv4.tcp_max_tw_buckets = 4096
 /proc/sys/net/ipv4/tcp_max_tw_buckets
 
 TIME-WAIT状态的链接重新使用于新的TCP链接，1表示允许：
@@ -332,8 +336,8 @@ TIME-WAIT状态的链接快速回收，1表示开启：
 net.ipv4.tcp_tw_recycle = 1
 /proc/sys/net/ipv4/tcp_tw_recycle
 
-TCP KEEPALIVE探测频率，以秒为单位，建议设置在30分钟以内，900为15分钟：
-net.ipv4.tcp_keepalive_time = 900
+TCP KEEPALIVE探测频率，以秒为单位，建议设置在30分钟以内，300为5分钟：
+net.ipv4.tcp_keepalive_time = 300
 /proc/sys/net/ipv4/tcp_keepalive_time
 
 TCP KEEPALIVE探测包的数量：
@@ -356,12 +360,30 @@ TCP链接的内存大小，以PAGE为单位，x86下每个page为4KB大小：
 net.ipv4.tcp_mem = 131072 196608 262144
 /proc/sys/net/ipv4/tcp_mem
 
+如果不是特殊场景的服务器或者网络设备，一般不要调整tcp_mem，超过最大的值
+会报OOM的错误。
+
+
 每个TCP链接的读，写缓冲区内存大小，单位为Byte：
-net.ipv4.tcp_rmem = 4096 8192 4194304
+net.ipv4.tcp_rmem = 4096 8192 16777216
 /proc/sys/net/ipv4/tcp_rmem
 
-net.ipv4.tcp_wmem = 4096 8192 4194304
-/proc/sys/net/ipv4/tcp_rmem
+net.ipv4.tcp_wmem = 4096 8192 16777216
+/proc/sys/net/ipv4/tcp_wmem
+
+如果按照缺省分配8KB * 2 = 16KB/链接，4GB内存能提供的链接数为：
+(4 * 1024 * 1024) / 16 = 262144 
+
+Oracle 10g的最佳建议：
+http://www.dba-oracle.com/t_linux_networking_kernel_parameters.htm
+
+
+设置最大的发送和接收窗口：
+net.core.rmem_max = 16777216
+/proc/sys/net/core/rmem_max
+
+net.core.wmem_max = 16777216
+/proc/sys/net/core/wmem_max
 --------------------------------------------------------------
 
 
