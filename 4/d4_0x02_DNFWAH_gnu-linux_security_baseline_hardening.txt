@@ -42,7 +42,9 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 
 4. SSL/TLS Checklist
 
-5. Reference
+5. Weirdo audit
+
+6. Reference
 
 
 
@@ -183,6 +185,8 @@ sudo apt-get install auditd
 -a always,exit -S adjtimex -S settimeofday -S stime -k time-change
 -a always,exit -S clock_settime -k time-change
 -a always,exit -S sethostname -S setdomainname -k system-locale
+# Monitor binaries ps & ls and saved the log when being executed....
+-a always,exit -F path=/bin/ps -F path=/bin/ls -F perm=x -k binaries
 -w /etc/group -p wa -k identity
 -w /etc/passwd -p wa -k identity
 -w /etc/shadow -p wa -k identity
@@ -282,6 +286,10 @@ passwd -u -l可以操作
 ls -l /boot
 --------------------------------------------------------------
 
+11，找到suid和sgid相关的可执行文件：
+--------------------------------------------------------------
+find / -xdev -user root \( -perm -4000 -o -perm -2000 \)
+--------------------------------------------------------------
 
 (可选) 
 
@@ -690,7 +698,17 @@ openssl s_client -ssl3 -fallback_scsv -connect www.google.com:443 | grep -i "ale
 --------------------------------------------------------------
 
 
---[ 5. Reference
+--[ 5. Weirdo audit
+
+Grinch攻击虽然不是漏洞，但pkcon+wheel的组合场景还是需要注意，首先检查
+wheel组是否存在：
+
+grep -i wheel /etc/group
+
+如果存在的话检查pkcon是否存在。
+
+
+--[ 6. Reference
 
 [1] 开源闭源项目代码质量对比
     http://www.solidot.org/story?sid=39173
