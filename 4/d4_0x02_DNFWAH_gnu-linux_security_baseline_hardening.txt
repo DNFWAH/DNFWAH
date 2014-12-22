@@ -32,6 +32,8 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 
        1.4.1 file permission audit
 
+       1.4.2 history_bash baseline
+
 2. Kernel security baseline
 
 3. Hardening
@@ -293,6 +295,17 @@ getfacl file
 设置哪些用户对哪些文件有什么样的权限：
 setfacl -m u:user:r file
 --------------------------------------------------------------
+
+
+------[ 1.4.2 history_bash的审计
+
+#Prevent unset of histfile, /etc/profile
+export HISTSIZE=1500
+readonly HISTFILE
+readonly HISTFILESIZE
+readonly HISTSIZE
+
+chattr +a /home/shawn/.bash_history
 
 
 --[ 2. 内核安全基线
