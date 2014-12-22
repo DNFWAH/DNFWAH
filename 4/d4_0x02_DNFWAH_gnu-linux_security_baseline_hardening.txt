@@ -307,6 +307,7 @@ setfacl -m u:user:r file
 
 ------[ 1.4.2 history_bash的审计
 
+部署基本的基线
 #Prevent unset of histfile, /etc/profile
 export HISTSIZE=1500
 readonly HISTFILE
