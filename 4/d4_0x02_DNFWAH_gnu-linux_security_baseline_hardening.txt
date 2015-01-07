@@ -896,3 +896,6 @@ grep -i wheel /etc/group
 
 [12] CVE-2014-0196 exploit
 http://bugfuzz.com/stuff/cve-2014-0196-md.c
+
+[13] Secure Secure Shell
+https://stribika.github.io/2015/01/04/secure-secure-shell.html
