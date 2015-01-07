@@ -13,7 +13,7 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 |=-----------------------------------------------------------------=|
 |=--------------------=[ 初稿:July 22 2014  ]=---------------------=|
 |=-----------------------------------------------------------------=|
-|=-------------------=[ Update: Nov 18 2014 ]=---------------------=|
+|=-------------------=[ Update: Jan 7 2015 ]=---------------------=|
 |=-----------------------------------------------------------------=|
 
 --[ CONTENTS
@@ -31,8 +31,6 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
    1.4 audit framework
 
        1.4.1 file permission audit
-
-       1.4.2 history_bash baseline
 
 2. Kernel security baseline
 
@@ -163,6 +161,151 @@ PasswordAuthentication no
 AllowGroups, AllowUsers, DenyUsers, DenyGroups
 --------------------------------------------------------------
 
+密钥交换( Kex)
+--------------------------------------------------------------
+OpenSSH支持8种密钥交换协议：
+1. curve25519-sha256: ECDH over Curve25519 with SHA2
+2. diffie-hellman-group1-sha1: 1024 bit DH with SHA1
+3. diffie-hellman-group14-sha1: 2048 bit DH with SHA1
+4. diffie-hellman-group-exchange-sha1: Custom DH with SHA1
+5. diffie-hellman-group-exchange-sha256: Custom DH with SHA2
+6. ecdh-sha2-nistp256: ECDH over NIST P-256 with SHA2
+7. ecdh-sha2-nistp384: ECDH over NIST P-384 with SHA2
+8. ecdh-sha2-nistp521: ECDH over NIST P-521 with SHA2
+
+按照以下3个标准：
+
+* ECDH曲线：安标NIST已经受到污染所以排除6--8
+* DH的位数：排除1024-bit的
+* 安全的Hash：排除2--4的SHA1
+
+*** 只剩下1和5，建议配置：
+
+/etc/ssh/sshd_config:
+
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+/etc/ssh/ssh_config snippet:
+
+Host *
+    KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+
+*** 建议删除/etc/ssh/moduli低于2048位长度的，或者直接创建：
+ssh-keygen -G /tmp/moduli -b 4096
+ssh-keygen -T /etc/ssh/moduli -f /tmp/moduli
+--------------------------------------------------------------
+
+认证( Authentication)
+--------------------------------------------------------------
+1. DSA
+2. ECDSA
+3. Ed25519
+4. RSA
+
+2是属于被污染的NIST里的，这里不能通过配置来屏蔽ECDSA，但可以通过坏链接
+来实现：
+cd /etc/ssh
+rm ssh_host_ecdsa_key*
+rm ssh_host_key*
+ln -s ssh_host_ecdsa_key ssh_host_ecdsa_key
+ln -s ssh_host_key ssh_host_key
+
+DSA虽然没有被污染，但是必须要求是1024-bit，长度过低，所以关掉：
+cd /etc/ssh
+rm ssh_host_rsa_key*
+ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+
+生成强度高的RSA：
+cd /etc/ssh
+rm ssh_host_rsa_key*
+ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+
+生成客户端的密钥：
+ssh-keygen -t ed25519
+ssh-keygen -t rsa -b 4096
+--------------------------------------------------------------
+
+对称算法( Symmetric ciphers)
+--------------------------------------------------------------
+1.  3des-cbc
+2.  aes128-cbc
+3.  aes192-cbc
+4.  aes256-cbc
+5.  aes128-ctr
+6.  aes192-ctr
+7.  aes256-ctr
+8.  aes128-gcm
+9.  aes256-gcm
+10. arcfour
+11. arcfour128
+12. arcfour256
+13. blowfish-cbc
+14. ast128-cbc
+15. chacha20-poly1305
+
+对称算法选型是最后意思的，根据以下标准：
+
+* 算法本身的安全性，RC4和DES已经存在风险，所以排除1和10--12
+* 密钥强度：至少128-bit
+* 块大小：块加密的情况下至少128 bits
+* cipher mode：建议使用AE：
+https://en.wikipedia.org/wiki/Authenticated_encryption
+
+这样只剩下了5--9和15，/etc/ssh/sshd_config建议配置：
+
+Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+
+建议配置/etc/ssh/ssh_config：
+
+Host *
+    Ciphers aes256-gcm@openssh.com,aes128-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+--------------------------------------------------------------
+
+MAC（Message authentication codes)：
+--------------------------------------------------------------
+为了抗侧信道攻击，所以必须采用先加密再MAC，OpenSSH提供了以下MAC支持：
+
+1.  hmac-md5
+2.  hmac-md5-96
+3.  hmac-ripemd160
+4.  hmac-sha1
+5.  hmac-sha1-96
+6.  hmac-sha2-256
+7.  hmac-sha2-512
+8.  umac-64
+9.  umac-128
+10. hmac-md5-etm
+11. hmac-md5-96-etm
+12. hmac-ripemd160-etm
+13. hmac-sha1-etm
+14. hmac-sha1-96-etm
+15. hmac-sha2-256-etm
+16. hmac-sha2-512-etm
+17. umac-64-etm
+18. umac-128-etm
+
+按照以下标准：
+
+* HASH算法的安全性，MD5和SHA1被排除
+* 必须先加密再MAC，所有不带-etm的被排除
+* Tag大小：最少256 bits，UMAC和RIPEMD160被排除
+* 密钥长度：至少128-bit
+
+建议配置/etc/ssh/sshd_config:
+
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+建议配置/etc/ssh/ssh_config
+
+Host *
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+为了兼容github，可以加上：
+Host github.com
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512
+--------------------------------------------------------------
+
 
 ----[ 1.4 auditd审计框架
 
@@ -239,6 +382,12 @@ find / -path /proc -prune  -name "-*"
 2, 所谓的world-writable权限的文件是不太合理的，所以这种文件我们必须得提防：
 --------------------------------------------------------------
 find / -path /proc -prune -o -perm -2 ! -type l -ls
+
+针对日志的world-readable也需要注意：
+find /var/log -perm -o=r ! -type l
+
+正确：
+chmod 640 /var/log/
 --------------------------------------------------------------
 
 3, 一个没有owner的文件是存在潜在威胁的，因为你永远也不知道未来某个时候她的
@@ -303,18 +452,6 @@ getfacl file
 设置哪些用户对哪些文件有什么样的权限：
 setfacl -m u:user:r file
 --------------------------------------------------------------
-
-
-------[ 1.4.2 history_bash的审计
-
-部署基本的基线
-#Prevent unset of histfile, /etc/profile
-export HISTSIZE=1500
-readonly HISTFILE
-readonly HISTFILESIZE
-readonly HISTSIZE
-
-chattr +a /home/shawn/.bash_history
 
 
 --[ 2. 内核安全基线
