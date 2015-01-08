@@ -211,12 +211,11 @@ rm ssh_host_key*
 ln -s ssh_host_ecdsa_key ssh_host_ecdsa_key
 ln -s ssh_host_key ssh_host_key
 
-DSA虽然没有被污染，但是必须要求是1024-bit，长度过低，所以关掉：
-cd /etc/ssh
-rm ssh_host_rsa_key*
-ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
+DSA虽然没有被污染，但是必须要求是1024-bit，长度过低，所以关掉最好的情况是只使用：
+Protocol 2
+HostKey /etc/ssh/ssh_host_ed25519_key
 
-生成强度高的RSA：
+如果需要使用RSA，生成更高强度的密钥：
 cd /etc/ssh
 rm ssh_host_rsa_key*
 ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
