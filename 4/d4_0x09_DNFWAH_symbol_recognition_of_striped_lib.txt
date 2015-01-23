@@ -1,0 +1,329 @@
+
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #4 File 0x09 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=-------=[ Symbol Recognition of Stripped Shared Library ]=-------=|
+|=-----------------------------------------------------------------=|
+|=-------------------------=[ By jigsaw ]=-------------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ Jan 24 2015  ]=-----------------------=|
+|=-----------------------------------------------------------------=|
+
+
+=============================================
+
+Lack of symbol table or DWARF hinders the reverse engineer work of
+stripped shared library. In this paper a method of machine aided
+symbol recognition is proposed. Implementation is straightforward and
+the result is positive.
+
+Note that this approach must have been taken for many years in
+numerous tools, especially those made for reverse engineering. Hence
+purpose of this paper is to serve as the README of the tool.
+
+What's left in a stripped object
+--------------------------------
+
+Although almost all symbols are ripped from a stripped object, there
+have been left enough clues for the linker to to its job.
+
+The juicy part consists of:
+
+* .dynsym   - All global symbols
+* .dynstr   - Names of all global symbols
+* .plt      - External subroutines
+* .got      - Collection of referenes to global symbols
+* .rodata   - Hardcoded strings in original program
+* .text     - The source of power
+
+None of the pieces can be stripped, otherwise linker and loader will
+fail.
+
+
+How symbols are located at run time
+-----------------------------------
+
+An example is given on how a global symbol is referenced at
+runtime. ARM Thumb2 is assumed.
+
+    694a:        4f58        ldr  r7, [pc, #352]
+    694c:        4b58        ldr  r3, [pc, #352]
+    694e:        2600        movs r6, #0
+    6950:        447f        add  r7, pc
+    6952:        58fb        ldr  r3, [r7, r3]
+    6954:        681b        ldr  r3, [r3, #0]
+
+This is a typical reference of global symbol. The procedure can be
+outlined as below:
+
+    694a: A PC-relative LDR to get first piece of base address
+    694c: A PC-relative LDR to get offset
+    6950: An ADD PC as the complement to the base address
+    6952: With base address and offset, load the address of the symbol from GOT
+    6954: Load the symbol value
+
+The pattern is seen repeatedly in all occurrences of global symbol
+references.  The use of PC-relative feature makes it convenient to
+emulate the process staticly without resorting to runtime emulation,
+because all the imm values are in place.
+
+
+Static analysis
+---------------
+
+To find out all the fingerprints of symbol references, a full scan of
+.text is required. Furthermore, to retrieve names of the symbols,
+other sections are required as well. The outline of the whole static
+analysis is as following.
+
+1. A full scan to the ELF object. Collect sections: .dynsym, .dynstr,
+.got, and .text.
+
+2. Read all symbol names from .dynstr; Find all subroutines that are
+listed in .dynsym.
+
+3. For each subroutines found in step 2, scan the instructions one by
+one. If the instruction is one of the following, record it.
+
+    - Load from Literal Pool: LDR Rt, [PC, imm8]
+    - Load(register)        : LDR Rt, [Rn, Rm]
+    - Load(imm)             : LDR Rt, [Rn, imm]
+    - Add PC                : ADD Rd, PC
+
+4. For each subroutine, simulate the execution of the recorded
+instructions. If the simulation cannot proceed due to missing info,
+namely unknown value of certain register, abort current instruction
+and go to the next one. Since all PC-relative values and imm values
+are within the .text section, all references to global symbols will be
+revealed.
+
+Note that sometimes the referenced symbol may not have a name, or is
+not in the GOT. In this case the result is simply dropped.
+
+Enhancement
+-----------
+
+One more thing that can be carried on parallely is to locate the
+references to const strings. It is due to the fact that const strings
+are referenced in a similar way to symbols. All the const strings are
+collected in .rodata section.  A brute-force approach is taken in the
+reference code: All suspecious addresses are sent to const string look
+up.
+
+
+Future work
+-----------
+
+It is noticed that quite a few subroutines are not listed in symbol
+table. The only way to find out these subroutines is deeper analysis
+to the .text section.  The instruction decoding is currently
+hand-made. It could be more effecient and complete with dedicated
+decoder, e.g. Capstone. Once armed with a efficient instruction
+decoder, not only the hidden subroutines can be found, but also the
+pattern match of symbol reference will be more accurate.
+
+Another possible enhancement is using of .hash section, which can
+accelerate the procedure of symbol look up from O(n) to O(1).
+
+Source code
+-----------
+begin-base64 644 armre
+H4sIAAAAAAAAA+w8a3fTyJLzWb+ih9nl2sY2fsUJ5MLZkDgkM0mctc0ysyzH
+R5ZasQZZ8tWDJDuX/75V1Q+1JDthOMAsu+jkxHJ1db26qrq6W/LavplfBdHC
+DuZLbrs8/uHzXx24hsMhfcJV/oTGwQ/d3mDYGXR3OoMdgHcHO93+D1dfQJbK
+lSWpHQPLOIrSu/Duay8r941cOz3mRKsVD9Nn3BsOBk92HMfe7fIe95zdXrfn
+uIuus1gMu7uLBe88sZ90etZfLfP36/Ndh+f2O37mJ2nSTm/udPBPv0T8D7bG
+f79bif/+sAufX0ac4vX/PP6dFYz/fOWH/ipbzWP+j8yPuVv7j9Fkejq+YL32
+Xt2y1nH0O3dSVrPjVcwBkPC0dnh+8Mtofjg/Pjt4OWUPWldX7oK1xj3Wem0H
+AfzncRzF8BlGrSzMEu4+qFu26875DXey1F4EXNBjK9sP2w7jgQf/4wzvXe5E
+Lm87dcsPnSBz+dwFuZw0in2e1B78yx+C+3T8anI4mh+dTj4A8b/alt/iNRkd
+HJ2PviyPu+O/2+kPO+X47+72d7/H/1e4prerRRSwCcTbVeinfhSyyGPTNPbX
+a+6y6dKGdMDO/EVsx7fWsz9zWdaZ7bxDcolgQjHPICccvT6YHLOlH0K9mbB0
+yVnM38MtZzy88kPOY3YdxaKrlMRKhCSBkKTNTkPo6Cdsba8B3WYrni4jF7us
+bAdIc2b7LnSQvGNDQT/BjLaOICUBndU64Fj/2LINWdr+1TL1ovjajl1mh66U
+McmCFDGgK1B6z9uWdRGlHFrtVEhjr4Ey8Gcr8Cu2tN9ztuAcRIUsGzKgCNKF
+t+yW26C4H7IwW/E4ysAIURQkTYsna+74kD9vgR4ICOgup35lC/nhVZud8NDh
+bJ3FqAzqbpjER6KQqWOQwRZWFsEu8DixBA1eg/B/S1jAvRQlsrXJWbTArG+1
+7rks6yAAYbOrJbODVQR6Y/4XdgeLQIKX9Lw4WlXpN1EYQNLGskgUHhJFSP48
+IQOgyIEfvgPV0gj//DRhv0cLUGEGTb9nvnMLqscpFLRhghUNKPrUshqs7d6G
+IA5jrMUOQDSx3lESKoQ0JoQLe8WxJylRxVyDB9DVYqOblMchNmcLGMMUhoVQ
+riKNchgFAagooyrmHigKWCh9lXQcuXZqU78T8DucAF0yVnhFvgJzHww99AEX
+u4rtFfZJ+U0qeaERkiiLHXKEdXTNY3TPkKvxXvvcAd6OHYKZ9Sg0WYT2v/YT
+bV50+CDCxSC79sEKnu2jo1gn0XVhWIPIsVOQEZwfZm2W+it+r7MIfwkZv7Ex
+8NBLryCSQLuQLYG+XTQMtkuzOZoTMmqzg8k56JytFj0LAy9JIJRcEBOtMXwy
+sJ8yeQ28nT11H7gwyvFuk71ZO032U3+n91Z1cPIOi3KH/qYOXHfoDTsddb+K
+3oPIQ8DtSMSdTk55sOupeyiFhChrRyH2NOLOnreoioDYcV8JsDPQ6MO97ib0
+PkrxFuMDLIRGYunt2nfsILcpOkfB4m1yJHAxsHcGgyzdBfwbvAOHILEWPIiu
+n5qWPmCXh62YBzZmRXZ2NCEP5ynz/BjyAXkeclrY4GWgOKTSxLD71u6R50Gp
+adgRPOfg6AjQVUqDxavM35QVALKBBxr2tZ8uC23k5oJBk9ydeqtGGTPSCylz
+vRzPDMufqR4S5b0NmUqkorWdYmaguQSTf8zXHAMFkjomWIioyHGymOyfVAYg
+H5ukTeQykdpNE3lAL6PK+R1Q8CnlQRD50gx8lQEiF1GPIwmWSHCCc0CEax+T
+dYrTWRRD0rrCHjKqZE/IV00YdMdG1igvEvJXK6EkBT/U5Wwd2A7OgdaUaINB
+7eAWMm85CYBVIvAENHeWanoAuOLxGtIbZeqq9k3wVy/DqQR9EDBEtgP6apnS
+ZsdZjNlrFcW8SXpwSGswU7JQpfF8iBKZ6mBQKCULPRQtdKhrHkj/l+6uCFwv
+owBTZkFNiiicmwIIB5yOLasLacmQWXrk6OxYznVtNSNoGZ6q2ampZqEmzSBN
+C92TNAa6vTZUaOBv+cQqFSTHlB332THamHDyGUkUJ5SuYU4EPf3QkiyBcB9M
+CHMrx5LF7ORFWYiooDNfs15T6oNugKwyaUCcXRa3+AGFlGeV2tFAxvyjDdWk
+agwqKz+V+bolwom0OfMheCAaLqE8eUrJYAIB+ubysIkuuPfW6FCL+RUqFddV
+8jM6TMCHJ6sCOvTXmJvQoV3hH0B2hixTup5S9pnApHl5aFmDjcYDW/lG/InV
+rqwARBmJutNA5JbU5pN9ER8sHkIpQQEM6G6GJRtb+UmCQeuHXtQkL4CYzsJ3
+YXQdivgERpbD4xRW1UwZCGJpEWFpRGknLYwSOtpVpJw1xBijAZ36OD+AO1lm
+6lEpAN2jkBEosfjCSUSkSh9vkkvmcW1Vqh9RZizEMsAOaBrPC+skgtreX3G1
+UtDVgIyElX3L0FBUQNpkkiauMsD7ECxEsiB754sGB+eBYk0Phl+DJV1YGKxJ
+gFG4tIENTi1WIZmNwaUx4SApzJ4oo5wlHTuG9ONiMQOVKKiNg0OFuCyWiipQ
+hY7VaqrqPBCRpJGDTWFjO6lkYmKKwjo3Bs4sFijhBzaUbWAS6C7N26aqV8yW
+ZQqOyEeCgCpB5cC1rQO2iLOUt6D+RldQixvUiBY0crjzagKL1qfELsloKYNr
+Gzmnwsgjx0ROUqYsYJ3oHcvWOJkcZzS14QKwaHdhGRhSH/Uli0DqTnHMPX5d
+SF/IB8dep7zCEpRSvBWFOBkKQ+nJCbQBzzBJ4WBwTmtMlfflwBScXEzVZljR
+FhZFaqLCDhiCT7ktXNTRSDtRFrjoOORP3PPAYmgeQLJEZZOKuAJqri+qbbE1
+BhHN27ACPLTXSUrhOqZojaEIFj1spOcTPasiF/ZHA5ERUJml77owoKbm0qdp
+KoBygKbuhFS3VIWzslNwhw2Tt45oUszGcgeEb2PpL+ZgWLAmPm4H8DzM0FIZ
+JTec7Jd2ssxTyPXSB04oEhDjAY9lMFl5pZqLIb1JzCfjWljHIRvXuvX29z3C
+0kU7sO3lF+Vxz/7/YKfTL+//9fqDzvf9v69w/eR7ocs9Nofl9GQ0P7F+gm9Y
++WqA9ZPcgmd/T1LXj9rL5yVQmCLMgrUlR1I8zFbsD6qjxpfzi/HFiD1jnaYC
+QMU1h2LO/DopfDs9P9ffodwCZOsDZda5yxNnHq33LUuksxy6n7MvN0lRTAIM
+aSAwA9m7wzltoSz8NKlC43QDbLUBFm6AuTms3xMwqJmqQJwgBbQifAPrsf2C
+AdJcfy8LN6iOUKm1yQUdPa0yT/z/5lWoE0pUZ2nHqvxtYG21XzJnyhq+GIKy
+/o3Yvi6oRYJpjfBbWZktg6mbPl4tHroV3iWTahBJUWL5uexnAhswyeEBFjKH
+Nd7HsaUK+2PZIrV9+HzcYFPO2fS38/npdH786uKQNR5vG88POG+SMCr4jX61
++Typsxp9tJ4jffbsGevWP91gemQKomDhiaKIEvTjTKONTPIrSrLqRWJinWs6
+WZyFc1H0VxnkbZWcUXVyJQNtlLpzY5QKaslmkOKOxrQY/YYc2ldzGGnzuNGw
+WIP9G64yVujILL9e0n4qOjeWTgaa3pimawS+eItF00uxFhvTVhibYYVsdAIT
+Gp2wyFXb6WkJU4iXGJhQSa4z3MXLV8GEH3Mo8U2ycLW6uGqiM+Mm6+B9kjm0
+c4WeCwa30ASoVU0kDtbATzFT0EURxRq0eaKBygPAwW5DA67cDJJU5Jpww86s
+0ZA61asmX5vCH/sBp9K+YBBKdwXTYRGB5lCDk3yN0fk0awP9hM954NWOT89G
+YOy1YSWmhqCBGpkNGwdh6yhsHQYzNwNvvNkwBhX7KrtivQ+LD7HUgcX8p5tB
+kKj6HUrzE2Qy3/u2lxSwCocpCRZ3UfzFngC67/mfTnen8vxff6f7vf7/Cte/
+w3I7sH32q29H37Ynf78+5VIPWn1JHvfE/7Df61XW/4Pv8f9Vro9c3Bdggb8o
+w+hxFNwE0MAHcmfpAc7aOAFvPuHBlk4XRpy1WJqm8N+XF7XcDPY6HbzDU+3y
+OVADIOwZa9QuD9kjhqc7ewAb1OvQpDjmR0SSEzICfvB/tVrB/zAMBWvBb6fM
+Tx8jaW6TELhNVgUueLIkGCB9pN4VHDbxGG7iIc6eikyQbEEjcSqlbEa6kCrE
+sEu8XdeVlhvs7uEdPmcgT6yQvMsePRP3VOPoJZ/YlhFlUa2mlvH1zs2TegFn
+wjbg9A6LSKfn51WkoxxHbOtsILS3d1zPZYIlqBCrtqgLVLx5/hx0reMqVDTW
+y/gTiZ7jP9Hokwo2yCrwN1GHxkIHIXhZnD7hi7atC+MQ69I/dImrN0rEvpOG
+FzpVkNEhnrK9/c2tcYpHlP0trZ5/A607eesH9MD52vlo7nfTx+L6jtbV/bLt
+lmWLv4powqg7f85stJH3scK59+ve7Zsc8Dnptdxt+MAyvQEodjLoMYTC5oRa
+p6iDnlrBveqWsZ9Bu4t3b+KV9kohIcmNXKmx77GaEZvIoW7ornqIdqUEDxJu
+9pzc3XGyrR/F6109AWFTXxW627qKdtkz1xObtf513UuuJi9enZ0po4RJO2sj
+eaCXbyaTWQHi2EEQObVuk3buIq9mGL9eN3BbzzfTaD0nSWn7m1zu2sfDNxBQ
+aUOn2truT7WssnuMM4uQUsR9W+3OGUgYCyUsOQnlqIuY2++kFCbPSZVlkVjc
+VlvnJk5YxgmrOGkZJ71fHPCDikBl9eB7Vb/NgiHq/aIR1j3CCU+rGsvVlET4
+t9UBQpkQTC52FqQ5hccN9jM+cIzPh9jvxFNxfsBjtrTX61u19VvxW8PVJVwm
+AQDeufmh8wkkk9K+f6N4jkLbpPn5RjXjNFkjtf1AaiZdH5mAQdTxAfbXUGNX
+GTsC3AhCfFC45uN50z7z2d9lF9wnZv6jR01BCQqgnpkBMMyR8Rv/LU3/fYz4
+zs0ue/iwkLFrBSwoEh4CFsz9PwJ2vZT7cQP+nb9m/R70Ec+pmsNAbFGQbnFS
+0PIVwbhL44dqg9kYNu0+oHJ5CpDC1vcLihJ2WVrpgdLO+XCZHX8UthT9C61k
++LwRvTifS0wSOF7VrghtPafnjjb2lKNcavmwwXs76Ll/9Yrq27ropasvzOOe
+93+6g03v/+z2v6//v8J1z/pfrev//J4Aj+Mw2rYlkIPQ/3CPQBe16uThKkpr
+xmECGwUezCXTJWSoRrJsioO0RsL1ZARYcnKAZJEs4X45zzOZaIXKK2/MT1Cp
+ESYJaMvxHqtCTU1jdQNZHuRCB93MGnV8XGm/mpGqyrm3Ya14JrJdP32bxqm9
+UNpK9FsoXbiu5mE2bpYPRRtqcSn0M3TPNdTEpIpJXq9CL12xEkFVq4LQQEk+
+vwl0DajghP9ban4TpjKENm2lJ+2umLTz6TrBfxz+mxNW0nounnN9Bk045Obh
+q0TAg21ofyiM9kbiIfRtAU96hGzPPUI2i+NufIB7Pp3NZ79djmoSFR+/pVX/
+dDajc/JN1dSW0cfnBmtbT9DKnmA25U5hQreerm06RauWbrmf6C7wFR9ZLNZm
+OITmqMsDbcCDhvtLMeUa+dCWa7AfzccOknqxUqiWQNhFDyGwYf/8p+EbWJPd
+QwBqtDE+/yiqs+6Qik90+2vXrNWQT00TfsjE7tBW6hosLVNZ+AkL1426DDG1
+z0rvLbfqzKYEaZm1o8SR+U3clVuhnFb5SlTqdbAfd9ijAoeWmTsrMsrQzrkV
+siRt4pUsoCs74UmqSfoLYhQi53qJR+k1r1ylCs/3hGU+wcSetG6Oume0JvQa
+CvQTD48/+NebB03miaKYzLJtsLy7hsoksGWoJAoPXTC80fvbGbvcwrL2lyqJ
+B1eMkaUIxz6VTZRWV5KhXFikXMik/zufSyjMyCNM23ypyo5iLnfjpImf9JZP
+Y43TPHyb0/yPNzgxiDsqefAG2BsPDlFfe9EkeeUduIGiAHeKBNxKGnCniWDW
+j/F9N1/ldOJOdQF1FXdXkbyBjjqpC3RkKuYBeSfZyztFQ7CXdyYVMTUknL+r
+wcixTpNNR6Nf5tPRTPorJOUYX3Xy6JEa+kkilYxBcvQvbK49RBvreMcv9SaD
+qPbWai8N3A07/EgPqxluEOFjSRVBkEKbz5Nl5HkVmWjk8uShccNsZfSEmhDF
+KelBr2PJd4CFOskmfaRzlIkZEGK2ST0TY6um5HRUESGjN7oPQEP35m1peI2E
+ihi6ZJTMc7PlzepNyi3DqUxAeVO+9CF+D2CjMYRvF5l/wvhCiJEjg8panPw1
+O/3inQgaeu1OvwMjxSpXMaaxZSUDTIq1jAhVjLyi2yuxgbuzWtceCjXfrGXS
+puoUJh8p1wNZZpS2agTVhzLsijslOpqBpHmaoLfBP4ZzGt/NWYb+J9FHQ9+v
+V6qnDkMxmVk+VTMY2/sZA1KFr0hjn8pWONP9nHWGNjiLtFnkXHIkXtnJk16X
+B/DaWPHVizzyMFZIW4JYXWaMiqWpSb0Yn6ac1ThVVx6vuYqGolQzqBkGyvsf
+1byD93q+UV9wqNQ9GM80jazvHqg0JN+i/K/wgSGuUY4YMgAlc19hLr6bewsE
+wRKu0g71mQHJi3KCUJrRM6RxtFbYAGkyVQ5IFcmXWt1N2lFHepAUf7LhHuWK
+3OSORJOpekSXFdLk97LFIfoItiW+tBamYo3pAiivY0gAuRb4jOzzotIC3xPH
+KGt6ClRSw/ryQb1YgiKN/3u7y7T/9oV53LP/O+z0hpXnvzqd7/u/X+N63PiM
+l8U+OzX6x/Dpbj9Ry4FrO2F2lkYr3Fej30q64iG9Eap/Y+jMD7Mb9o7HIQ9k
+N0VJ/SYEFqJiua9OTXFPL16Jl+9D/K2cxI5vqQLMEijb17aDL2UrOsgZF1Ti
+ZWDJyn4PKYjKWnzl2184bSbe8w3xdfxEvG9Lbz7bUOA3FS1xYpfF9KMXMJGs
+bCeOkrJayEf/CJBQqil/nSrLaWleIb5jvb6N8besSCRDv3Zu3M87Xp/temzp
+VxPPTi9e/TrHTVjj9UQTePf7iHqDfj7P+r39Apw2UwDeHRbhw4GADwc5PCeT
+mGRyKolJJSeSIBENJyHkvsABlRBGS3coW07swNvf2GfsFRoS3TC9jvB5gU19
+XlOL2TQcYBMIuEUEaCmLkOiWaUU6TW6zdNhni3TQ9Lrcoqn9Wu6U6KbpjWjT
+DnE5m+NSi3VMyNn44Ih1TcjRbxcH56eHrGcCTy9mo8kl6xeIjWcjNjAh05Oz
+0xdsxwRdnhxN2NCEzM6mbJexohDjKT71KWeGYuPJqWj0xFXueTkZH+KjCLJv
+sadqlH3NxpcXr+ajk/nx5OB8hOQHuwO+s9OxyjjT2cHhL6ympHyEz40Satd4
+DHM0E2/xdkzIZHRmWBYAo19HpllHZGvDpgA4HE9Mm44MDT2vUyCvtSPNdMtR
+ZZQRMhodjcxxBtjl2QwknP6nIZGAvhzPDKEAdnIwPTGEAsh0NpkdmCONsN/O
+ETY0YcDggO2WIcBzrwwbXczYkxILwOt2SiwQr1vQ4/TiFEAFJY4BxroFHabj
+CxzobkGNyeXB7IR1y2q8GJ+B/3fLmrBuWRMUsKwJCfikamjWK6hyNHrx6iXr
+FTSZjX4VmAVlfj6/JGBBne1+f7TJ7/PXVmcvoO/hgekfCHt5Nn5xYLorAl+P
+Dn4B7zBgFPS/XY4KvWfz8YufR4ezQm9x5Gf4FoKmgIW/mdsvIuIu9aAAOhyf
+nwPeTgGIiWNoxJw4cnxxenFUu8H3b2/oSeNBvYxBh5KEUcvCxL8K6fdOYJV4
+I55P8go9cJ7IqRaZVPEU7SKr/2nvWJvaSHLf8ysmVAE2cBtsiEkByZUJJnEd
+cSg/slQB5fLhMbgSG9eMYcnmuN9+LakfUveMMdndpPbK8yHB6ofUarX6Jal5
+PtDE89RH+XLq8w2m1VauNxpeqp0em9mifnfau1LbODSkDtLuenBB4aZVBZqg
+W+2D+ut2DAa0lHgIh2YZJtp8WpG4XOqpj0xPoNnIVCIhk3xtwiDkffrK53yT
+darpxUHxmcdPqmcImYZkhV72Wa4rMnlWtDqFL+R6jOxJ1CL2m2Bkok+FLHth
+vlZQWE06tjbjLyFbY2SCq9KwS1ZpGSvqBPJz6iQye08hU0hLAmcz6IXOqO/N
+IL/3NPqlLHnYqF3Z2BQl6dfRN9ECbbYghZvZPMis+ojJagI8itbmCllwDMZj
+a4F1HdZyPe7fO+60wHk9mzngaWx549H7PUTodScjgvNdNtvy3bbbMJgItmOh
+3m3UD3HmquRw/bqffPMJi7tD1W3TM1v8QvIp7mKwBQ+mgw/Ljom7ELtXqRLZ
+i3EXzIi+WqBaPCvYBK6gPFgqYLrOwZfeVerjj6+1CAjoxNwnhQlwj+EB07zc
+aXZuukNy8lLD689sgYGb0FxWlyoXUgw4jx1M8NjIncdjIzKCx7RBkTy2sFTA
+Qh47/JzHDurxmCdYrjlgmpc7zc4teKwSNI/tcv6o24S1Owf8qgBlDjhVgFLO
+CJjQEGACNpHyDUya+DoWWTxRg5LOwgVwIoC6SrjVTX/3oaN4FAKleGtg74sS
+GydpJzMkbaJFjfXnRIpTiEgLw8TX72E7HXAigKSRZEMZmLWUQXmrFPhE9m3r
+fbDpAZBaBb87qLdbfGH63m5UyhJIO5otAcTty7YA4V7opQCZDXNF0gO74x0P
+hNS88nGwjQ+Sgrvo0qaPRNHNtz7U6A986wOg/J0Bkp+7JaaynVYNRsmr7LI6
+dRBuK96rwdSst2s4fji0enyM+MoCCjvhekPxXIxISPlQbf3L7GsNESxDo9tp
+HNaOREc3FN3NmiLtU83fJlNi1gYaUtgOujQQKdWDFrWzJMB6W4IpZa8qTgGw
+JnP9bNch13LJYoBCnxigHOY0zdvLNad67OVkUIGYqAwQIpkHQLEUNEDApMef
+l2IVtF0HzdA2aahtBBsYUOggvYK59rRQyAetmjw+8BrEbBIyggHFMtWW9zjB
+kyQrYIUlVZRaI32ovtuM+OEWwUr8kAghZX5IhJAtfkpU7749rrZa/Jio3j2s
+tqtMLymIeaCmwoEfW9WDOlNLCnRSPVQqie+LiND7HX7WRuBStFpb9WDlaPXY
+h21Fq0c+LFo6L+3sqL+X3MjRKdsCPbaOjtMkAZiwVeb80sDKNmeZqUIpxy1R
+MzApq2KAl49bB7JmhH5oHfAjkNqnbljBp+7bTrOJy2eRUeEvC/zI/eCk0MDx
+vB4p1sf6cAiASeJEg7pQ1Gbi7Nh8DZj8Wu1qu8MnP4QenTRr7xi3EHjSqjeO
+PjIhU9C20sRKQ3fetpmkKXi1c/qJCRWWP6ValTKvxJXyv1FysldRYwhaLJXh
+GJWAv7wZow1hCCXdYBROY4bCYajMyJaoHJSjclCGSgE1qv+HkEaL7wkfvb31
+1+J4JP7L9sud8P6/VFnc//+I7w/Ef8mM9QIm2iBTBTA17iVX1n1pTf24M7bS
+xnR7T7icwJX2BnmeUAIZbVurPGutbQ0frZm2sHAesmqZqbaqeuAM2TUJzlYU
+bJKAYLBU28qyM+qkvat4N1pOo301P72J9j922ied9pvz8dIGNPXubPOiuBfN
+Yfr0vDAAV/7BzSQeF7BkCawFk6ViMQvxW3oIAHKTWfRy6nCWLuYx8lIYIby5
+wFkGnL/9+TiF3W98P016FKmPQni7qPw6UKE2tDWIm3OV+sWZeamehXYJBySU
+lhsv2gpe3qMh3wbFIA0ajZc6ZOpXqI2ncaJWQhBG//NwUtyVhmXwHoYqgY4i
+K76LCFmGosVg4Cik/fgzUYMN4ZMQqwIeWjRDfAwpsWxENqLahB5GiHCY6cfM
+7FH6pGAaGTzaYK4Wrl1GBtJnxPSPyqLlxLj6lIqB6aNa4RSkX4f5VlBHZCV4
+nh0W7rvEGbjn18GaMMPUUI8Ksjj8nmExuPxyk8YFtJIltw7yYIJmZYitjEaa
+oBdlhkE5j9OAHjZhC3grDjE7KDJtMLnBnJpCk1/eDGoKx22jspLDIPYDcZ14
+rP6N00cIat6ODTW3SfxHCQJ0Es/AuHcpHah0Ho61s+X0YjYm0RM5VUXR8uar
++93lze17+nMpS6gM5amOkECRFjYEBJwPHynLQw17tLLG23xKTfqMyGnFrsq6
+axni1xFiYgbwIvM0mRvhNMlBOE1yEc5Ts1SWjH1q5CCeceBcYDURSM7eLMGR
+lT+EfojWZ87TcTgoMzzafvbqTy1rb//y5f/j8R92gvefy5tblcX6/wd8PyL+
+Y2Y8PNwVDMdDc+sXsUWaidmYUtoDAFIe+4x+R1dd+IOdQzbhrRf1FSjlF1eR
+Srhw5hGtExq3zUJpi0UubFoos7MxcQoV9CWLBdiotwGZwYQtISTMrOdjs1ZQ
+E+FdESeT6PwZVaTKvY4Kd2qzQBBTGUZAOH9m1cZm0baYNlHP4GWb2wmoZT9+
+hGWemh7MNkt69uutEaVk+vI/3WWf+9sjYql1UdMJh3bpgUFrmYe8Vk6TgnTE
+lSGlbCwD2LnBgfmb19xbZ2WFwintWwedwPN4xTrinGHWf7DyF3szSb27GfYx
+JD1FSStkRbYSgeod7Wusi0SDNvA9SiUvidmU6ohMPD7TOo9ltm7ilmHSyuvo
+vzqMIFQEQqabxUJnFaMXJrzUHbmpm2BbZ1DoIvqPDsmJMU9kosJXuoj296NS
+RU+E0BZVh6OYhN4GR8PGFP04GIZvSRbbmAz9WV7bgvU8QZ9NTHD553cJUJ+o
+oZWMsBUbrI/2nA5bYzEJkqnrLLNhojByJqScho0YbMT2P89RFSRKF4AjG/0Y
+FfM95rV8NLHIOvxv1mtqA355HV9+hmox1xAfEQbzV73jtsNmn8fOUXhpLEUF
+Bl13gXFmUOMJnSsPMrfNZY4H0SGx22PS48QmU8R07AWpC0WJic7CuyYnJAuI
+IoXbyxzCefoHBekR8ekDTf08UekzETCHV04C+jPYfIdlm5DJaQOtG7Zt75+e
+nsKs8xs86Qjv5YGTS/qZnshVe41/GjF48QLqY6pD9wFR7/eBptTrAlLUooDs
+AtM6ZBSbQ/CYaHRzRw8jno953BU9Ca75ZUxda4ThdbR6Pl4NXUt1MvQ4BwN0
+fd3fPD4St8foK6VyH9FYeTprVpSefL01Q3PNqbs8vbXhHqD6buWlY2jaSShL
+fc2tsSw5C301Q19RBHX0gXNPnGAAMjWs6TRKPCpq3lfVltT2IVCqReUb4IPJ
+6I02UuMv+Yp+ZL1kOL2Gx1Yv4eA36dlXkgkHPaRSndIbqqMbeLNRVwLP4kIN
+8JwuPisKXUkFfv7jPTz6cWa0Y3tlICvQIbD0tQSPUvp7nNwUVmjpb4OQ0M+i
+Pc408XBcZMw9/8gvM3CW1ntBoE43YMU5txj2/IiIdJ/NQ/GCzcrMRQ3GqnMi
+BxuemDWuW9ZuRCszjqPy4jJx/ha9MjzArU9TU5KEqoatIYksPHnEkUXnjpw+
+9RPVZNb51PcQa8rxgzIx2ZnvYe42inDFQStx5vnbt9OPfCyaaVZhduH1w9uG
+EXKe2ra+H4wZPntnOP4M73Lz93fh2HMX8tiTYzgEDSiLTExd8lEW58bsyHie
+03GxY6f7gW/BcJ0ZvFewySiX8OU7jmeOWL/uopcXfA6KMSyp1WVYJogkx4kO
+NCW7K+DNzYhXZqYPezsTTMs/++xu8S2+xbf4Ft/iW3yLb/EtvsW3+J7y/Q+B
+8BDrAKAAAA==
+====
