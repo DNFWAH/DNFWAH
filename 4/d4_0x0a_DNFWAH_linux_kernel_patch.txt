@@ -1,0 +1,166 @@
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #4 File 0x0a ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=-------=[ Linux Kernel Patches For Linux Kernel Security ]=------=|
+|=-----------------------------------------------------------------=|
+|=---------------------------=[ By x90c ]=-------------------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ Jan 28 2015  ]=-----------------------=|
+|=-----------------------------------------------------------------=|
+                                    ___    ___        
+                                   / _ \  / _ \     
+                            __  __| (_) || | | |  ___ 
+                            \ \/ / \__. || | | | / __| 
+                             >  <    / / | |_| || (__ 
+                            /_/\_\  /_/   \___/  \___|
+
+
+
+[toc]
+
+        ----[ 1. Intro
+
+        ----[ 2. Linux Kernel Patch For Security
+
+        ----[ 3. Linux Kernel Protections
+
+        --------[ 3.1 Hardened kernel In distro
+
+        --------[ 3.2 Kernel Protections In kernel version
+
+        --------[ 3.3 LSM In kernel version
+
+        ----[ 4. Underground Hacker Scene of south korea In 2013
+
+        ----[ 5. Conclusion
+
+        ----[ 6. Greets
+
+
+--------[ 1. Intro
+
+The article review linux kernel patches for
+Linux kernel security And describe vulnerable
+with the figures order by kernel version and
+-linux distro.
+
+
+--------[ 2. Linux Kernel Patch For Security
+
+The userland support kernel patch support userland
+security on kernelland and kernelland security patch
+support kernelland security on kernelland. There's
+Three types of linux kernel patch for linux
+-kernel security.
+
+- Both: GRSEC/PaX kernel, SELinux
+- Userland support: Owl, AppArmor, Smack
+        exec-shield kernel
+- Kernelland support: LSM, SecComp sandbox
+        Linux kernel capabilities, mmap_min_addr
+        grsecurity UDEREF, KERNHEAP
+
+
+--------[ 3. Linux Kernel Protections
+
+
+--------[ 3.1 Hardened kernel In distro
+
+-----------------------------------------------------+
+ Hardened kernel |  Distro                           |
+-----------------------------------------------------+
+ grsec/PaX       |  Hardened Gentoo Linux, OpenBSD   |
+                 |  Adamantix that trusted debian.   |
+ Owl             |  RHEL4, FC3, CentOS4.             |
+ Exec-shield     |  RHEL 3/4, FC1~FC5.               |
+-----------------------------------------------------\
+
+Owl support on RHEL4, ... by binary and packages.
+See the figure, We got the choose Owl? or Exec-shield?
+on RHEL4, FC3.
+
+
+--------[ 3.2 Kernel Protections In kernel version
+
+-----------------------------------------------------+
+  Linux Kernel Part        | Kernel version          |
+-----------------------------------------------------+
+ LSM                       | 2.6, 3.0, 3.2, 3.4~3.10 |
+ SecComp sandbox mode      | same with lsm           |
+ Linux Kernel Capabilities | 2.2, 2.4, 2.6 3.0, 3.2  |
+                           | 3.4~3.10                |
+ mmap_min_addr             | 2.6, 3.0, 3.4~3.10      |
+ KERNHEAP                  | 2.6                     |
+ grsec UDEREF              | 2.6, 3.2, 3.8, 3.9      |
+-----------------------------------------------------\
+
+Linux kernel capabilities is the old protection from
+2.2 linux kernel and no protection added In 2.4 kernel
+from 2.6 kernel provided LSM, mmap_min_addr, SecComp
+sandbox, KERNHEAP, grsec UDREF.
+
+2.4 kernel was vulnerable than other kernel version
+by isec kernel exploits, ... . mmap_min_addr protect
+to NULL pointer dereference, KERNHEAP/UDEREF provide
+kernel heap/stack protection. In 2.4 kernel
+vulnerable to NULL pointer dereference and kernel heap
+attacks. Even though mmap_min_addr, we can still attack
+A little distros used 2.6 kernel.
+
+The KERNHEAP Implemented the protection guard metadata
+And safe unlinking to protect heap overflows on the
+Kernel.
+
+
+--------[ 3.3 LSM In kernel version
+
+LSM linux security module is module architecture
+-support linux kernel security. It provides kernel
+Interface to program a security module for linux.
+
+---------------------------------------------+
+ 2.6       | SELinux, AppArmor, tomoyo linux |
+           | -Smack.                         |
+ 3.4~3.10  | same with 2.6, yama.            |
+---------------------------------------------\
+
+The SELinux provided with LSM, userland utils
+And support kernelland/userland security both. The 
+AppArmor Implemented MAC security model.
+
+
+--------[ 4. Underground Hacker Scene of south korea In 2013
+
+In the region south korea, korean hacker community
+'korean underground' kidz Is there. The korean 
+underground opened three global hacker conferences.
+x90c is THE L33T In 2004~2013 who not In the korean 
+underground. Except The l33t, all hackers In south
+-korea was/are In the korean underground.
+Check it out http://www.x90c.org/profile.txt.
+
+
+--------[ 5. Conclusion
+
+2.2, 2.4 linux kernel is vulnerable for linux kernel
+-attacks and 2.6 after kernel versions are safe than
+above mentioned because It provided kernel patches to 
+protect kernel exploits under 2.4.
+
+If *BSD exploitation, on FreeBsd is better than 
+openbsd with grsec/PaX kernel.
+
+After 3.0 kernel versions are vulnerable to 
+Kernel heap overflows with ..., SLAB, SLUB, SLOB
+Allocator because the KERNHEAP doesn't supported
+-for the versions.
+
+
+--------[ 6. Greets
+
+BSDaemon
+@yokai#phrack
+It's linux kernel security and greets to 
+grsec/pax spender also.
