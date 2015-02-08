@@ -30,7 +30,7 @@ The offcial Android emulator
 
 The offcial Android emulator consists of a qemu based emulator, the
 Android runtime, and a toolset to deploy, run and debug native
-execultabes built by Android NDK. However, it turns out not to be
+execultabes built by Android NDK. However, it turns out to be
 handicapped.
 
 The gdbserver delivered with the NDK is basically broken. It fails to
