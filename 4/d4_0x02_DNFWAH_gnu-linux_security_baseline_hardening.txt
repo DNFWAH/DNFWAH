@@ -32,6 +32,8 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 
        1.4.1 file permission audit
 
+       1.4.2 Prevent *UNSET* bash history
+
 2. Kernel security baseline
 
 3. Hardening
@@ -452,6 +454,18 @@ getfacl file
 setfacl -m u:user:r file
 --------------------------------------------------------------
 
+
+----[ 1.4.2 Prevent *UNSET* bash history
+
+针对history_bash不允许unset:
+#Prevent unset of histfile, /etc/profile
+export HISTSIZE=1500
+readonly HISTFILE
+readonly HISTFILESIZE
+readonly HISTSIZE
+
+#Set .bash_history as attr +a
+find / -maxdepth 3|grep -i bash_history|while read line; do chattr +a "$line"; done
 
 --[ 2. 内核安全基线
 
