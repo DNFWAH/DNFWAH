@@ -861,6 +861,12 @@ openssl s_client -ssl3 -fallback_scsv -connect www.google.com:443 | grep -i "ale
 显示"alert inappropriate fallback"则是安全的。
 --------------------------------------------------------------
 
+FREAK:
+--------------------------------------------------------------
+openssl s_client -cipher EXPORT -connect www.google.com:443
+
+如果协商成功则说明有风险。
+--------------------------------------------------------------
 
 --[ 5. Weirdo audit
 
