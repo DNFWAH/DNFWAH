@@ -101,7 +101,7 @@ password requisite pam_cracklib.so minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 oc
 
 2，不同的系统密码不能一样
 
-3，根换密码策略(每90天更换一次）
+3，更换密码策略(每90天更换一次）
 
 4，密码分发管理，管理不同业务服务器的系统管理员掌握不同的密码
 
