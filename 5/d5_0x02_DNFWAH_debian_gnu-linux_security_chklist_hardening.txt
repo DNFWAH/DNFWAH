@@ -739,7 +739,6 @@ Very good writing:
 
 http://www.exploresecurity.com/wp-content/uploads/custom/SSL_manual_cheatsheet.html
 
---[ 4. SSL/TLS基线检查
 
 SSL/TLS has been through BEAST/CRIME/LUCKY-13/HEARTBLEED/POODLE in
 past few years.
