@@ -1,0 +1,953 @@
+
+[sth0r@shawn-fortress]$ uname -a
+Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linux
+
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #5 File 0x02 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=----=[ Debian GNU/Linux security checklist and hardening ]=------=|
+|=-----------------------------------------------------------------=|
+|=-------------------=[ By Shawn the R0ck   ]=---------------------=|
+|=-----------------------------------------------------------------=|
+|=-----------------------------------------------------------------=|
+|=-------------------=[ Update: Apr 8 2015 ]=----------------------=|
+|=-----------------------------------------------------------------=|
+
+--[ CONTENTS
+
+0. About this doc
+
+1. Security updates
+
+2. Vulnerability Assessment
+
+   2.1 GCC mitigation
+
+   2.2 0ld sch00l *nix file auditing
+
+   2.3 GNU/Linux's auditd
+
+   2.4 T00ls
+
+3. Kernel security
+
+   3.1 Apparmor
+
+   3.2 SELinux
+
+   3.3 Mempo kernel
+
+       3.3.1 PaX/Grsecurity
+
+4. SSL/TLS Checklist
+
+   4.1 Ciphersuites in Apache2/Nginx
+
+5. PHP
+
+6. Weirdo audit
+
+7. Reference
+
+
+
+--[ 0. About this documentation
+
+GNU/Linux already become one of most important fundamental element in
+*modern* IT platform. Almost every important applications heavily rely
+on the core component of GNU system: GCC, Glibc and linux
+kernel. GNU/Linux is totally free/libre and open source software(
+FLOSS). Many people thinks free/libre and open source software is
+secure because its open to many eyes. Yes, that's true. According to
+Coverity's report:
+
+http://developers.slashdot.org/story/14/04/16/2021227/code-quality-open-source-vs-proprietary
+
+The source code quality of FLOSS project are better than closed
+software systems. But the FLOSS is not unbreakable. This documentation
+is going to discuss something we should know about GNU/Linux security
+operations. These examples in this doc has been tested only on Debian
+GNU/Linux 7.5.
+
+
+--[ 1. Security update
+
+Follow the minimal installation principle: Debian is providing mini
+installation iso.
+
+To check which packages need security updates:
+
+#sudo apt-get upgrade -s | grep -i security
+
+
+--[ 2. Vulnerability Assessment
+
+Know your GNU/Linux system as your *enemy* does. Your enmey might hide
+in the shadow and watch and learn the ways you've been using the
+system. As a defender, some philosophical ideas( thanks to Bruce
+Schneier) should be kept in mind:
+
+https://www.schneier.com/essays/archives/2000/04/the_process_of_secur.html
+
+-----------------------------------------------------------------------
+Security is NOT:
+* Security is NOT installing a firewall
+* Security is NOT a Product or Service
+* Security is Not a Product; It's a Process
+
+Security is:
+* Security is a Process, Methodology, Costs, Policies and People
+* Security is only as good as your "weakest link"
+* Security is 24x7x365 ... constantly ongoing .. never ending
+-----------------------------------------------------------------------
+
+A security system is only as strong as its weakest
+link. Defense-in-depth seems the only option we have. You should be
+the best professional paranoia and also need a proper threat
+model. "Who's gonna attack your system" would be daily bread for your
+mind;-)
+
+
+----[ 2.1 GCC mitigation
+
+setuid binaries are highly risks if the program had the bug that can
+be exploitable.  The setuid binaries should be protected under GCC's
+mitigation.  We only examine 4 mitigation options here:
+
+http://phrack.org/archives/issues/67/13.txt ( some GCC mitigation
+description from one Phrack paper, thanks pi3..dude, did I owe you a
+beer?)
+
+*) NX <==> ESP (Executable Space Protection) 
+
+The idea of this protection mechanism is very old and
+simple. Traditionally, overflows are exploited using shellcodes which
+means the execution of user supplied 'code' in a 'data' area. Such an
+unusual situation is easily mitigated by preventing data sections
+(stack, heap, .data, etc.) and more generally (if possible) all
+writable process memory from executing. This cannot however prevent
+the attacker from calling already loaded code such as libraries or
+program functions. This led to the classical return-into-libc family
+of attacks. Nowadays all PAE or 64 bits x86 linux kernel are
+supporting this by default.
+
+This mechanism can be implemented by hardware or software
+emulation. Take a look:
+ 
+http://en.wikipedia.org/wiki/NX_bit 
+
+In GCC's options, NX is enable by default. If you want to turn it off,
+use "-z execstack".
+
+Check method: 
+shawn@shawn-fortress ~ $ readelf -l a.out | grep GNU_STACK 
+  GNU_STACK      0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000 RW  0x8
+
+*) Stack canaries (canaries of the death)
+
+This is a compiler mechanism, in contrast to previously kernel-based
+described techniques. When a function is called, the code inserted by
+the compiler in its prologue stores a special value (the so-called
+cookie) on the stack before the metadata. This value is a kind of
+defender of sensitive data. During the epilogue the stack value is
+compared with the original one and if they are not the same then a
+memory corruption must have occurred. The program is then killed and
+this situation is reported in the system logs. Details about technical
+implementation and little arm race between protection and bypassing
+protection in this area will be explained further.
+
+GCC options:
+-fno-stack-protector,  do not add any canary onto any functions
+
+-fstack-protector, only add the canary onto a few functions in compile
+ time
+
+-fstack-protector-all , add the canary onto all functions, be cautions
+ about this one. It'd be triggered the heavily performance hit.
+
+-fstack-protector-strong, add the canary onto those functions, which
+ the stack buffers would be used. This is a smart one. But its only
+ supported by GCC 4.9.x. Kees Cook shared a very good writing here:
+
+http://www.outflux.net/blog/archives/2014/01/27/fstack-protector-strong/
+
+
+Check the symbols in an elf file: 
+#readelf -s ./a.out | grep stack_chk_fail 
+     3: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __stack_chk_fail@GLIBC_2.4 (3) 
+    52: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __stack_chk_fail@@GLIBC_2 
+
+*) RELRO 
+
+RELocation Read-Only. 
+
+Turn it on: -z norelro 
+Turn it off: -z now 
+
+Check elf header to find partial-RELRO: 
+shawn@shawn-fortress ~ $ readelf -l a.out | grep GNU_RELRO 
+  GNU_RELRO      0x0000000000000e28 0x0000000000600e28 0x0000000000600e28 
+
+Check elf's dynamic sections to find fully-RELRO: 
+shawn@shawn-fortress ~ $ readelf -d a.out | grep BIND_NOW 
+ 0x0000000000000018 (BIND_NOW)
+
+*) PIE
+
+PIE enforces every process's code segment is mmap()'d, it begins at a
+different base address at each execution of the application.
+
+Note: mmap()' is always used no matter what the type of the executable
+is (PIE vs. non-PIE).For non-PIE binaries the kernel uses an internal
+flag equivalent to MMAP_FIXED when mapping program headers.
+
+http://en.wikipedia.org/wiki/Position-independent_code 
+
+GCC option: -pie, it only work for sec mitigation when kernel enables
+ASLR.
+
+no PIE: 
+shawn@shawn-fortress ~ $ readelf -h a.out | grep "Type:[[:space:]]*EXEC" 
+  Type:                              EXEC (Executable file) 
+
+PIE: 
+shawn@shawn-fortress ~ $ readelf -h a.out | grep "Type:[[:space:]]*DYN" 
+  Type:                              DYN (Shared object file)
+
+
+These exploit mitigations provided by GCC will definitely increase the
+cost of attackers. We all did believed so...until shit happened( as
+always?). Hector Marco released a method:
+
+http://cybersecurity.upv.es/attacks/offset2lib/offset2lib.html
+
+that can bypass NX/ASLR/PIE/CANARY mitigations locally/remotely
+easily. After these years of debating and bragging about how secure of
+GNU/Linux is/was and we finally ended up in*One mem infoleak can rule
+the fuc*ing GNU/Linux*!!! Damn, PaX/Grsecurity will be our last hope
+again, like a decade ago...........
+
+
+----[ 2.2 0ld sch00l *nix file auditing
+
+There are a bunch of files that could be exploited by attackers in the
+specific scene. Fortunately, FOSS( Free & Open Source) community is
+providing a lot of methods for the security audit work. They should be
+a defender's daily bread, which being part of defense-in-depth model.
+
+WildCards is a powerful feature in UNIX-like platform, but it can be
+exploited by attackers:
+
+http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+
+--------------------------------------------------------------
+find / -path /proc -prune  -name "-*"
+--------------------------------------------------------------
+
+World-writable file audit
+--------------------------------------------------------------
+find / -path /proc -prune -o -perm -2 ! -type l -ls
+--------------------------------------------------------------
+
+World-readable file audit, correct permission: chmod 640 /var/log/
+--------------------------------------------------------------
+find /var/log -perm -o=r ! -type l
+--------------------------------------------------------------
+
+Check if files were orphange
+--------------------------------------------------------------
+find / -path /proc -prune -o -nouser -o -nogroup
+--------------------------------------------------------------
+
+List avaiable users, be cautions about who's the "user"
+--------------------------------------------------------------
+egrep -v '.*:\*|:\!' /etc/shadow | awk -F: '{print $1}'
+--------------------------------------------------------------
+
+Check which files belong to whom. Then delete the user correctly:
+#userdel -r account
+
+--------------------------------------------------------------
+find / -path /proc -prune -o -user account -ls
+--------------------------------------------------------------
+
+List which users are unavailable
+--------------------------------------------------------------
+grep -v ':x:' /etc/passwd
+--------------------------------------------------------------
+
+List expired passwords
+--------------------------------------------------------------
+cat /etc/shadow | cut -d: -f 1,2 | grep '!'
+--------------------------------------------------------------
+
+The correct permission should be 644 at least. 600 would be better.
+--------------------------------------------------------------
+ls -l /boot
+--------------------------------------------------------------
+
+Files with suid or sgid flags
+--------------------------------------------------------------
+find / -xdev -user root \( -perm -4000 -o -perm -2000 \)
+--------------------------------------------------------------
+
+Check if some stupid mistakes has been made( Thanks to Tim Brown).
+--------------------------------------------------------------
+objdump -x $i | grep -i path
+--------------------------------------------------------------
+
+
+Note: The main stream GNU/Linux distro( Debian, Gentoo, OpenSUSE,
+CentOS) won't have big chance to do stupid things, but it's worth to
+look at GNU/Linux platform with 3-rd party applications. Some
+commercial applications may do something stuipid like this one:
+
+http://lists.openwall.net/bugtraq/2014/06/04/5
+
+
+----[ 2.3 GNU/Linux's auditd
+
+One particular scene is that some m41wares( or human attackers) might
+be interested in change some file's metadata for some *interesting*
+reasons and then change it back to the original. Let's show time:
+
+Install auditd and make sure its on boot startup:
+#apt-get install auditd
+#update-rc.d auditd enable
+
+
+Config file:
+/etc/audit/auditd.conf
+
+Store log file:
+log_file = /var/log/audit/audit.log
+
+Add one policy to /etc/audit/audit.rules:
+-w /home/shawn/change-test -p wa -k  identify
+
+Use this test program to change the permission：
+
+#include <stdio.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[])
+{
+	struct stat sb;
+
+	if( stat(argv[1], &sb) == -1){
+	    perror("stat");
+		exit(EXIT_FAILURE);
+		}
+
+		if( chmod(argv[1], sb.st_mode) == -1)
+		{
+			perror("stat");
+				exit(EXIT_FAILURE);
+				}
+				return ;
+}
+
+shawn@shawn-fortress ~ $ gcc change.c
+shawn@shawn-fortress ~ $ touch change-test
+shawn@shawn-fortress ~ $ ./a.out change-test
+
+The date of  "Modify" and "Change" should be different:
+shawn@shawn-fortress ~ $ stat change-test
+
+Check *who* did it:
+shawn@shawn-fortress ~ $ ausearch -i -k identify
+
+
+----[ 2.4 T00ls
+
+NMAP/OpenVAS/lynis/rkhunter/chkrootkit/metasploit/volatality/etc
+
+
+--[ 3. Kernel security
+
+Anti-DoS related:
+--------------------------------------------------------------
+** SYN cookies is a syn flood attack protection, the default is enable( 1)：
+
+net.ipv4.tcp_syncookies = 1
+/proc/sys/net/ipv4/tcp_syncookies
+
+(optional)，if your kernel support SYNPROXY：
+iptables -t raw -A PREROUTING -i eth0 -p tcp --dport 80 --syn -j NOTRACK
+iptables -A INPUT -i eth0 -p tcp --dport 80 -m state UNTRACKED,INVALID \
+	 -j SYNPROXY --sack-perm --timestamp --mss 1480 --wscale 7 --ecn
+
+echo 0 > /proc/sys/net/netfilter/nf_conntrack_tcp_loose
+
+Note: SYNPROXY has been added into vanilla kernel in 3.13.
+
+
+** TCP FIN-WAIT-2 status reversed time, it'd be an DoS attack risk if
+the value is too big. It'd be cause remote machine doesn't have enough
+time to close the connection if the value is too small. Default is 60(
+seconds). 15 is better, you think? Further reading:
+ 
+http://benohead.com/tcp-about-fin_wait_2-time_wait-and-close_wait/
+
+net.ipv4.tcp_fin_timeout = 15
+/proc/sys/net/ipv4/tcp_fin_timeout
+
+
+** SYN queue length, the bigger value can handle more connections, the
+  default is 1024:
+
+net.ipv4.tcp_max_syn_backlog = 8192
+/proc/sys/net/ipv4/tcp_max_syn_backlog
+
+
+** Device queue length, this value should be bigger than syn queue?
+   The default is 1000
+
+net.core.netdev_max_backlog = 16384
+/proc/sys/net/core/netdev_max_backlog
+
+
+** listen()'s backlog, the default is 128:
+
+net.core.somaxconn = 4096
+/proc/sys/net/core/somaxconn
+
+
+** TIME_WAIT status TCP connections, the system will empty the
+   connection if the number is exceed the value, 
+
+net.ipv4.tcp_max_tw_buckets = 65535
+/proc/sys/net/ipv4/tcp_max_tw_buckets
+
+
+** TIME-WAIT status can be reuse, the default is disable( 0):
+
+net.ipv4.tcp_tw_reuse = 1
+/proc/sys/net/ipv4/tcp_tw_reuse
+
+
+** fast recycle of TIME-WAIT status connection, the default is disable( 0): 
+
+net.ipv4.tcp_tw_recycle = 1
+/proc/sys/net/ipv4/tcp_tw_recycle
+
+
+** TCP KEEPALIVE probe frequency,the default is 7,200 seconds:
+
+net.ipv4.tcp_keepalive_time = 300
+/proc/sys/net/ipv4/tcp_keepalive_time
+
+
+** TCP KEEPALIVE probe packets, the default is 9:
+
+net.ipv4.tcp_keepalive_probes = 3
+/proc/sys/net/ipv4/tcp_keepalive_probes
+
+
+** how many times of SYN and SYN+ACK can be re-transimit, the default is 5:
+
+net.ipv4.tcp_syn_retries = 3
+/proc/sys/net/ipv4/tcp_syn_retries
+
+net.ipv4.tcp_synack_retries = 3 
+/proc/sys/net/ipv4/tcp_synack_retries
+
+
+** the bigger value of TCP ORPHAN would prevent simple DoS attack,
+   each ORPHAN cost 64KB memory, so 65535 is about 4GB:
+
+net.ipv4.tcp_max_orphans = 65536
+/proc/sys/net/ipv4/tcp_max_orphans
+
+
+** How many pages( 4KB each page in x86) can be used in TCP connection:
+
+net.ipv4.tcp_mem = 131072 196608 262144
+/proc/sys/net/ipv4/tcp_mem
+
+Be careful about this one, it'd be triggered OOM if the TCP connection
+consume all pages.
+
+
+** The maxisum send and receive window, you can set 64MB for a 10G NIC:
+
+net.core.rmem_max = 67108864
+/proc/sys/net/core/rmem_max
+
+net.core.wmem_max = 67108864
+/proc/sys/net/core/wmem_max
+
+
+** Each TCP connection's read buffer( X bytes):
+net.ipv4.tcp_rmem = 4096 8192 16777216( 4096 87380 33554432)
+/proc/sys/net/ipv4/tcp_rmem
+
+net.ipv4.tcp_wmem = 4096 8192 16777216( 4096 65536 33554432)
+/proc/sys/net/ipv4/tcp_wmem
+
+If default paging 8kb * 2 = 16kb/connection, 4GB memory can be used for:
+(4 * 1024 * 1024) / 16 = 262144
+
+Oracle DB server's best practice：
+http://www.dba-oracle.com/t_linux_networking_kernel_parameters.htm
+--------------------------------------------------------------
+
+
+Networking
+------------------------------------------------------------- 
+Ref:
+https://www.suse.com/documentation/sles11/singlehtml/book_hardening/book_hardening.html
+
+** Source Routing is used to specify a path or route through the
+network from source to destination. This feature can be used by
+network people for diagnosing problems. However, if an intruder was
+able to send a source routed packet into the network, then he could
+intercept the replies and your server might not know that it's not
+communicating with a trusted server.
+
+
+net.ipv4.conf.all.accept_source_route = 0
+/proc/sys/net/ipv4/conf/all/accept_source_route
+
+
+** ICMP redirects are used by routers to tell the server that there is
+   a better path to other networks than the one chosen by the
+   server. However, an intruder could potentially use ICMP redirect
+   packets to alter the hosts's routing table by causing traffic to
+   use a path you didn't intend.
+
+net.ipv4.conf.all.accept_redirects = 0
+/proc/sys/net/ipv4/conf/all/accept_redirects
+
+
+** Turn it off if this is not a router：
+
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+
+
+** IP spoofing protection, the default is disabled( 0)：
+
+net.ipv4.conf.all.rp_filter = 1
+/proc/sys/net/ipv4/conf/all/rp_filter
+
+
+** If you want to ignore all ICMP package, you can enable it. The
+   default is disabled( 0):
+
+net.ipv4.icmp_echo_ignore_all = 1
+/proc/sys/net/ipv4/icmp_echo_ignore_all
+
+
+** Ignore ICMP broadcast, the default is enabled( 1):
+
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+/proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+
+** To alert you about bad message, the default is disabled( 1):
+
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+/proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+
+
+** To turn on logging for Spoofed Packets, Source Routed Packets, and
+   Redirect Packets, the default is disabled( 0):
+
+/proc/sys/net/ipv4/conf/all/log_martians
+net.ipv4.conf.all.log_martians = 1
+
+
+Exploit mitigation
+--------------------------------------------------------------
+** Randomize the memory area. 0: disable ASLR. 1: Randomize the stack,
+   VDSO page, shared memory regions. 2: (1) + also randomize the data
+   segment.
+
+kernel.randomize_va_space=2
+/proc/sys/kernel/randomize_va_space
+
+
+** Not allow the user to read kernel address symbol tables:
+
+kernel.kptr_restrict=1
+/proc/sys/kernel/kptr_restrict
+
+
+** the minimal memory map address, 65536 is good at least:
+
+vm.mmap_min_addr=65536
+/proc/sys/vm/mmap_min_addr
+
+
+** Now allow the debugger trace the process by ptrace. The current
+   Debian stable kernel doesn't have this feature. 0: All process can
+   be debugged. 1: Only one father process can be debugged. 2: Only
+   *root* can do debug( with CAP_SYS_PTRACE) 3: no process can be
+   debugged
+
+kernel.yama.ptrace_scope = 2
+/proc/sys/kernel/yama/ptrace_scope
+--------------------------------------------------------------
+
+
+----[ 3.1 Apparmor
+
+Why Apparmor? It's easy to deploy. More importantly, it's easy to
+audit the polices. Everyone can write your own MAC/RBAC
+policy. Debian/OpenSuSE shipped with Apparmor by default.
+
+Install Apparmor and MAC polices from community:
+#apt-get install -y apparmor-profiles apparmor
+
+Check the status:
+#aa-status
+
+
+----[ 3.2 SELinux
+
+S0rry. I barely use SELinux for reasons. The 1st one is I don't trust
+NSA, even the source code is GPL'ed. NSA is professional about
+*implant* backdoors, which would be very hard to audit. People has
+been discussing it for years:
+
+https://www.schneier.com/blog/archives/2008/04/nsas_linux.html
+
+http://www.zerohedge.com/news/2013-07-09/nsa-has-inserted-its-code-android-os-bugging-three-quarters-all-smartphones
+
+http://www.eteknix.com/nsa-has-code-running-in-the-linux-kernel-and-android/
+
+
+Sebastian Krahmer found a exploitable bug from SELinux recently:
+
+https://github.com/stealth/troubleshooter
+
+It looks like a backdoor more than a "vulnerablity", isn't it?;-)
+
+Another important reason people don't like SELinux because it's hard
+to use and cause other application troubles from time to time. "Stop
+disabling SELinux" movement won't work in the near future:
+
+http://stopdisablingselinux.com/
+
+S0rry, Mr.Walsh. It's nothing personal:-)
+
+
+----[ 3.3 Mempo kernel
+
+""⌘ Mempo project aims to provide most secure and yet comfortable
+out-of-the-box Desktop and Server computer, for professionals,
+business, journalists, and every-day users avoiding PRISM-like
+spying. ⌘"
+
+https://wiki.debian.org/Mempo
+
+Mempo is a FLOSS project for protect user's digital freedom. Let the
+massive surveillance cry;-)
+
+The Debian Mempo repo is not working for the internet user now and
+it'll be back soon. So I'll write how to use PaX/Grsecurity from
+offical Mempo repository on Debian.
+
+
+----[ 3.3.1 PaX/Grsecurity
+
+PaX/Grsecurity is the cutting-edge kernel protection in past 14
+years. But they don't have the credit what they supposed to
+have. Almost every main stream OS kernel security mechanism has
+influenced by PaX/Grsecurity in past decade. Lionel tells a little
+story about PaX/Grsecurity better than myself:
+
+http://www.openwall.com/lists/oss-security/2014/12/06/14
+
+PaX/Grsecurity treat the kernel security as a whole. They've been
+inventing many innovations( SEGMEXEC, PAGEEXEC, MPROTECT, UDEREF,
+RANDSTRUCT*, etc), while hardening the kernel in source code level(
+make important *struct* read-only, etc). PaX/Grsecurity is one of most
+respected 0ld sch00l hacker community. The main contributor( Spender)
+was even been through a very badly economic situation back in 2004:
+
+http://developers.slashdot.org/story/04/05/31/1949241/end-of-development-for-grsecurity-announced
+
+Thanks to the G0d of techn0logy, PaX/Grsecurity is still alive.... I
+personally agree with some ideas:
+
+-----------------------------------------------------------------------
+"The "better than none" point of view is actually a nice way to false
+sense of security for those who don't know better. We got
+better-than-none apparmor, selinux, tomoyo, some poorly maintained and
+crippled ports of grsec features or alikes, namespaces and containers,
+rootkit-friendly LSM, the dumb and useless kernel version of SSP,
+etc. What's the sum of all this shit for end users? False sense of
+security..."
+
+"without Grsecurity/PaX, linux security is like monkey can never
+perform a regular masturbation cu'z lacking of giant pennis;-)"
+-----------------------------------------------------------------------
+
+Too many better-than-none product or solutions, which only makes you
+feel safe, maybe for a while. Feel safe is not equal to
+secure. Fuc*ing cargo cult shitty security only makes things worse.
+
+I'll show you how to install PaX/Grsecurity manually( still waiting
+Mempo back online):
+
+** Download kernel( Pick one)：
+https://www.kernel.org/pub/linux/kernel/v3.x/
+
+** Download PaX/Grsecurity patch( you can download the latest version
+   from )：
+
+https://grsecurity.net/download.php
+
+** Decompress the kernel and patch the kernel with grsecurity:
+
+xz -d linux-*.tar.xz
+tar xvf linux-*.tar
+cd linux-*/
+patch -p1 < ../grsecurity-*.patch
+
+
+** Do "make menuconfig" to customize your kernel, or you can use my test config:
+
+https://raw.githubusercontent.com/citypw/citypw-SCFE/master/security/apparmor_test/debian-7.4-linux-3.14.1-grsec.config
+
+
+** Compile
+make -j7 deb-pkg
+
+
+** Install the new kernel
+dpkg -i ../*.deb
+--------------------------------------------------------------
+
+
+4. Crypto
+
+“Encryption works. Properly implemented strong crypto systems are one
+of the few things that you can rely on. Unfortunately, endpoint
+security is so terrifically weak that NSA can frequently find ways
+around it.”   --- Edward Snowden
+
+
+----[ 4.1 SSL/TLS Checklist
+
+Very good writing:
+
+http://www.exploresecurity.com/wp-content/uploads/custom/SSL_manual_cheatsheet.html
+
+--[ 4. SSL/TLS基线检查
+
+SSL/TLS has been through BEAST/CRIME/LUCKY-13/HEARTBLEED/POODLE in
+past few years.
+
+SSLv2 should be disabled:
+--------------------------------------------------------------
+openssl s_client -ssl2 -connect www.google.com:443
+
+OpenSSL 1.0 no longer support SSLv2. So you can use GnuTLS do the
+check:
+
+gnutls-cli -d 5 -p 443 --priority "NORMAL:-VERS-TLS1.2:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0" www.google.com
+--------------------------------------------------------------
+
+FREAK:
+--------------------------------------------------------------
+openssl s_client -cipher EXPORT -connect www.google.com:443
+
+If succeed, it's risk to FREAK.
+--------------------------------------------------------------
+
+----[ 4.2 OpenSSH
+
+Config file：/etc/ssh/ssh_config
+
+--------------------------------------------------------------
+1, known_hosts stores server's signature, so hash the host name:
+
+HashKnownHosts yes
+
+2, SSH protocl version 1 is not secure:
+
+Protocol 2
+
+3, If you don't use X11 forwarding, plz disable it"
+
+X11Forwarding no
+
+4, Disable rhosts:
+
+IgnoreRhosts yes
+
+5, Not allow empty password:
+
+PermitEmptyPasswords no
+
+6, Maxisum tries:
+
+MaxAuthTries 5
+
+7, Now allow root login:
+
+PermitRootLogin no
+--------------------------------------------------------------
+
+(Optional)
+--------------------------------------------------------------
+1, disable password auth, enable pubkey auth:
+
+PubkeyAuthentication yes
+
+PasswordAuthentication no
+
+
+2，Allow or deny users/groups
+
+AllowGroups, AllowUsers, DenyUsers, DenyGroups
+--------------------------------------------------------------
+
+
+------[ 4.2.1 OpenSSH in post-prism era
+
+Well, plz read this:
+
+https://stribika.github.io/2015/01/04/secure-secure-shell.html
+
+
+----[ 4.2 Ciphersuites in Apache2/Nginx
+
+Apache:
+SSLProtocol ALL -SSLv2 -SSLv3
+SSLHonorCipherOrder On
+SSLCipherSuite ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+
+Nginx:
+ssl_prefer_server_ciphers On;
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+
+
+--[ 5. Reference
+
+[2] Back To The Future: Unix Wildcards Gone Wild
+    http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+
+[3] SYNPROXY：廉价的抗DoS攻击方案
+    www.solidot.org/story?sid=38791
+
+[4] INTERNET PROTOCOL
+    http://tools.ietf.org/html/rfc791
+
+[5] A simple TCP spoofing attack
+    http://www.citi.umich.edu/u/provos/papers/secnet-spoof.txt
+
+[6] ICMP Attacks Illustrated
+    http://www.sans.org/reading-room/whitepapers/threats/icmp-attacks-illustrated-477
+
+[7] SUSE Linux Enterprise Server 11 SP3 - Security and Hardening
+    https://www.suse.com/documentation/sles11/singlehtml/book_hardening/book_hardening.html
+
+[8] Securing Debian Manual 
+    https://www.debian.org/doc/manuals/securing-debian-howto/
+
+[9] A Brief Introduction to auditd
+    http://security.blogoverflow.com/2013/01/a-brief-introduction-to-auditd/
+
+[10] Apparmor RBAC
+     http://wiki.apparmor.net/index.php/Pam_apparmor_example
+
+[11] Hardening PHP from php.ini
+     http://www.madirish.net/199
+
+[12] CVE-2014-0196 exploit
+http://bugfuzz.com/stuff/cve-2014-0196-md.c
+
+[13] Secure Secure Shell
+https://stribika.github.io/2015/01/04/secure-secure-shell.html
+
+
+
+begin-base64 644 test.tar.bz2
+QlpoOTFBWSZTWbxpxYUAEo7///n/2ez+f//3///f+f////7bhgAkAfANIAgx
+wjUxUAwJ4A8Ps2+zrXdBsDAKKNACgAaAAAAAACgAMkCmmTUxTzU01ANPUeoa
+aaepp6nqGnoj9UabUHqNqAA0BoANAAAA0A9IPSA0IGmiaR6lPIj1T1PUPU9Q
+aAZPU0ZNAaAAAA0aGIAANAYjQAAyNCDAEYJiNMmEZDEMIwmAEYRkMmmQ0ZGI
+NDATEwJiNGAjJkwIMARgmI0yYRkMQwjCYARhGQyaZDRkYg0MBMTAmI0YCMmT
+ANIqNAZAGjI0AGmjIYQ00AaAAyGQyDTQAyaGIaNAABo0bU0CRIIBNACGhGSZ
+GRpkp7VPJpPU9pRobSep5QaAB6gAeoDIAAA9QDyJmpfaeuxqs13S55CljJ5e
+QvAgOC8AwCcgIchImoQBjoDLYIp/DkjawQLizhzzcgK8xzS+P4ottfRF9+y/
+kYYyYNrM4zJ8EiYCwNYBd3uADThanC4d3bxbj18vYY3cMgtpy3jF7CSiEoKM
+wEQsZ7aKPObLeaUMAEBJkIh1yAG7m4Vd9rWpXAVRWE6NZbHCKkolgA1JXKUp
+AxlBSi20l/y0liy5omSsulMbHQiVxdOJlJUkeYG3MVWYgQIlYrzygMSk5whC
+6vH7kr6iNkun3NC7Ikeq/pwNN7p7/WL/rLxp6x/Kwtv8YLlnQX1RXlWV6uFb
+WMVHVyHKmxte7/MX25TUyoYHLs4x5Mgh6SHCw53mbebSBj5kvIgRFBjy66oo
+OPahkLRPJBv1o9OyNzuAvQztMJyT2DvJg4qPtmx9j5DM3aNtmJqCh5jPgc7A
+qhQbnoFiiuitW40ehF2xiPbOKK1l28zN33NipUsu3mXMmx4vHJ/FbgWbT0TP
+xEixkI+nkcfus/IyFNdh9rHBJTAHAf/QDPDM7DO8IPQQtU9kZjM/EtggXthj
+UELmrFwXQEaAPEjHIaDMIxQEE/vxfN40WNBwLkiW5IRR0lANw8ShB7A0Fot0
+323MRglv2yZrF9+7wsD2/56TdV+5IaQ0Uwt9goJsimK26MYsqr6lu2S3G7CV
+EWOgwYhw20T5uXHsX+QixpS8UCWyJkgaa+mwgTPpIrL6k1bJHdkiEf71IkXd
+z1bKsBjD0XNkhgyw/FJC+nM3GiZ8vhLCvzJHbVG5OeUpf6QgqczEoFUfj85F
+iu+RSWvHXDmJH/A0ejbPOxxaZCXedpOY66BYk1QJWm0vdw2h8I6paefmy5Yl
+CckKOE5OMKr907Sq4V+r5ySXU1NF4RPPXvWI8dOW0tbnzdYbfWSqBNmT9GNg
+eEh5iVIxWdHbhVsgTVMzWKS2gGhbqYdJaYmhvB+cmNc4rGp4lDOt8rKvSnzm
+oDINkTygkRYGlMM9cNkiRMJ5+odiRC5TyZU32jNSQmRydyxaELNneHhb5ngB
+70EQMUJcRVXSwMOrrKNOwmMaxMB1MQ2vhOQgpauSAuDvGl3K2WMq1wMLWiBo
+JKyaqkAqwDTpMOe7MQJTIQllFWOuAQnxeA5E3OeNFRR68qSrgV1ZEWHl7pq5
+56G333QXyV7JIT8v5qQ2NA2xv7U5SGMhkNA2JOTgoEQBBETZIaXxlZyBBNJi
+IEj4nw575I47nlyjL2f0DyyGFpAWdXijiO7vHkPagPW9ztJJYgJG1pCPD3w2
+hIPOyyySJHhGuOdiL1PwCZ30jsJSSBh4BWnuzBIkjlQEiQkt6doJiFEkUSPY
+JyQmDSJC11DEJ0ytZjzD9A0V88XMYzSgGFyknAvN7DbQ2JRMGUSZfMUwQpB4
+hrBQhPMzMzOphwXacoBCLMm8n2rk017bL+NxtQXHoyHaBdHrU5v0ivn9fFfQ
+nCGBykEkNDAfDxy0uaNDBtA9vov7HjBUAxgIAxxifI0fMYza8zBg02mzR6Xy
+Ui7ANM1kDmY3HWS0SKMkBrJ5L8BjuxXqhVEyYmchDDTasIyIWMiGNPqoVCmZ
+M4agMa7ifA7+m8AIAEyx33JyrrK1nOmcn/2URqpgBjAfUuFdrnXIUsMmm8oY
+X43G1QG4rfbPpyskLK+zVoWIFlK3ninca2plrLVYaS7w6Mj2sTABL1/Idvk8
+3i9SJ4oKFSD+6qgSCJRhJEYHnGmWChZjCsWE0kn18TFOoJInCR8qQw94MF+E
+XCGHqqcGjUiwy2loj3G2JjoDR7nsS9w+Y0HttlQzRpSLjjhcKRrwT1kqtpg3
+rBqS7BWWZ0G6CDy3fYVjSMhg7trVt4w+h8aSJH2ffBRuqJKA4wbjkhC5SDpX
+VvNnMDoOgia61rR1t8SwQaQajT+6SwBzP7ma2Q0wGHEmLXKBiS6IgGZiDnOc
+QslYRQLUIvth7AxhyB7CszltSIEhSN5v+2INulIGMbQURUGb0y5veS1CFpmG
+aqj4K7OTihEt4ngtwa1cBe0irVQNrT3qrkgFmAdLQEA4UNZ2LQqYsJHy/Z/6
+uSRtMyBAa0WC+4edmAzyZ5Rkw04pE4EIArs396SRYFUDiBQqAYAYdcMFKEHc
+GHrnnIFrraWlp5galkGHwDqTVF9U0GAplSRIJLWGIZFTJgx/CXqTJUX0gLj4
+aZ1Jo6mMPeCiJfPfM3Bh5jThKpa5H4aR7eD46FYErV8C9vWgJG2w37rLXVGR
+I0hOhSYzIOJ77CSgwHiHd+5tLdFpvWIpHt39Vgg3D3Lc7dkDIxeIugReCmJa
+2zKPq7gsMX9HoqyOefWkDJWEcBcIUhs5EkSFjz4k1PvYcKtsax9ZiNyL4Y4W
+BuBVn/nNaf6PTobCIIYFRoX5JbgwDaQBfAkrNXdHudWxlEbkCV9xcqmxBAgn
+KDdKNdYoMG25xA2REBbSQcqBtHYyDAjddJXJXRgYkXATWp2CU16ly+ir9BCd
+pmLXUJ2510Ex9ceA1hqETM5BJVmPoXPMDqTpD6icWEzaDkVi7sghEQSYMCQb
+/hAT6ChQWgXZXEqNSgDMhSmBGhBAvHCgi0ewZv6DC3KglIZJYeraSxpDq5E3
+4dMxLtC+YVETSLF+DTNDbQpl/M9jLNk0WvKe1hdhtMS5jEWsxzB0BaYeRo3Q
+FzT93V+MMFuJqh3N+O2TB7B4MblSmyXROClmvM1KjJE7MAmS0BeCS2vvjXk3
+42hYItCqvmXBiKA5O6cGjJT6HtSvDzAzwrrIOw7EouYJYdIjSvQu0FVksrog
+Ly5IwSJrQMTaLJVJLvOrIoaHaDG0NiTBJsxtqYKRpSY6aFzK0+3uytHFwaZV
+okMmriuV0Fp0RBlChoO0cJI3s9x6plisUzlHaVSCZxGuLGc/clYBUOIWFvXA
+HSmDtgtXQGC4NaohEwyBLI9EwcKBeaEuwkWESC6wI6ruFsdFxz92wnYadk7r
+sMZTmtOSTdvtzBLme33SvFJ8U45iSQLu4iTsqbFZ56q/UaUjmaRvaLXVpmqv
+IYcUjWqmIJFKs68Yk2w5BnT2X3mQ4aoJZgw2jRzgdtGjSsd8pDfPDnJC7YFN
+uTGMbTBrYkMw6TA6zfcQGTCGBOzaKmtIgA64CrNArWs2hHpsyoVXYFwJbCeG
+pQ7EGGWIiENaMerM57ZItMkK1pNMRB1FNj5aFyOg5VlIVSiMcNJnROltqGY5
+xYUDp0ixL7ioJdJZM3GmEr+mmW0FyYX6XqwLAkHdQYBCbDxtvYWxMbTGENxu
+ZUdZyonMJgzFLxyKK2dLjXXFTPu0MkpGFjIZCGTuBq67FJezPsDW2x7un3tm
+Va6HhKG2WuG23DhtttttttttwqzYwMkdKYJYJA2LMazwwoibigRYcAYrAqlN
+FGkxiiwsYiJulEE0VnHDsVObrJhbzZV7wdfisJXHFK9T6M1c0yYeAaSXeNsT
+DHv3oO4a5rwuUhpbkYjbbDa1m50TAD3eqwvmFUlMiiCwkpBSVdwLEXhaDvVI
+22iyB8VPATSpG8qLjbvclY7stmwWvmLUeRlWcAye/VuxFrBgp4ElEow4bxVi
+yQIqkTExVRE8AiRCmSJEAdAxGZoSm7wu5doLhSfGIBhZPwYzvNzNQsdBekeW
+wO5XIllg4uBS1M2IXhOZKSQLWdtbLWZgy4BvawgaYsiFvDqNJUJsViUNjMYA
+k+e8mJah1JKQh8Ejadz0p0MtBAFgb6RpvLDrAYSJTzzBzSVQmqoNHbsJ6sli
+iWIa0+bFZI0CmvE5yzaUpVYHNzA3qbeEceELg6C32yY0DJEQ2Jk0XDXXKE5z
+vmbyj53kWTld13pXVJy0WKdHBZFawZvWOgWxkc+7QkaL63J8de+2z0oMnMMy
+6VjDpKW6Ca3o+0H9lSlFcy+ZCOhGZBqgUD255BqRKdzC8LEGlBbcpULiFhUw
+FIYzYNucOD77bnc8EjIwJB2JT0oYKBkHkHYjQWwsrkDkGJiyitUFIKqnQwTM
+xgMjmCSuSEmFpDMTBK8D4WHOKtQ7zEDhX60g0oDYCJmYjBNA1qIsbuhrRRjG
+at58fteTlcrcXjKRmhDZczN4Y8Ex5rnDCWwMA3t7oCLHIE5Uukg58ErrYNv6
++BgXUvqaQmIZg22gk3BJuUKDEUB6BzhVZiuosjENQEG3r7xttLY+IuVDhI8R
+pEXJau/VU8MHq+nGp+kmlwPNoRM1GvdZ84Mr0JQuho9pnqbL9D+8LQBMagwM
+Vb0BNIk9zC7o9eVi4O86BaRUXlKYHbHIF1Wh1z7dSRUC9obYBZwUoGWmJ0F5
+6TETEqQg7RzZaWXo9kQbe53RBCEe+0HzsBI//F3JFOFCQvGnFhQ=
+====
