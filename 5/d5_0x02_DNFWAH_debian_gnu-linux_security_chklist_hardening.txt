@@ -120,21 +120,11 @@ http://phrack.org/archives/issues/67/13.txt ( some GCC mitigation
 description from one Phrack paper, thanks pi3..dude, did I owe you a
 beer?)
 
-*) NX <==> ESP (Executable Space Protection) 
+*) NX
 
-The idea of this protection mechanism is very old and
-simple. Traditionally, overflows are exploited using shellcodes which
-means the execution of user supplied 'code' in a 'data' area. Such an
-unusual situation is easily mitigated by preventing data sections
-(stack, heap, .data, etc.) and more generally (if possible) all
-writable process memory from executing. This cannot however prevent
-the attacker from calling already loaded code such as libraries or
-program functions. This led to the classical return-into-libc family
-of attacks. Nowadays all PAE or 64 bits x86 linux kernel are
-supporting this by default.
-
-This mechanism can be implemented by hardware or software
-emulation. Take a look:
+This feature can prevent shellcode execution on the stack.  This
+mechanism can be implemented by hardware or software emulation. Take a
+look:
  
 http://en.wikipedia.org/wiki/NX_bit 
 
