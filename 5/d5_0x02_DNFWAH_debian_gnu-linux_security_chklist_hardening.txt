@@ -375,7 +375,7 @@ echo 0 > /proc/sys/net/netfilter/nf_conntrack_tcp_loose
 Note: SYNPROXY has been added into vanilla kernel in 3.13.
 
 
-** TCP FIN-WAIT-2 status reversed time, it'd be an DoS attack risk if
+** TCP FIN-WAIT-2 status lifetime, it'd be an DoS attack risk if
 the value is too big. It'd be cause remote machine doesn't have enough
 time to close the connection if the value is too small. Default is 60(
 seconds). 15 is better, you think? Further reading:
