@@ -821,11 +821,14 @@ ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+
 
 --[ 5. Reference
 
-[2] Back To The Future: Unix Wildcards Gone Wild
+[1] Back To The Future: Unix Wildcards Gone Wild
     http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
 
-[3] SYNPROXY：廉价的抗DoS攻击方案
-    www.solidot.org/story?sid=38791
+[2] SYNPROXY
+    http://lwn.net/Articles/563151/
+
+[3] DDoS protection Using Netfilter/iptables
+    http://people.netfilter.org/hawk/presentations/devconf2014/iptables-ddos-mitigation_JesperBrouer.pdf
 
 [4] INTERNET PROTOCOL
     http://tools.ietf.org/html/rfc791
