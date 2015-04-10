@@ -462,7 +462,7 @@ Be careful about this one, it'd be triggered OOM if the TCP connection
 consume all pages.
 
 
-** The maxisum send and receive window, you can set 64MB for a 10G NIC:
+** The maximum send and receive window, you can set 64MB for a 10G NIC:
 
 net.core.rmem_max = 67108864
 /proc/sys/net/core/rmem_max
@@ -518,6 +518,8 @@ net.ipv4.conf.all.accept_redirects = 0
 net.ipv4.conf.all.send_redirects = 0
 net.ipv4.conf.default.send_redirects = 0
 
+/proc/sys/net/ipv4/conf/all/send_redirects
+/proc/sys/net/ipv4/conf/default/send_redirects
 
 ** IP spoofing protection, the default is disabled( 0)：
 
@@ -722,6 +724,8 @@ of the few things that you can rely on. Unfortunately, endpoint
 security is so terrifically weak that NSA can frequently find ways
 around it.”   --- Edward Snowden
 
+Damn, we should treat the crypto engineering very carefully. Because
+it may be the last outter-heaven we have;-)
 
 ----[ 4.1 SSL/TLS Checklist
 
@@ -731,7 +735,13 @@ http://www.exploresecurity.com/wp-content/uploads/custom/SSL_manual_cheatsheet.h
 
 
 SSL/TLS has been through BEAST/CRIME/LUCKY-13/HEARTBLEED/POODLE in
-past few years.
+past few years. and it's already become one of hottest topic in cyber
+security. There are a set of vulnerable protocols and ciphersuites are
+worth to do audit. There are a few open source tools would make your
+audit work easier. Try this one:
+
+#apt-get install sslscan
+
 
 SSLv2 should be disabled:
 --------------------------------------------------------------
