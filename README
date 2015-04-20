@@ -23,8 +23,9 @@ Sendto: citypw@gmail.com
 
 DEADLINE: I don't know.
 
-DNFWAH Issue 4 is released in ( we still lacking the prologue...)
+DNFWAH Issue 4 is released in Apr 20 2015
 
+├── d4_0x00_intro.txt
 ├── d4_0x01_DNFWAH_archeological_hacking_on_pax.txt
 ├── d4_0x02_DNFWAH_gnu-linux_security_baseline_hardening.txt
 ├── d4_0x03_DNFWAH_hack_back_diy_guide.txt
@@ -33,7 +34,10 @@ DNFWAH Issue 4 is released in ( we still lacking the prologue...)
 ├── d4_0x06_DNFWAH_the_awesome_truth_about_hackers.txt
 ├── d4_0x07_DNFWAH_shellshock_bash_story_cve-2014-6271.txt
 ├── d4_0x08_DNFWAH_SmartOS_security_assessment.txt
-└── d4_0x09_DNFWAH_symbol_recognition_of_striped_lib.txt
+├── d4_0x09_DNFWAH_symbol_recognition_of_striped_lib.txt
+├── d4_0x0a_DNFWAH_linux_kernel_patch.txt
+└── d4_0x0b_DNFWAH_diy_your_own_android_emu.txt
+
 
 The 3rd issue is released in Apr 1st 2014( We don't fool anyone;-)):
 
@@ -46,6 +50,7 @@ The 3rd issue is released in Apr 1st 2014( We don't fool anyone;-)):
 ├── d3_0x06_hacker_nsa_free-software.txt
 ├── d3_0x07_intro_secret_sharing.txt
 └── d3_0x08_intro_to_big_data.txt
+
 
 The 2nd issue is released in Dec 31st, 2011:
 
@@ -64,6 +69,7 @@ The 2nd issue is released in Dec 31st, 2011:
 0x06 Hacking the wholism of linux net Shawn the R0ck
 
 0x07 Reviews of The Consequences of Ideas Cat
+
 
 The 1st issue is released in May 8th, 2011:
 
