@@ -9,7 +9,7 @@ Watson D W N GNU/xXx 2.8.13
             DWN  NOT   ~~~~~~~~~~~   ~~~~~~~~~   ~~~~~~~    WITH    DWN
             DWN                    Issue 4                          DWN
             DWN  A                                          HACKER  DWN
-            DWN                 June 18, 2014                       DWN
+            DWN                 Dec 15, 2014                        DWN
             DWN                                                     DWN
             DWN          Created, Written, and Edited               DWN
             DWN                 by f0Rsaken                         DWN
