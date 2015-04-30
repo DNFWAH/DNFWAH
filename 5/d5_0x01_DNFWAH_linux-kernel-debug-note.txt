@@ -1,0 +1,217 @@
+
+|=-----------------------------------------------------------------=|
+|=-----=[ D O   N O T   F U C K   W I T H   A   H A C K E R ]=-----=|
+|=-----------------------------------------------------------------=|
+|=------------------------[ #5 File 0x01 ]-------------------------=|
+|=-----------------------------------------------------------------=|
+|=----------------=[ Linux kernel debugging notes ]=---------------=|
+|=-----------------------------------------------------------------=|
+|=------------------------=[ By  g0t3n ]=--------------------------=|
+|=-----------------------------------------------------------------=|
+|=-----------------=[ CreateDate: Nov 29 2014 ]=-------------------=|
+|=-----------------------------------------------------------------=|
+|=-------------------=[ Update: Apr 30 2015 ]=---------------------=|
+|=-----------------------------------------------------------------=|
+
+
+--[ Content
+ 0. 引言
+ 1. 万物之源: 获得 console 输出调试信息
+ 2. 静态反汇编
+ 3. 动态调试
+ 4. To-Do
+ 5. Reference
+
+--[ 0. 引言: 一些准备
+
+关注的是基于发行版的内核调试方法.二者首先区别是公布的内核打的是特性补丁
+(feature patch) 而发行版在这个基准上选定一个稳定内核版本打安全补丁(我们
+这仅关注安全问题).获取版本信息的一些命令如下:
+
+[g0t3n@test] uname -an
+[g0t3n@test] cat /proc/version_signature
+[g0t3n@test] lsb_release -c  # 这个会获取发行版代号
+
+例如我随便来台 debian 4.0 的机器做个例子
+
+[g0t3n@test] uname -an
+Linux g0t3nst_desktop 2.6.18-6-amd64 #3 SMP Sat Feb 20 23:34:55 UTC 2010 x86_64 GNU/Linux
+
+每组数字依次未 (版本号).(内核版本)-(安全补丁)-(微调优化补丁)
+kernel.org 上一些有意思的缩写
+  EOL - End-of-life
+  Longterm - Long term support
+
+安全补丁以及微调优化补丁是发行版未他们选定的 stable 内核打上的补丁.这里
+关注的是发行版内核,因此需要的是打过补丁的内核文件.直接从iso或安装后的系
+统找到的都是 vmlinuz 文件,这是个经 gzip 压缩处理过的内核文件.别担心,每
+个发行版都提供未经压缩的带符号表的 vmlinux 文件下载.
+
+  [Ubuntu] : http://ddebs.ubuntu.com/pool/main/l/linux/
+  [RedHat] : ftp://ftp.redhat.com/pub/redhat/linux/enterprise/
+
+调试环境我选的是 Vmware, 考虑使用 qemu+kvm 作为调试环境也不错.PS:不支持
+kvm的qemu 简直不能看啊.使用 Vmware 的好处是简单易用,life is short,
+right? ;-)内核代码阅读我是用的是 lxr
+(http://lxr.free-electrons.com/source/).当然了像我这样的伪 c 爱好者来说
+还需要像 cflow 来快速静态分析一段代码的.我们能通过一下命令来快速绘制函
+数执行树.  cflow -T -m function *.c
+
+--[ 1. 万物之源: 获得 console 输出调试信息
+
+要把 console 输出的信息重定向文件,vmware 输出到文件, grub.cfg 中加入
+
+  console=ttyS0,115200 console=tty0
+
+同时,我们需要在待调试的机器中设置
+
+ echo 8 > /proc/sys/kernel/printk  # 任何printk 都会输出
+
+默认的 /var/log/kern.log 中就记录了各种控制台输出信息.但在实际环境中,内
+核调试中经常出现了 panic, klogd进程很容易崩掉,因此我还是偏向于将
+console信息重定向到文件.
+
+Vmware 的虚拟机设置中可选择串行端口,最常用的就是用输出到文件,这样内核
+panic 时的 Oops 信息都能一览无遗.当然你也可以用 minicom / putty 这样的
+console 程序来直接打开串行接口.
+
+--[ 2. 静态反汇编
+
+其实有了 kdump 我们基本上能快速定位到全局变量,快速查看局部 asm code.需
+要注意是 kdump 需要用到 vmlinux 文件.借助 kdump 套件我们能 disassemble
+函数,快速查看相关结构,事实上 kdump 仅仅为 gdb 的一个封装而已 ;-)
+
+[g0t3n@test] crash /usr/lib/debug/boot/vmlinux
+crash> disassemble printk
+Dump of assembler code for function printk:
+   0xffffffff81644136 <+0>:     push   %rbp
+   0xffffffff81644137 <+1>:     mov    %rsp,%rbp
+   0xffffffff8164413a <+4>:     sub    $0x50,%rsp
+   0xffffffff8164413e <+8>:     data32 data32 data32 xchg %ax,%ax
+   0xffffffff81644143 <+13>:    cmpl   $0x0,0x840776(%rip)        # 0xffffffff81e848c0
+   0xffffffff8164414a <+20>:    lea    0x10(%rbp),%rax
+   0xffffffff8164414e <+24>:    mov    %rsi,-0x28(%rbp)
+   0xffffffff81644152 <+28>:    mov    %rdx,-0x20(%rbp)
+   0xffffffff81644156 <+32>:    mov    %rcx,-0x18(%rbp)
+   0xffffffff8164415a <+36>:    mov    %r8,-0x10(%rbp)
+   0xffffffff8164415e <+40>:    lea    -0x48(%rbp),%rsi
+   0xffffffff81644162 <+44>:    mov    %rax,-0x40(%rbp)
+   0xffffffff81644166 <+48>:    lea    -0x30(%rbp),%rax
+   0xffffffff8164416a <+52>:    mov    %r9,-0x8(%rbp)
+   0xffffffff8164416e <+56>:    movl   $0x8,-0x48(%rbp)
+   0xffffffff81644175 <+63>:    mov    %rax,-0x38(%rbp)
+   0xffffffff81644179 <+67>:    je     0xffffffff81644182 <printk+76>
+   0xffffffff8164417b <+69>:    callq  0xffffffff810cee20 <vkdb_printf>
+   0xffffffff81644180 <+74>:    jmp    0xffffffff81644187 <printk+81>
+   0xffffffff81644182 <+76>:    callq  0xffffffff81067a50 <vprintk>
+   0xffffffff81644187 <+81>:    leaveq
+   0xffffffff81644188 <+82>:    retq
+
+crash> whatis thread_info
+struct thread_info {
+    struct task_struct *task;
+    struct exec_domain *exec_domain;
+    __u32 flags;
+    __u32 status;
+    __u32 cpu;
+    int preempt_count;
+    mm_segment_t addr_limit;
+    struct restart_block restart_block;
+    void *sysenter_return;
+    int uaccess_err;
+}
+SIZE: 104
+
+在调试内核 panic 情况下我们能配置 kdump 导出崩溃了的 vmcore 文件
+(thanks for kexec).这样在 panic 的情况能把把内核内存都 dump 成 core
+file.方便随时看到 panic发生内核函数执行树以及查看当时上下文情况(
+kernel thread context).
+
+其中有几点值得注意,首先 bt 不仅能查看到当前进程的执行树 backtrace,还能
+查看别的进程的 backtrace,甚至能定位出每个函数所在文件的偏移值. 第二个点
+比较值得注意的是内核的某些特定数据结构 list_head 内核链表,list_head 应
+该是内核中用得最多的数据结构.比如以下的做法.
+
+crash> struct -o task_struct
+struct task_struct {
+     [0] volatile long int state;
+...
+   [504] cpumask_t cpus_allowed;
+   [536] struct sched_info sched_info;
+   [568] struct list_head tasks;             // 找到要查看的 list_head 链表
+
+crash> task|grep -A5 -B4 task_struct
+PID: 1519   TASK: ffff88003cdeade0  CPU: 0   COMMAND: "crash"  // 找到 task_struct 地址
+struct task_struct {
+  state = 0,
+  stack = 0xffff88003c7ae000,
+  usage = {
+    counter = 2
+  },
+
+crash> list -o 568 -s task_struct.tasks 0xffff88003cdeade0
+ffff88003cdeade0
+  tasks = {
+    next = 0xffff8800398d1928,
+    prev = 0xffff880039c1ddf8
+  }
+ffff8800398d1928
+  tasks = {
+    next = 0x0,
+    prev = 0x0
+  }
+
+使用 kdump 的第三点好处在于,我们能用 sys config 命令导出发行版的配置列
+表.类似于 zcat /proc/config.gz.因此做针对于发行版的调试能通过这个技巧查
+看到发行版的内核配置.  rd 能用于直接读取相关内存地址.
+
+--[ 3. 动态调试
+
+无论是 vmware 还是 qemu ,我认为现在最佳的动态调试方法还是 利用 gdb
+stub.现在有很多例如 systemtap, jprobes, kprobes 方法但要写 c 或者
+script.而我还是更喜欢类似 gdb 那样的 step-by-step 调试方法.
+
+在 vmware 中使用 gdb stub 很简单,只需要在待调试的虚拟机的 vmx 文件最后
+加上如下参数
+
+  debugStub.listen.guest64 = "TRUE"             # 64位调试打开
+  debugStub.listen.guest64.remote = "TRUE"      # 允许远程调试
+  debugStub.hideBreakpoints = "FALSE"           # 用硬断点不用int 3
+
+然后在相应的调试服务器上使用
+
+  [g0t3n@test] gdb ~/path/to/vmlinux
+  (gdb) set architecture i386:x86-64
+  (gdb) target remote:1234                      #  host:port 请自行修改
+  (gdb) b panic                                        # 对 panic 函数下断点
+
+类似的我们也能在 qemu 中添加 -gdb tcp::1234 来启动 qemu 的gdb stub.但不
+带 kvm的 qemu 速度是在不能直视.
+
+有了 gdb 的基础你就能对任意函数下断点,查看其内存的值.不单如此,在基于
+interrupt context 或 thread context 的环境下还能查看当前局部变量的值.
+
+
+--[ 4. TO-DO
+
+首先,像 linux kernel source 这样庞大的架构肯定不能简单的通过 cflow 这样
+简单的程序画出流程图进而对一个 subsystem 进行深入的了解,很容易从一个要
+解决的问题陷入到另一个问题.
+
+使用 kdump 做 vmcore dump 虽然能解决大部分情况,但在特殊情况下,(ex: 中断
+上下文环境下的kernel panic),系统往往无法执行 kexec 导致无法导出 vmcore
+dump.
+
+
+--[ 5. Ref
+
+[0] kernel source code
+  kernel.org
+
+[1] Debug Hacks中文版:深入调试的技术和工具
+
+[2] vmware gdb stub
+  http://sysprogs.com/w/making-breakpoints-work-with-vmware-gdb-stub/
+
+[3] kernel newbies
+  http://kernelnewbies.org/
