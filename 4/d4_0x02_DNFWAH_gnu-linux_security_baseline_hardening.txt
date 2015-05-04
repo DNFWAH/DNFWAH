@@ -34,6 +34,8 @@ Linux shawn-fortress 3.7-trunk-686-pae #1 SMP Debian 3.7.2-0+kali8 i686 GNU/Linu
 
        1.4.2 Prevent *UNSET* bash history
 
+   1.5 sudoers
+
 2. Kernel security baseline
 
 3. Hardening
@@ -104,6 +106,25 @@ password requisite pam_cracklib.so minlen=10 ucredit=-1 lcredit=-1 dcredit=-1 oc
 3，更换密码策略(每90天更换一次）
 
 4，密码分发管理，管理不同业务服务器的系统管理员掌握不同的密码
+
+
+PAM例子：
+
+分别代表最短密码长度为8,其中至少包含一个大写字母，一个小写字母，一个数
+字和一个字符, 编辑/etc/pam.d/passwd，增加：
+
+password  requisite pam_cracklib.so minlen=8 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1
+
+
+编辑/etc/login.defs，设置：
+
+PASS_MAX_DAYS 90	#密码最长生命周期90天
+PASS_WARN_AGE 7		#密码过期之前7天报警信息
+
+
+登录失败3次死锁，编辑/etc/pam.d/system-auth，设置：
+
+auth	required	pam_tally2.so onerr=fail even_deny_root deny=3 unlock_time=3600
 
 
 ------[ 1.2.1 业务分离
@@ -372,6 +393,15 @@ type=SYSCALL msg=audit(07/20/2014 20:38:56.017:62) : arch=i386 syscall=unlinkat 
 
 也可以使用aureport来生成报告。
 
+记录tty的场景:
+
+编辑/etc/pam.d/password-auth-ac：
+
+session     required      pam_tty_audit.so enable=*
+
+查看相关信息：
+#tail -n 20 /var/log/audit/audit.log
+#aureport --tty -ts today
 
 ------[ 1.4.1 针对文件的审计 
 
@@ -466,6 +496,19 @@ readonly HISTSIZE
 
 #Set .bash_history as attr +a
 find / -maxdepth 3|grep -i bash_history|while read line; do chattr +a "$line"; done
+
+
+----[ 1.5 sudoers
+
+执行visudo，让普通用户shawn有所有权限：
+shawn ALL=(ALL) ALL
+
+让普通用户shawn只能以root权限执行ls和cat：
+shawn ALL=/bin/ls,/bin/cat
+
+让普通用户shawn只能在主机localhost上以root权限执行ls：
+shawn localhost=/bin/ls
+
 
 --[ 2. 内核安全基线
 
