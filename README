@@ -54,41 +54,25 @@ The 3rd issue is released in Apr 1st 2014( We don't fool anyone;-)):
 
 The 2nd issue is released in Dec 31st, 2011:
 
-0x00 Introduction f0Rsaken
-
-0x01 A & G trends II Shawn the R0ck
-
-0x02 Hacking on the ext of future GNU System NalaGinrut
-
-0x03 Loopback f0Rsaken
-
-0x04 DNFWAH World News f0Rsaken
-
-0x05 The Dic of the new village of south lake Sissy
-
-0x06 Hacking the wholism of linux net Shawn the R0ck
-
-0x07 Reviews of The Consequences of Ideas Cat
+├── d2_0x00_Introduction f0Rsaken
+├── d2_0x01_A & G trends II Shawn the R0ck
+├── d2_0x02_Hacking on the ext of future GNU System NalaGinrut
+├── d2_0x03_Loopback f0Rsaken
+├── d2_0x04_DNFWAH World News f0Rsaken
+├── d2_0x05_The Dic of the new village of south lake Sissy
+├── d2_0x06_Hacking the wholism of linux net Shawn the R0ck
+└── d2_0x07_Reviews of The Consequences of Ideas Cat
 
 
 The 1st issue is released in May 8th, 2011:
 
-d1_0x00_Introduction
-
-d1_0x01_A_G_trends
-
-d1_0x02_How_to_start_contributing_to_or_using_Open_Source_Software
-
-d1_0x03_The_way_of_NGO_hacking
-
-d1_0x04_DNFWAH_World_News
-
-d1_0x05_Hacking_libpcap_and_tcpdump
-
-d1_0x06_Hacking_snort
-
-d1_0x07_The_chapter_one_answer_of_sicp
-
-d1_0x08_My_way_of_music_hacking
-
-d1_0x09_Summary_of_Complex_system 
+├── d1_0x00_Introduction
+├── d1_0x01_A_G_trends
+├── d1_0x02_How_to_start_contributing_to_or_using_Open_Source_Software
+├── d1_0x03_The_way_of_NGO_hacking
+├── d1_0x04_DNFWAH_World_News
+├── d1_0x05_Hacking_libpcap_and_tcpdump
+├── d1_0x06_Hacking_snort
+├── d1_0x07_The_chapter_one_answer_of_sicp
+├── d1_0x08_My_way_of_music_hacking
+└── d1_0x09_Summary_of_Complex_system
