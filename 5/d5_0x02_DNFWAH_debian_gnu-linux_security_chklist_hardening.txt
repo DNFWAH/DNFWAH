@@ -1009,6 +1009,11 @@ security standards are not our concerns here.
 
 ----[ 6.1 STIGs for Debian
 
+Once there's history, there's story about offense & defense. Once
+we've heard fascinating stories from Mr.Sn0wden about how NSA fuck the
+world, there should be some open information about how BIG-BROTHER do
+the defense. STIGs is one of them.
+
 I think I'm not the right person to write this section.....
 
 
