@@ -584,6 +584,20 @@ net.ipv4.icmp_ignore_bogus_error_responses = 1
 net.ipv4.conf.all.log_martians = 1
 
 
+** To prevent side channel attack via CVE-2016-5696: TCP exploit:
+   challange ack information leak
+
+http://www.cs.ucr.edu/~zhiyunq/pub/sec16_TCP_pure_offpath.pdf
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=75ff39ccc1bd5d3c455b6822ab09e533c551f758
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=083ae308280d13d187512b9babe3454342a7987e
+
+The 1st PoC for testing SSH serivce:
+https://github.com/violentshell/rover
+
+/proc/sys/net/ipv4/tcp_challenge_ack_limit
+net.ipv4.tcp_challenge_ack_limit = 65537
+
+
 Exploit mitigation
 --------------------------------------------------------------
 ** Randomize the memory area. 0: disable ASLR. 1: Randomize the stack,
@@ -614,6 +628,25 @@ vm.mmap_min_addr=65536
 
 kernel.yama.ptrace_scope = 2
 /proc/sys/kernel/yama/ptrace_scope
+
+
+** Disable PERF_EVENT if you don't need it, e.g: profiling
+
+   *   0 - disallow raw tracepoint access for unpriv
+   *   1 - disallow cpu events for unpriv
+   *   2 - disallow kernel profiling for unpriv
+   *   3 - disallow all unpriv perf event use
+
+kernel.perf_event_paranoid = 3
+/proc/sys/kernel/perf_event_paranoid
+
+
+** BPF JIT hardening( v4.7)
+   * 0 - none
+   * 1 - hardened with blinding constants for unpriviledged users
+   * 2 - hardened with blinding for all users
+
+/proc/sys/net/core/bpf_jit_harden
 --------------------------------------------------------------
 
 
